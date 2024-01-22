@@ -1,0 +1,230 @@
+html, body{
+  position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    margin:0;
+    padding:0;
+
+}
+
+.dashboard{
+  width:100%;
+  height:100%;
+  background-color:rgb(157, 222, 248);
+}
+
+.dashboard .topbar {
+  z-index: 999;
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  background-color:  #41d159;
+  width: 100%;
+  padding: 7px;
+  box-sizing: border-box;
+  border-bottom: 8px solid rgb(157, 222, 248);
+}
+
+.dashboard .content{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: wrap;
+  }
+.dashboard .content img{
+  width: auto; 
+  height: 80px; 
+  display: block; 
+  border: 2px solid #000; 
+}
+.dashboard .content .name {
+  padding-left: 30px;
+  font-size: 45px;
+  white-space: wrap;
+  overflow: hidden;
+  transition: font-size 0.5s ease; 
+}
+@media(max-width: 700px)
+{
+  .dashboard .content{
+    width:500px;
+  }
+  .dashboard .content .name {
+    font-size: 35px; 
+    margin-right: 40px;
+    text-align: center;
+  }
+}
+@media(max-width: 590px)
+{
+  .dashboard .content{
+    width:400px;
+  }
+  .dashboard .content .name {
+    padding-top: 20px;
+  }
+}
+
+.dashboard .topbar .profile{
+  position: fixed;
+  top:5px;
+  right:0px;
+  margin-right: 1%;
+  display: inline-block;
+}
+.dashboard .profile img{
+  height: 40px;
+  width: auto;
+  border-radius: 50%;
+  align-self: center;
+}
+.dashboard .profile button {
+  background-color: #4CAF50;
+  text-align: center;
+  padding: 4px 5px;
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+}
+.dashboard .profile button:hover{
+  background-color:  rgb(157, 222, 248);
+}
+
+.dashboard .dropdown-content{
+  display: none; /* Initially hide the dropdown content */
+  position: absolute;
+  right: 0%;
+  top: 100%;
+  background-color: #f1f1f1;
+  min-width: 100px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 10%;
+  z-index: 1;
+}
+.dashboard .dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dashboard .dropdown-content a:hover {
+  background-color: #ddd;
+}
+.dashboard .show {
+  display: block; /* Display the dropdown content when the "show" class is added */
+}
+
+/* going into dangerous territory */
+.dashboard .lower-content{
+  flex-direction: row;
+  padding-top: 103px;
+  /* background-color: orange; */
+  display: flex;
+  width: 100%;
+  gap: 5px;
+}
+.dashboard .lower-content .saved .sidebar{
+  max-width: 30vw;
+  min-width: 300px;
+  height: 100vh;
+  background-color: #f2f2f2; 
+  display: block;
+  border: 2px solid #000; 
+  border-radius: 1%;
+  flex: 1;
+  margin-left: 5px;
+}
+.dashboard .lower-content .result .sidebar {
+  max-width: 30vw;
+  min-width: 300px;
+  height: 100vh;
+  background-color: #f2f2f2; 
+  display: block;
+  border: 2px solid #000; 
+  border-radius: 1%;
+  flex: 1;
+  margin-right: 5px;
+}
+.dashboard .sidebar .name{
+  position: sticky;
+  top: 105px;
+  width: auto;
+  font-size: 30px;
+  text-align: center;
+  background-color: #41d159;
+  border-top: 2px solid #000; 
+  padding: 10px;
+}
+.dashboard .sidebar li{
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.dashboard .lower-content .search-map{
+  margin-top: -100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 5px;
+  width: 100%;
+  flex-grow: 1;
+}
+.dashboard .search-map .input-container{
+  top: 110px;
+  position: sticky;
+  padding-left: 0px;
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  min-width: 420px;
+  max-width: 4300px;
+  min-height: 10px;
+  margin-bottom: 10px;
+}
+.dashboard .input-container input{
+  font-size: 20px;
+  padding-left: 10px;
+  min-width: 300px;
+  padding: 6px;
+  margin-top: 8px;
+  margin-right: 8px;
+  width: 500px;
+  border-radius: 4%;
+  flex: 1;
+}
+.dashboard .input-container .searchButton{
+  padding: 6px;
+  margin-top: 8px;
+  margin-right: 16px;
+  height: 38px;
+  background: #41d159;
+  font-size: 17px;
+  border: black;
+  cursor: pointer;
+  border-radius: 4%;
+}
+.dashboard .input-container .currentLocationButton{
+  padding-top: 10px;
+  width: 150px; 
+  height: auto; 
+  display: block; 
+  border-radius: 10px;
+  cursor: pointer;
+}
+.dashboard .lower-content img:hover{
+  filter: brightness(85%);
+}
+
+.dashboard .lower-content .searchButton:hover{
+  background-color:  #309c42;
+}
+
+.dashboard .lower-content .search-map .map{
+  position: sticky;
+  overflow: hidden;
+  width:100%;
+  height: 80vh;
+  padding-top: 5px;
+  flex-grow: 1;
+}

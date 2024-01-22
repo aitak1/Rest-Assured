@@ -1,0 +1,70 @@
+/* General page here */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(0, #ffffff, #91e29e, #41d159);
+}
+
+/* Style the page container */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Set the page height to the viewport height */
+}
+
+/* Style the title name */
+.homepage-name {
+  text-align: center;
+  width: 90%;
+  font-size: 60px;
+  color: white;
+}
+
+/* Style the footer with a blue background */
+.footer {
+  padding-top: 15px;
+  padding-bottom: 30px;
+  margin-top: auto;
+  background-color: rgb(157, 222, 248);
+  color: black;
+  text-align: center;
+  padding: 20px;
+}
+
+.button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 0px;
+  cursor: pointer;
+}
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: rgb(108, 175, 108);
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 25px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #04aa6d;
+  color: white;
+}
