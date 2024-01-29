@@ -1,0 +1,11 @@
+.review-page-container {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .review-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    width: 300px;
+  }
