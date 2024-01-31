@@ -14,14 +14,15 @@ html, body{
 }
 
 .dashboard .topbar {
+  width: 100%;
+  padding: 7px;
+  box-sizing: border-box;
   z-index: 999;
   display: flex;
   flex-direction: row;
   position: fixed;
   background-color:  #41d159;
-  width: 100%;
   padding: 7px;
-  box-sizing: border-box;
   border-bottom: 8px solid rgb(157, 222, 248);
 }
 
@@ -67,7 +68,7 @@ html, body{
 
 .dashboard .topbar .profile{
   position: fixed;
-  top:5px;
+  top:20px;
   right:0px;
   margin-right: 1%;
   display: inline-block;
@@ -227,4 +228,73 @@ html, body{
   height: 80vh;
   padding-top: 5px;
   flex-grow: 1;
+}
+
+.dashboard .topbar .settings{
+  position: fixed;
+  top:20px;
+  right:100px;
+  margin-right: 1%;
+  display: inline-block;
+}
+.dashboard .settings img{
+  height: 40px;
+  width: auto;
+  border-radius: 50%;
+  align-self: center;
+}
+.dashboard .settings button {
+  background-color: #4CAF50;
+  text-align: center;
+  padding: 4px 5px;
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+}
+.dashboard .settings button:hover{
+  background-color:  rgb(157, 222, 248);
+}
+
+.dashboard .topbar .notifications{
+  position: fixed;
+  top:20px;
+  right:163px;
+  margin-right: 1%;
+  display: inline-block;
+}
+.dashboard .notifications img{
+  height: 40px;
+  width: auto;
+  border-radius: 50%;
+  align-self: center;
+}
+.dashboard .notifications button {
+  background-color: #4CAF50;
+  text-align: center;
+  padding: 4px 5px;
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+}
+.dashboard .notifications button:hover{
+  background-color:  rgb(157, 222, 248);
+}
+
+.dashboard .settings input[type="checkbox"]{
+  width: 16px;
+  height: 16px;
+  position:fixed;
+  float: left;
+  margin: 15px 5px;
+}
+
+.dashboard .settings .check-label{
+  top: 0;
+  right: 0;
+  color: black;
+  font-size: 20px; 
+  padding: 12px 16px;
+  padding-left: 30px;
+  text-decoration: none;
+  float: right;
 }

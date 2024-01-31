@@ -192,12 +192,67 @@ function UserProfile(){
   );
 }
 
+function UserSettings(){
+  const [dropdownOpen, setdropdownOpen] = useState(false);
+  const handleSettingsDropdown = () => {
+    setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+  };
+
+  return (
+    <div className="settings">
+            <button type="button" onClick={handleSettingsDropdown}>
+            <img
+                src="../assets/settings-3110.png"
+                className="settings-logo"
+              />
+            
+          </button>
+          <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+            <div className="check"><input type="checkbox"></input></div>
+            <div className="check-label"><label>Notifications</label></div>
+          </div>
+          <div>
+
+          </div>
+        </div>
+  );
+}
+
+function UserNotifications(){
+  const [dropdownOpen, setdropdownOpen] = useState(false);
+  const handleNotificationsDropdown = () => {
+    setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+  };
+
+  return (
+    <div className="notifications">
+            <button type="button" onClick={handleNotificationsDropdown}>
+            <img
+                src="../assets/bell-icon.png"
+                className="notifications-logo"
+              />
+            
+          </button>
+          <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+            <div>
+            <a href="https://www.google.com/">Garage Sale</a>
+            </div>
+          </div>
+          <div>
+
+          </div>
+        </div>
+  );
+}
+
 function Dashboard(){
   
     return(
     <div className="dashboard">
       <div className="topbar">
           {UserProfile()}
+          {UserSettings()}
+          {UserNotifications()}
           <div className="content">
             <div className="image-container">
               <img
@@ -233,6 +288,20 @@ function Dashboard(){
           {resultSales()}
         </LoadScript>
       </div> */}
+          <>
+          {/* Need homepage content here */}
+          <footer className="footer">
+            Made with
+            <span role="img" aria-label="Heart Emoji">
+              ❤️
+            </span>
+            from Team Hex: <a href="https://github.com/fabo22" target="blank">Fabrizio Lopez, </a>
+            <a href="https://github.com/Mothraa380" target="blank">Measam Ali, </a>
+            <a href="" target="blank">Daniel Hughes, </a>
+            <a href="https://github.com/NoahDaniels1" target="blank">Noah Daniels, </a>
+            <a href="https://github.com/aitak1" target="blank">Katia Maldonado</a>
+          </footer>
+        </>
     </div>
   );
 }

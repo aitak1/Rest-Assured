@@ -2,7 +2,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(0, #ffffff, #91e29e, #41d159);
+  background: linear-gradient(0, #ffffff, rgb(208, 231, 240), rgb(157, 222, 248));
 }
 
 /* Style the page container */
@@ -42,13 +42,14 @@ body {
   cursor: pointer;
 }
 /* Add a black background color to the top navigation */
-.topnav {
-  background-color: rgb(108, 175, 108);
+.topbar {
+  background-color: #41d159;
   overflow: hidden;
+  padding: 8px;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
+.topbar a {
   float: left;
   color: #f2f2f2;
   text-align: center;
@@ -58,13 +59,34 @@ body {
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
+.topbar a:hover {
   background-color: #ddd;
   color: black;
 }
 
 /* Add a color to the active/current link */
-.topnav a.active {
+.topbar a.active {
   background-color: #04aa6d;
   color: white;
+}
+
+.topbar .content img{
+  width: auto; 
+  height: 80px; 
+  display: block; 
+  border: 2px solid #000; 
+}
+.topbar .content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: wrap;
+}
+
+.topbar .name {
+  padding-left: 30px;
+  font-size: 45px;
+  white-space: wrap;
+  overflow: hidden;
+  transition: font-size 0.5s ease; 
 }

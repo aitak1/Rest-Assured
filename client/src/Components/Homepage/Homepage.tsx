@@ -24,17 +24,23 @@ function Homepage() {
 
   return (
     <div className="page">
-      <div className="topnav">
-        <a className="active" href="#home">
-          Home
-        </a>
-        <a href="#Login" onClick={toggleLogin}>
-          Log In
-        </a>
-        <a href="#SignUp" onClick={toggleSignUp}>
-          Sign Up
-        </a>
-        <div className="homepage-name">Garage Sale Finder</div>
+ <div className="topbar">
+          <div className="content">
+            <div className="image-container">
+              <img
+                src="https://media.istockphoto.com/id/482430364/photo/blue-wooden-wall-with-the-inscription-garage-sale.jpg?s=1024x1024&w=is&k=20&c=59RBAF6v6sbtJDIWLRWRbTIMlDoCUv3sCJNSIWAQbv8="
+                //src="/assets/button.png"
+                className="logo"
+                alt="logo"
+                />
+            </div>
+            <div className="name">Garage Sale Finder</div>
+            <a href="#Home">Home</a>
+            <a href="#Login" onClick={toggleLogin}>Log In</a>
+            <a href="#SignUp" onClick={toggleSignUp}>Sign Up</a>
+            
+          </div>
+          
       </div>
 
       {showSignUp ? (
@@ -49,7 +55,11 @@ function Homepage() {
             <span role="img" aria-label="Heart Emoji">
               ❤️
             </span>
-            from Team Hex: <a href="https://github.com/Angel0002">Melis</a>
+            from Team Hex: <a href="https://github.com/fabo22" target="blank">Fabrizio Lopez, </a>
+            <a href="https://github.com/Mothraa380" target="blank">Measam Ali, </a>
+            <a href="" target="blank">Daniel Hughes, </a>
+            <a href="https://github.com/NoahDaniels1" target="blank">Noah Daniels, </a>
+            <a href="https://github.com/aitak1" target="blank">Katia Maldonado</a>
           </footer>
         </>
       )}
