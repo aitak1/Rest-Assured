@@ -19,6 +19,7 @@
 const mongoose = require('mongoose');
 const User = require('./schemas/userschema');
 const GarageSale = require('./schemas/saleschema'); // Adjust the path based on your project structure
+const Notification = require('./schemas/notificationschema');
 
 const connectDB = async () => {
   try {
