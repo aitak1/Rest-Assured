@@ -1,4 +1,4 @@
-// garageSale.js
+// saleschema.js
 
 const mongoose = require('mongoose');
 
