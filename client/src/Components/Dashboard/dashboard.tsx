@@ -192,7 +192,7 @@ function UserProfile(){
   );
 }
 
-function UserSettings(){
+/*function UserSettings(){
   const [dropdownOpen, setdropdownOpen] = useState(false);
   const handleSettingsDropdown = () => {
     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
@@ -216,7 +216,7 @@ function UserSettings(){
           </div>
         </div>
   );
-}
+}*/
 
 function UserNotifications(){
   const [dropdownOpen, setdropdownOpen] = useState(false);
@@ -245,13 +245,60 @@ function UserNotifications(){
   );
 }
 
+async function notifyUser(notificationText = "Thank you for enabling notifications!") { //logic for notifying a user
+  if(!("Notification" in window)) {
+    alert("Browser does not support notifications")
+  } else if (Notification.permission === "granted") {
+    const notification = new Notification(notificationText);
+  } else if (Notification.permission !== "denied") {
+    await Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        const notification = new Notification(notificationText);
+      }
+    });
+  }
+}
+
 function Dashboard(){
   
-    return(
+  //states
+  const [userResponded, setUserResponded] = useState(false);
+  const [dropdownOpen, setdropdownOpen] = useState(false);
+  const handleSettingsDropdown = () => {
+    setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+  };
+
+  async function enableNotifsAndClose() {
+    await notifyUser().then(() => {
+      setUserResponded(true);
+    });
+  }
+
+  function disableNotifsAndClose() {
+    
+    setUserResponded(true);
+  }
+
+    return(!(userResponded) && !(Notification.permission === "granted")) ? (
     <div className="dashboard">
       <div className="topbar">
           {UserProfile()}
-          {UserSettings()}
+          <div className="settings">
+            <button type="button" onClick={handleSettingsDropdown}>
+            <img
+                src="../assets/settings-3110.png"
+                className="settings-logo"
+              />
+            
+          </button>
+          <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+            <div onClick={enableNotifsAndClose} className="check"><input type="checkbox"></input></div> 
+            <div className="check-label"><label>Notifications</label></div>
+          </div>
+          <div>
+
+          </div>
+        </div>
           {UserNotifications()}
           <div className="content">
             <div className="image-container">
@@ -303,7 +350,149 @@ function Dashboard(){
           </footer>
         </>
     </div>
-  );
+  ) : (Notification.permission === "granted") ? (
+    <div className="dashboard">
+    <div className="topbar">
+        {UserProfile()}
+        <div className="settings">
+            <button type="button" onClick={handleSettingsDropdown}>
+            <img
+                src="../assets/settings-3110.png"
+                className="settings-logo"
+              />
+            
+          </button>
+          <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+            <div className="check"><input type="checkbox"></input></div>
+            <div className="check-label"><label>Notifications</label></div>
+          </div>
+          <div>
+
+          </div>
+        </div>
+        {UserNotifications()}
+        <button className="testbutton" onClick={disableNotifsAndClose}>Disable Notifs</button>
+        <div className="content">
+          <div className="image-container">
+            <img
+              src="https://media.istockphoto.com/id/482430364/photo/blue-wooden-wall-with-the-inscription-garage-sale.jpg?s=1024x1024&w=is&k=20&c=59RBAF6v6sbtJDIWLRWRbTIMlDoCUv3sCJNSIWAQbv8="
+              //src="/assets/button.png"
+              className="logo"
+              alt="logo"
+            />
+          </div>
+          <div className="name">Garage Sale Finder</div>
+          
+        </div>
+        
+    </div>
+    {/* before */}
+    <div className="lower-content">
+      {SavedSales()}
+      <LoadScript
+        googleMapsApiKey="AIzaSyBqSTtw4vop05TMAcAXcdClNgIKApvgYVU"
+      >
+        <SearchLocation />
+      </LoadScript>
+      {ResultSales()}
+    </div>
+
+    {/* after */}
+    {/* <div className="lower-content">
+      
+      <LoadScript
+        googleMapsApiKey="AIzaSyBqSTtw4vop05TMAcAXcdClNgIKApvgYVU"
+      >
+        <SearchLocation />
+        {resultSales()}
+      </LoadScript>
+    </div> */}
+        <>
+        {/* Need homepage content here */}
+        <footer className="footer">
+          Made with
+          <span role="img" aria-label="Heart Emoji">
+            ❤️
+          </span>
+          from Team Hex: <a href="https://github.com/fabo22" target="blank">Fabrizio Lopez, </a>
+          <a href="https://github.com/Mothraa380" target="blank">Measam Ali, </a>
+          <a href="" target="blank">Daniel Hughes, </a>
+          <a href="https://github.com/NoahDaniels1" target="blank">Noah Daniels, </a>
+          <a href="https://github.com/aitak1" target="blank">Katia Maldonado</a>
+        </footer>
+      </>
+  </div>
+  ) :     <div className="dashboard">
+  <div className="topbar">
+      {UserProfile()}
+      <div className="settings">
+            <button type="button" onClick={handleSettingsDropdown}>
+            <img
+                src="../assets/settings-3110.png"
+                className="settings-logo"
+              />
+            
+          </button>
+          <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+            <div className="check"><input type="checkbox"></input></div>
+            <div className="check-label"><label>Notifications</label></div>
+          </div>
+          <div>
+
+          </div>
+        </div>
+      {UserNotifications()}
+      <button className="testbutton" onClick={disableNotifsAndClose}>Disable Notifs</button>
+      <div className="content">
+        <div className="image-container">
+          <img
+            src="https://media.istockphoto.com/id/482430364/photo/blue-wooden-wall-with-the-inscription-garage-sale.jpg?s=1024x1024&w=is&k=20&c=59RBAF6v6sbtJDIWLRWRbTIMlDoCUv3sCJNSIWAQbv8="
+            //src="/assets/button.png"
+            className="logo"
+            alt="logo"
+          />
+        </div>
+        <div className="name">Garage Sale Finder</div>
+        
+      </div>
+      
+  </div>
+  {/* before */}
+  <div className="lower-content">
+    {SavedSales()}
+    <LoadScript
+      googleMapsApiKey="AIzaSyBqSTtw4vop05TMAcAXcdClNgIKApvgYVU"
+    >
+      <SearchLocation />
+    </LoadScript>
+    {ResultSales()}
+  </div>
+
+  {/* after */}
+  {/* <div className="lower-content">
+    
+    <LoadScript
+      googleMapsApiKey="AIzaSyBqSTtw4vop05TMAcAXcdClNgIKApvgYVU"
+    >
+      <SearchLocation />
+      {resultSales()}
+    </LoadScript>
+  </div> */}
+      <>
+      {/* Need homepage content here */}
+      <footer className="footer">
+        Made with
+        <span role="img" aria-label="Heart Emoji">
+          ❤️
+        </span>
+        from Team Hex: <a href="https://github.com/fabo22" target="blank">Fabrizio Lopez, </a>
+        <a href="https://github.com/Mothraa380" target="blank">Measam Ali, </a>
+        <a href="" target="blank">Daniel Hughes, </a>
+        <a href="https://github.com/NoahDaniels1" target="blank">Noah Daniels, </a>
+        <a href="https://github.com/aitak1" target="blank">Katia Maldonado</a>
+      </footer>
+    </>
+</div>
 }
 
 export default Dashboard;
