@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
 import "./dashboard.css"; 
+//import ReviewPage from "../Reviewpage/reviewpage";
+
 
 function SearchLocation() {
   const mapStyles = [
@@ -146,22 +148,34 @@ function SavedSales() {
   );
 }
 
+
 function ResultSales() {
   return (
     <div className="result">
-    <div className="sidebar">
+      <div className="sidebar">
         <div className="name">
           Results
         </div>
         <ol>
           <li>First</li>
+          <Link to="./Components/Reviewpage/reviewpage.tsx">
+            <button className="result-sales-button">Reviews</button>
+          </Link>
           <li>Second</li>
+          <Link to="/reviewpage">
+            <button className="result-sales-button">Reviews</button>
+          </Link>
           <li>Third</li>
+          <Link to="/reviewpage">
+            <button className="result-sales-button">Reviews</button>
+          </Link>
         </ol>
-    </div>
+      </div>
     </div>
   );
 }
+
+
 
 function UserProfile(){
   const [dropdownOpen, setdropdownOpen] = useState(false);
@@ -222,8 +236,6 @@ function Dashboard(){
         </LoadScript>
         {ResultSales()}
       </div>
-
-      {/* after */}
       {/* <div className="lower-content">
         
         <LoadScript
@@ -233,6 +245,7 @@ function Dashboard(){
           {resultSales()}
         </LoadScript>
       </div> */}
+       
     </div>
   );
 }

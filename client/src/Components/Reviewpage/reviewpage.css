@@ -1,11 +1,114 @@
-.review-page-container {
-    display: flex;
-    justify-content: space-around;
-  }
-  
-  .review-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px;
-    width: 300px;
-  }
+.review-page {
+  text-align: center;
+  padding: 20px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #41d159;
+  padding: 7px;
+  border-bottom: 8px solid rgb(157, 222, 248);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.review-header {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  flex-grow: 1; /* Added flex-grow to center the text */
+}
+
+.add-review-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-review-btn:hover {
+  background-color: #309c42;
+}
+
+.add-review-dropdown {
+  background-color: #f2f2f2;
+  padding: 10px;
+  border: 2px solid #000;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.add-review-dropdown label {
+  display: block;
+  margin-top: 10px;
+}
+
+.add-review-dropdown input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.add-review-dropdown button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-review-dropdown button:hover {
+  background-color: #309c42;
+}
+
+.reviews-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.review-rectangle {
+  width: 30%;
+  margin: 10px;
+  padding: 15px;
+  border: 2px solid #000;
+  border-radius: 10px;
+  background-color: #f2f2f2;
+}
+
+.customer-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.stars {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 14px;
+}
+
+/* Add this code for the "Reviews" button */
+.result-sales-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px; /* Adjust margin-top as needed */
+}
+
+.result-sales-button:hover {
+  background-color: #309c42;
+}
+
