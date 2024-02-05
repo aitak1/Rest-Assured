@@ -1,24 +1,7 @@
-// const mongoose = require('mongoose');
-
-// const connectDB = async () => {
-//     try {
-//         //mongodb connection string
-//         const con = await mongoose.connect(process.env.MONGO_URI)
-//         console.log(`MongoDB connected: ${con.connection.host}`);
-
-//     } catch(error) {
-//         console.log(error);
-//         process.exit(1);
-//     }
-// }
-
-// module.exports = connectDB;
-
-// connectDB.js
 
 const mongoose = require('mongoose');
 const User = require('./schemas/userschema');
-const GarageSale = require('./schemas/saleschema'); // Adjust the path based on your project structure
+const GarageSale = require('./schemas/saleschema');
 
 const connectDB = async () => {
   try {
@@ -30,7 +13,7 @@ const connectDB = async () => {
 
     console.log(`MongoDB connected: ${con.connection.host}`);
 
-    // Example: Insert a user
+    /* Example: Insert a user
     const newUserWithLocation = new User({
       first_name: 'Johnny',
       last_name: 'Bravo',
@@ -62,7 +45,7 @@ const connectDB = async () => {
     // Save the garage sale using promises
     await newGarageSale.save();
     console.log('Garage sale inserted successfully');
-
+    */
   } catch (error) {
     console.error(error);
     process.exit(1);

@@ -25,7 +25,7 @@ app.post('/api/signup', async (req, res) => {
     try {
         const {
             firstName,
-            lastname,
+            lastName,
             username,
             email,
             password,
@@ -39,7 +39,7 @@ app.post('/api/signup', async (req, res) => {
 
         const newUser = new User({
             first_name: firstName,
-            last_name: lastname,
+            last_name: lastName,
             username: username,
             email: email,
             password: password,
