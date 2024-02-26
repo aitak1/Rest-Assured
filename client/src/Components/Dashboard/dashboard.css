@@ -266,3 +266,21 @@ ul {
   padding: 7px;
   list-style-type: none;
 }
+
+.result-sales-button {
+  background-color: rgb(157, 222, 248);
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+Link{
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit text color from parent */
+}
+
+.result-sales-button:hover {
+  background-color: rgb(104, 183, 214);
+}

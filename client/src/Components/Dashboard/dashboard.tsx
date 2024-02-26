@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
 
 
@@ -12,8 +12,8 @@ const locationsArray =[
   "118 Lynn Avenue, Lewisville, TX, USA",
   "2003 Buffalo Bend Dr lewisville tx"
 ];
-
 let nearbyLocations=[] as string[];
+//const navigate = useNavigate();
 
 //add markers for garage sale locations within radius of user position
 const findTheWay = async (circle, map, userPosition) => {
@@ -278,7 +278,7 @@ function SavedSales() {
         </div>
         <ul>
           {locationsArray.map(location => (
-        <li key={location}>{location}</li>
+        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
       ))}
         </ul>
     </div>
