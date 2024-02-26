@@ -10,7 +10,6 @@ function SignUp({ onNavigateBack }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
@@ -27,7 +26,6 @@ function SignUp({ onNavigateBack }) {
         username,
         email,
         password,
-        dateOfBirth,
       });
 
       console.log(response.data);
@@ -88,14 +86,6 @@ function SignUp({ onNavigateBack }) {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
           />
         </div>
         <button type="submit" className="button">
