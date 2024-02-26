@@ -16,4 +16,4 @@ const restroomSchema = new mongoose.Schema({
 
 const Restroom = mongoose.model('Restroom', restroomSchema);
 
-module.exports = GarageSale;
+module.exports = Restroom;
