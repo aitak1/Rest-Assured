@@ -1,12 +1,7 @@
-// import { useNavigate } from "react-router-dom";
-// const navigate = useNavigate();
-//   const navigateToLogin = () =>{
-//       navigate("/login");
-//   };<button className="Login-button" onClick={navigateToLogin}>Login</button>
 import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
-import Login from "../Login/Login.tsx"; //Importing Login.js
+import Login from "../Login/Login.tsx"; // Importing Login.js
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -14,12 +9,12 @@ function Homepage() {
 
   const toggleSignUp = () => {
     setShowSignUp(!showSignUp);
-    if (showLogin) setShowLogin(false); //Hide the login if not being used
+    if (showLogin) setShowLogin(false); // Hide the login if not being used
   };
 
   const toggleLogin = () => {
     setShowLogin(!showLogin);
-    if (showSignUp) setShowSignUp(false); //hide sign up if not being used
+    if (showSignUp) setShowSignUp(false); // Hide sign up if not being used
   };
 
   return (
@@ -34,25 +29,23 @@ function Homepage() {
         <a href="#SignUp" onClick={toggleSignUp}>
           Sign Up
         </a>
-        <div className="homepage-name">Garage Sale Finder</div>
+        <div className="homepage-name">Restroom</div> {/* Centered text */}
+      </div>
+
+      <div className="content-container">
+        <div className="welcome-box">
+          <p>
+            Welcome to the one-stop to find the nearest restroom for those with disabilities.
+            We recommend making an account and logging in to save your previous search results.
+          </p>
+        </div>
       </div>
 
       {showSignUp ? (
         <SignUp onNavigateBack={() => setShowSignUp(false)} />
       ) : showLogin ? (
         <Login onNavigateBack={() => setShowLogin(false)} />
-      ) : (
-        <>
-          {/* Need homepage content here */}
-          <footer className="footer">
-            Made with
-            <span role="img" aria-label="Heart Emoji">
-              ❤️
-            </span>
-            from Team Hex: <a href="https://github.com/Angel0002">Melis</a>
-          </footer>
-        </>
-      )}
+      ) : null /* Ensure neither signup nor login components are rendered when not active */}
     </div>
   );
 }

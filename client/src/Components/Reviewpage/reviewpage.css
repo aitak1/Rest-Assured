@@ -7,22 +7,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #41d159;
+  background: linear-gradient(0, #ffffff, #91c8e2, #417fd1);
   padding: 7px;
-  border-bottom: 8px solid rgb(157, 222, 248);
   border-radius: 10px;
   margin-bottom: 20px;
 }
 
 .review-header {
+  text-align: center;
+  width: 60%;
   font-size: 24px;
   font-weight: bold;
-  color: white;
-  flex-grow: 1; /* Added flex-grow to center the text */
+  color: blue;
+  flex-grow: 1;
+  margin-bottom: 10px;
 }
 
 .add-review-btn {
-  background-color: #4caf50;
+  background-color: #1039a8;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -30,8 +32,9 @@
   cursor: pointer;
 }
 
-.add-review-btn:hover {
-  background-color: #309c42;
+.add-review-btn:hover { 
+  background-color: #ffffff;
+  color: black;
 }
 
 .add-review-dropdown {
@@ -40,6 +43,7 @@
   border: 2px solid #000;
   border-radius: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .add-review-dropdown label {
@@ -77,9 +81,9 @@
   width: 30%;
   margin: 10px;
   padding: 15px;
-  border: 2px solid #000;
   border-radius: 10px;
   background-color: #f2f2f2;
+  margin-bottom: 20px;
 }
 
 .customer-name {
@@ -88,27 +92,36 @@
   margin-bottom: 10px;
 }
 
-.stars {
+.cleanliness,
+.amenities,
+.accessibility,
+.overall-quality,
+.description,
+.date {
   font-size: 16px;
   margin-bottom: 10px;
 }
 
-.description {
-  font-size: 14px;
+.photo {
+  margin-top: 10px;
 }
 
-/* Add this code for the "Reviews" button */
-.result-sales-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
+.photo img {
+  max-width: 100%;
+  height: auto;
+  margin: 5px;
   border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px; /* Adjust margin-top as needed */
 }
 
-.result-sales-button:hover {
-  background-color: #309c42;
+.date {
+  font-style: italic;
+  color: #666;
 }
 
+.light-red {
+  background-color: #ffe6e6; /* Light red */
+}
+
+.light-green {
+  background-color: #e6ffe6; /* Light green */
+}

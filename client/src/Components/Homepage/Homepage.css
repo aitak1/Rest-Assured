@@ -2,7 +2,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(0, #ffffff, #91e29e, #41d159);
+  background: linear-gradient(0, #ffffff, #91c8e2, #417fd1);
 }
 
 /* Style the page container */
@@ -15,9 +15,9 @@ body {
 /* Style the title name */
 .homepage-name {
   text-align: center;
-  width: 90%;
+  width: 80%;
   font-size: 60px;
-  color: white;
+  color: blue;
 }
 
 /* Style the footer with a blue background */
@@ -32,7 +32,7 @@ body {
 }
 
 .button {
-  background-color: #4caf50;
+  background-color: #0a1681;
   color: white;
   padding: 10px 10px;
   text-align: center;
@@ -43,8 +43,13 @@ body {
 }
 /* Add a black background color to the top navigation */
 .topnav {
-  background-color: rgb(108, 175, 108);
+  background: linear-gradient(0, #ffffff, #91c8e2, #417fd1);
   overflow: hidden;
+  border-radius: 20px; /* Rounded corners */
+  margin: auto; /* Center horizontally */
+  width: 80%; /* Width of the navigation bar */
+  position: relative; /* Position relative for placing it lower */
+  top: 20px; /* Move it lower */
 }
 
 /* Style the links inside the navigation bar */
@@ -67,4 +72,27 @@ body {
 .topnav a.active {
   background-color: #04aa6d;
   color: white;
+}
+
+/* Style the content container */
+.content-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin-top: 50px; /* Adjust the distance from the topnav */
+}
+
+/* Style the welcome box */
+.welcome-box {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  border-radius: 10px; /* Rounded corners */
+  padding: 20px; /* Padding inside the box */
+  width: 80%; /* Width of the box */
+  max-width: 600px; /* Maximum width of the box */
+}
+
+/* Style the text inside the welcome box */
+.welcome-box p {
+  text-align: center; /* Center the text horizontally */
+  font-size: 18px; /* Adjust font size as needed */
+  color: #333; /* Text color */
 }

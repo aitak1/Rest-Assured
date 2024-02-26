@@ -1,38 +1,53 @@
-// Import necessary React components and styles if needed
 import React, { useState } from "react";
-import "./reviewpage.css"; // Make sure to create a corresponding CSS file
+import "./reviewpage.css";
+
+interface Review {
+  customerName: string;
+  cleanliness: number;
+  amenities: number;
+  accessibility: number;
+  description: string;
+  image: File | null;
+  date: Date; // Add date property
+}
 
 function ReviewPage() {
   const [addingReview, setAddingReview] = useState(false);
-  const [newReview, setNewReview] = useState({
+  const [newReview, setNewReview] = useState<Review>({
     customerName: "",
-    stars: 0,
+    cleanliness: 0,
+    amenities: 0,
+    accessibility: 0,
     description: "",
+    image: null,
+    date: new Date(), // Initialize date with current date
   });
-
-  // Dummy data for reviews (replace with actual data from your backend)
-  const [reviewsData, setReviewsData] = useState([
-    { customerName: "Customer 1", stars: 4, description: "Great service!" },
-    { customerName: "Customer 2", stars: 5, description: "Excellent products!" },
-    { customerName: "Customer 3", stars: 3, description: "Average experience." },
-    // Add more reviews as needed
+  const [reviewsData, setReviewsData] = useState<Review[]>([
+    { customerName: "User 1", cleanliness: 8, amenities: 7, accessibility: 9, description: "Very Clean bathroom!", image: null, date: new Date() },
   ]);
 
   const handleAddReview = () => {
-    // Add validation logic if needed
     const updatedReviews = [...reviewsData, { ...newReview }];
-    // Add logic to save the review to your backend if needed
-
-    // Update reviewsData state with the new review
     setReviewsData(updatedReviews);
-
-    // Reset state after adding the review
     setNewReview({
       customerName: "",
-      stars: 0,
+      cleanliness: 0,
+      amenities: 0,
+      accessibility: 0,
       description: "",
+      image: null,
+      date: new Date(), // Update date with current date
     });
     setAddingReview(false);
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Review) => {
+    const newValue = e.target.value === "" ? 0 : parseFloat(e.target.value);
+    setNewReview({ ...newReview, [field]: newValue });
+  };
+
+  const calculateOverallQuality = (review: Review): number => {
+    return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
 
   return (
@@ -41,7 +56,7 @@ function ReviewPage() {
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
           Add Review
         </button>
-        <div className="review-header">Seller-Name's Reviews</div>
+        <div className="review-header">Restroom's Reviews</div>
       </div>
       {addingReview && (
         <div className="add-review-dropdown">
@@ -51,11 +66,23 @@ function ReviewPage() {
             value={newReview.customerName}
             onChange={(e) => setNewReview({ ...newReview, customerName: e.target.value })}
           />
-          <label>Stars:</label>
+          <label>Cleanliness out of 10:</label>
           <input
             type="number"
-            value={newReview.stars}
-            onChange={(e) => setNewReview({ ...newReview, stars: Number(e.target.value) })}
+            value={newReview.cleanliness}
+            onChange={(e) => handleNumberChange(e, 'cleanliness')}
+          />
+          <label>Amenities out of 10:</label>
+          <input
+            type="number"
+            value={newReview.amenities}
+            onChange={(e) => handleNumberChange(e, 'amenities')}
+          />
+          <label>Accessibility out of 10:</label>
+          <input
+            type="number"
+            value={newReview.accessibility}
+            onChange={(e) => handleNumberChange(e, 'accessibility')}
           />
           <label>Description:</label>
           <input
@@ -63,15 +90,30 @@ function ReviewPage() {
             value={newReview.description}
             onChange={(e) => setNewReview({ ...newReview, description: e.target.value })}
           />
+          <label>Image:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNewReview({ ...newReview, image: e.target.files ? e.target.files[0] : null })}
+          />
           <button onClick={handleAddReview}>Add</button>
         </div>
       )}
       <div className="reviews-container">
         {reviewsData.map((review, index) => (
-          <div key={index} className="review-rectangle">
+          <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 5 ? 'light-red' : 'light-green'}`}>
             <div className="customer-name">{review.customerName}</div>
-            <div className="stars">{`${review.stars}/5 stars`}</div>
+            <div className="cleanliness">{`Cleanliness: ${review.cleanliness}/10`}</div>
+            <div className="amenities">{`Amenities: ${review.amenities}/10`}</div>
+            <div className="accessibility">{`Accessibility: ${review.accessibility}/10`}</div>
+            <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/10`}</div>
             <div className="description">{review.description}</div>
+            <div className="date">Date: {review.date.toLocaleDateString()}</div>
+            {review.image && (
+              <div className="photo">
+                <img src={URL.createObjectURL(review.image)} alt="Review" />
+              </div>
+            )}
           </div>
         ))}
       </div>
