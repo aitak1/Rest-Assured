@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
@@ -20,3 +20,4 @@ connectDB();
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 })
+*/
