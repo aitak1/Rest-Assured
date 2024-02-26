@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 const User = require('./schemas/userschema');
-const GarageSale = require('./schemas/saleschema');
+const Restroom = require('./schemas/restroomschema');
 
 const connectDB = async () => {
   try {
