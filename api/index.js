@@ -1,6 +1,6 @@
 // index.js
 
-const connectDB = require('./database'); // Adjust the path based on your project structure
+const connectDB = require('./database'); //connects to database file
 
 // Run the connectDB function
 connectDB();

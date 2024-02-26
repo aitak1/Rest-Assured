@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import "./SignUp.css"; // Ensure this path is correct
 
 function SignUp({ onNavigateBack }) {
@@ -9,29 +10,35 @@ function SignUp({ onNavigateBack }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle the sign-up logic here
-    console.log(
-      "Sign Up:",
-      firstName,
-      lastName,
-      username,
-      email,
-      password,
-      confirmPassword,
-      dateOfBirth,
-    );
-    navigate("/dashboard");
-    
+  const handleSignUp = async () => {
+    try {
+      //Check that passwords match
+      if(password !== confirmPassword) {
+        console.error("Passwords do not match");
+        return;
+      }
+
+      const response = await axios.post('http://localhost:3001/api/signup', {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+      });
+
+      console.log(response.data);
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error signing up:", error.response ? error.react.data : error.message);
+    }
   };
 
   return (
     <div className="sign-up-container">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { e.preventDefault(); handleSignUp();}}>
         <h2>Sign Up</h2>
         <div className="form-group">
           <label>First Name:</label>
@@ -79,14 +86,6 @@ function SignUp({ onNavigateBack }) {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
           />
         </div>
         <button type="submit" className="button">

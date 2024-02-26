@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
 import Login from "../Login/Login.tsx"; //Importing Login.js
+import restroomSign from "./restroomsign.jpg";
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -14,12 +15,12 @@ function Homepage() {
 
   const toggleSignUp = () => {
     setShowSignUp(!showSignUp);
-    if (showLogin) setShowLogin(false); //Hide the login if not being used
+    setShowLogin(false); //Hide the login if not being used
   };
 
   const toggleLogin = () => {
     setShowLogin(!showLogin);
-    if (showSignUp) setShowSignUp(false); //hide sign up if not being used
+    setShowSignUp(false); //hide sign up if not being used
   };
 
   return (
@@ -34,23 +35,24 @@ function Homepage() {
         <a href="#SignUp" onClick={toggleSignUp}>
           Sign Up
         </a>
-        <div className="homepage-name">Garage Sale Finder</div>
+        <div className="homepage-name">Restroom Finder</div>
       </div>
 
-      {showSignUp ? (
-        <SignUp onNavigateBack={() => setShowSignUp(false)} />
-      ) : showLogin ? (
-        <Login onNavigateBack={() => setShowLogin(false)} />
-      ) : (
+      {showSignUp && <SignUp onNavigateBack={() => setShowSignUp(false)} />}
+      {showLogin && <Login onNavigateBack={() => setShowLogin(false)} />}
+      {!showSignUp && !showLogin && (
+        // Placeholder for homepage content
         <>
-          {/* Need homepage content here */}
-          <footer className="footer">
-            Made with
-            <span role="img" aria-label="Heart Emoji">
-              ❤️
-            </span>
-            from Team Hex: <a href="https://github.com/Angel0002">Melis</a>
-          </footer>
+          <div className="Welcome-message">
+            <h1>Welcome to out Restroom Finding App!</h1>
+            <h1>Find your next restroom here.</h1>
+            <img
+              src={restroomSign}
+              alt="Restroom Sign"
+              className="restroom-image"
+            />
+          </div>
+          <footer className="footer">Made with ❤️ by Team Hex</footer>
         </>
       )}
     </div>
