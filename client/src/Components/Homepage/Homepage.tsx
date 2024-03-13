@@ -1,8 +1,13 @@
+// import { useNavigate } from "react-router-dom";
+// const navigate = useNavigate();
+//   const navigateToLogin = () =>{
+//       navigate("/login");
+//   };<button className="Login-button" onClick={navigateToLogin}>Login</button>
 import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
 import Login from "../Login/Login.tsx"; //Importing Login.js
-//import restroomSign from "../Homepage/restroomsign.jpg";
+import restroomSign from "./restroomsign.jpg";
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -42,7 +47,7 @@ function Homepage() {
             <h1>Welcome to out Restroom Finding App!</h1>
             <h1>Find your next restroom here.</h1>
             <img
-              src={"../HomePage/restroomsign.jpg"}
+              src={restroomSign}
               alt="Restroom Sign"
               className="restroom-image"
             />

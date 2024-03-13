@@ -15,9 +15,9 @@ body {
 /* Style the title name */
 .homepage-name {
   text-align: center;
-  width: 80%;
+  width: 90%;
   font-size: 60px;
-  color: blue;
+  color: white;
 }
 
 /* Welcome message */
@@ -57,11 +57,6 @@ body {
 .topnav {
   background-color: #1654ac;
   overflow: hidden;
-  border-radius: 20px; /* Rounded corners */
-  margin: auto; /* Center horizontally */
-  width: 80%; /* Width of the navigation bar */
-  position: relative; /* Position relative for placing it lower */
-  top: 20px; /* Move it lower */
 }
 
 /* Style the links inside the navigation bar */
