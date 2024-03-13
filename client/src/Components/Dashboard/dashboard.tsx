@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
+import Settings from "../Settings/settings";
 
 
 //testing marking 'garage sale' locations
@@ -312,8 +313,41 @@ function UserProfile(){
     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
   };
 
+  const [languagesOpen, setlanguagesOpen] = useState(false);
+  const handleLanguagesDropdown = () => {
+    setlanguagesOpen(!languagesOpen); // Toggle the dropdown
+  };
+
+  let settingsRef = useRef();
+  let profileRef = useRef();
+  let backRef = useRef();
+  //let testRef = useRef();
+
+  useEffect(() =>{
+    let handler = (e)=> {
+      if(settingsRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(true);
+      }
+      if(!profileRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(false);
+      }
+      if(backRef.current.contains(e.target)){
+        setdropdownOpen(true);
+        setlanguagesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+
+    return() => {
+      document.removeEventListener("mousedown", handler);
+    }
+  })
+
+
   return (
-    <div className="profile">
+    <div className="profile" ref={profileRef}>
             <button type="button"  onClick={handleProfileDropdown}>
               Name
             <img
@@ -327,9 +361,21 @@ function UserProfile(){
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
             <a href="https://www.google.com/">Profile</a>
             <Link to="/settings">Settings</Link>
+            <button ref={settingsRef} type="button">
+              Language       
+            </button >
             <Link to="/">Sign Out</Link>
           </div>
+
+          <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
+            <button>English</button>
+            <button>Spanish</button>
+            <a ref={backRef}>Back</a>
+          </div>
+
           <div>
+
+          
 
           </div>
         </div>
