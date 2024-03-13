@@ -326,7 +326,7 @@ function UserProfile(){
           </button>
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
             <a href="https://www.google.com/">Profile</a>
-            <a href="https://www.google.com/">Settings</a>
+            <Link to="/settings">Settings</Link>
             <Link to="/">Sign Out</Link>
           </div>
           <div>
