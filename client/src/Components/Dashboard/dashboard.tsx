@@ -250,14 +250,14 @@ function SearchLocation(){
                 id="locationInput"
                 name="location"
                 type="text"
-                placeholder="Location..."
+                placeholder={t("global.dashboard.searchbar")}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 onKeyDown={ handleEnterKey}
                 aria-label="Search Location"
               />
               <button id="searchButton" type="button" className="searchButton" onClick={handleSearch}>
-                Search
+              {t("global.dashboard.search")}
               </button>
               <img className="currentLocationButton" 
                 onClick={handleCurrentLocation}

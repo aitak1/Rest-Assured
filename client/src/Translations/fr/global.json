@@ -1,10 +1,16 @@
 {
+    "landing": {
+        "title": "Bienvenue sur notre application de recherche de toilettes!",
+        "description": "Trouvez vos prochaines toilettes ici."
+    },
     "header": {
         "name": "Recherche de toilettes"
     },
     "dashboard": {
         "title": "Emplacements",
-        "reviews": "Commentaires"
+        "reviews": "Commentaires",
+        "search": "Recherche",
+        "searchbar": "Emplacement..."
     },
     "dropdown" : {
         "profile": "Profil",
@@ -12,6 +18,18 @@
         "language" : "Langue",
         "signout" : "Se Déconnecter",
         "return" : "Retour"
-
+    },
+    "reviews": {
+        
+    },
+    "addreviews" : {
+        "addreview": "Ajouter un Commentaire",
+        "name": "Nom:",
+        "cleanliness": "Propreté Sur 10:",
+        "amenities": "Commodités Sur 10:",
+        "accessibility": "Accessibilité Sur 10:",
+        "description": "Description:",
+        "add": "Ajouter",
+        "image": "Image:"
     }
 }
