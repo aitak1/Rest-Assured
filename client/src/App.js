@@ -3,7 +3,6 @@ import Homepage from './Components/Homepage/Homepage.tsx';
 import Dashboard from './Components/Dashboard/dashboard.tsx';
 import ReviewPage from './Components/Reviewpage/reviewpage.tsx';
 import Posting from "./Components/Posting/posting.tsx";
-import Settings from "./Components/Settings/settings.tsx";
 // Import other components (Dashboard, Login, etc.)
 
 function App() {
@@ -15,7 +14,6 @@ function App() {
           <Route path="/dashboard" element={<Dashboard key="dashboard"/>} />
           <Route path="/reviewpage" element={<ReviewPage key="reviewpage"/>} />
           <Route path="/create-post" element={<Posting key="create-post" />} />
-          <Route path="/settings" element={<Settings key="settings" />} />
           {/* Other routes */}
         </Routes>
       </div>

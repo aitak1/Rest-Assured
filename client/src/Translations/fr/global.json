@@ -1,0 +1,17 @@
+{
+    "header": {
+        "name": "Recherche de toilettes"
+    },
+    "dashboard": {
+        "title": "Emplacements",
+        "reviews": "Commentaires"
+    },
+    "dropdown" : {
+        "profile": "Profil",
+        "settings" : "Paramètres",
+        "language" : "Langue",
+        "signout" : "Se Déconnecter",
+        "return" : "Retour"
+
+    }
+}

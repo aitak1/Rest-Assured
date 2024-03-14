@@ -1,0 +1,17 @@
+{
+    "header": {
+        "name": "Restroom Finder"
+    },
+    "dashboard": {
+        "title": "Locations",
+        "reviews": "Reviews"
+    },
+    "dropdown" : {
+        "profile": "Profile",
+        "settings" : "Settings",
+        "language" : "Language",
+        "signout" : "Sign Out",
+        "return" : "Return"
+
+    }
+}

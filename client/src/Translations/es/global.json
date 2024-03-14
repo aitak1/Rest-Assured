@@ -1,0 +1,17 @@
+{
+    "header": {
+        "name": "Buscador de Baños"
+    },
+    "dashboard": {
+        "title": "Ubicaciones",
+        "reviews": "Opiniones"
+    },
+    "dropdown" : {
+        "profile": "Perfil",
+        "settings" : "Ajustes",
+        "language" : "Idioma",
+        "signout" : "Desconectar",
+        "return" : "Regresar"
+
+    }
+}

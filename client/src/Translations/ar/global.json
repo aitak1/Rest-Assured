@@ -1,0 +1,17 @@
+{
+    "header": {
+        "name": "مكتشف مرحاض"
+    },
+    "dashboard": {
+        "title": "المواقع",
+        "reviews": "مراجعات"
+    },
+    "dropdown" : {
+        "profile": "حساب تعريفي",
+        "settings" : "إعدادات",
+        "language" : "لغة",
+        "signout" : "خروج",
+        "return" : "يعود"
+
+    }
+}

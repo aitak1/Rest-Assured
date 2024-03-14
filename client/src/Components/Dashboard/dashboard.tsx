@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
-import Settings from "../Settings/settings";
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../../Translations/language-selector';
 
 
 //testing marking 'garage sale' locations
@@ -239,6 +240,7 @@ function SearchLocation(){
           }
         };
     
+        const {t} = useTranslation();
 
   return (
         <div className="lower-content">
@@ -270,16 +272,17 @@ function SearchLocation(){
 }
 
 function SavedSales() {
+  const {t} = useTranslation();
   return (
     <div className="saved">
     <div className="sidebar-container">
     <div className="sidebar">
         <div className="name">
-          Locations
+        {t("global.dashboard.title")}
         </div>
         <ul>
           {locationsArray.map(location => (
-        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
+        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.reviews")}</Link></button></li>
       ))}
         </ul>
     </div>
@@ -308,6 +311,7 @@ function SavedSales() {
 // }
 
 function UserProfile(){
+  const {t} = useTranslation();
   const [dropdownOpen, setdropdownOpen] = useState(false);
   const handleProfileDropdown = () => {
     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
@@ -359,18 +363,17 @@ function UserProfile(){
             
           </button>
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-            <a href="https://www.google.com/">Profile</a>
-            <Link to="/settings">Settings</Link>
+            <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
+            <a>{t("global.dropdown.settings")}</a>
             <button ref={settingsRef} type="button">
-              Language       
+            {t("global.dropdown.language")}       
             </button >
-            <Link to="/">Sign Out</Link>
+            <Link to="/">{t("global.dropdown.signout")}</Link>
           </div>
 
           <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
-            <button>English</button>
-            <button>Spanish</button>
-            <a ref={backRef}>Back</a>
+            <LanguageSelector />
+            <a ref={backRef}>{t("global.dropdown.return")}</a>
           </div>
 
           <div>
@@ -383,7 +386,8 @@ function UserProfile(){
 }
 
 function Dashboard(){
-  
+  const {t} = useTranslation();
+
     return(
     <div className="dashboard">
       <div className="topbar">
@@ -397,7 +401,7 @@ function Dashboard(){
                 alt="logo"
               />
             </div>
-            <div className="name">Restroom Finder</div>
+            <div className="name">{t("global.header.name")}</div>
             
           </div>
           {UserProfile()}
