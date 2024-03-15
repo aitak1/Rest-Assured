@@ -1,0 +1,35 @@
+{
+    "landing": {
+        "title": "مرحبًا بك في تطبيق البحث عن الحمام!",
+        "description": "ابحث عن مرحاضك التالي هنا."
+    },
+    "header": {
+        "name": "مكتشف مرحاض"
+    },
+    "dashboard": {
+        "title": "المواقع",
+        "reviews": "مراجعات",
+        "search": "يبحث",
+        "searchbar": "موقع..."
+    },
+    "dropdown" : {
+        "profile": "حساب تعريفي",
+        "settings" : "إعدادات",
+        "language" : "لغة",
+        "signout" : "خروج",
+        "return" : "يعود"
+    },
+    "reviews": {
+        "title": "مراجعة الحمام"
+    },
+    "addreviews" : {
+        "addreview": "إنشاء مراجعة",
+        "name": "اسم:",
+        "cleanliness": "النظافة من 10:",
+        "amenities": "وسائل الراحة من 10:",
+        "accessibility": "إمكانية الوصول من 10:",
+        "description": "وصف:",
+        "add": "يخلق",
+        "image": "صورة:"
+    }
+}

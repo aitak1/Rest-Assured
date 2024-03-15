@@ -1,0 +1,35 @@
+{
+    "landing": {
+        "title": "¡Bienvenidos a nuestra aplicación de búsqueda de baños!",
+        "description": "Encuentra tu próximo baño aquí."
+    },
+    "header": {
+        "name": "Buscador de Baños"
+    },
+    "dashboard": {
+        "title": "Ubicaciones",
+        "reviews": "Opiniones",
+        "search": "Buscar",
+        "searchbar": "Ubicación..."
+    },
+    "dropdown" : {
+        "profile": "Perfil",
+        "settings" : "Ajustes",
+        "language" : "Idioma",
+        "signout" : "Desconectar",
+        "return" : "Regresar"
+    },
+    "reviews": {
+        "title": "Revisión del Baño"
+    },
+    "addreviews" : {
+        "addreview": "Agregar una Opinión",
+        "name": "Nombre:",
+        "cleanliness": "Limpieza Sobre 10:",
+        "amenities": "Comodidades Sobre 10:",
+        "accessibility": "Accesibilidad Sobre 10:",
+        "description": "Descripción:",
+        "add": "Agregar",
+        "image": "Imagen:"
+    }
+}

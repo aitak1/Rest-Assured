@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../../Translations/language-selector';
 
 
 //testing marking 'garage sale' locations
@@ -238,6 +240,7 @@ function SearchLocation(){
           }
         };
     
+        const {t} = useTranslation();
 
   return (
         <div className="lower-content">
@@ -247,14 +250,14 @@ function SearchLocation(){
                 id="locationInput"
                 name="location"
                 type="text"
-                placeholder="Location..."
+                placeholder={t("global.dashboard.searchbar")}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 onKeyDown={ handleEnterKey}
                 aria-label="Search Location"
               />
               <button id="searchButton" type="button" className="searchButton" onClick={handleSearch}>
-                Search
+              {t("global.dashboard.search")}
               </button>
               <img className="currentLocationButton" 
                 onClick={handleCurrentLocation}
@@ -269,16 +272,17 @@ function SearchLocation(){
 }
 
 function SavedSales() {
+  const {t} = useTranslation();
   return (
     <div className="saved">
     <div className="sidebar-container">
     <div className="sidebar">
         <div className="name">
-          Locations
+        {t("global.dashboard.title")}
         </div>
         <ul>
           {locationsArray.map(location => (
-        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
+        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.reviews")}</Link></button></li>
       ))}
         </ul>
     </div>
@@ -307,13 +311,47 @@ function SavedSales() {
 // }
 
 function UserProfile(){
+  const {t} = useTranslation();
   const [dropdownOpen, setdropdownOpen] = useState(false);
   const handleProfileDropdown = () => {
     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
   };
 
+  const [languagesOpen, setlanguagesOpen] = useState(false);
+  const handleLanguagesDropdown = () => {
+    setlanguagesOpen(!languagesOpen); // Toggle the dropdown
+  };
+
+  let settingsRef = useRef();
+  let profileRef = useRef();
+  let backRef = useRef();
+  //let testRef = useRef();
+
+  useEffect(() =>{
+    let handler = (e)=> {
+      if(settingsRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(true);
+      }
+      if(!profileRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(false);
+      }
+      if(backRef.current.contains(e.target)){
+        setdropdownOpen(true);
+        setlanguagesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+
+    return() => {
+      document.removeEventListener("mousedown", handler);
+    }
+  })
+
+
   return (
-    <div className="profile">
+    <div className="profile" ref={profileRef}>
             <button type="button"  onClick={handleProfileDropdown}>
               Name
             <img
@@ -325,11 +363,22 @@ function UserProfile(){
             
           </button>
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-            <a href="https://www.google.com/">Profile</a>
-            <a href="https://www.google.com/">Settings</a>
-            <Link to="/">Sign Out</Link>
+            <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
+            <a>{t("global.dropdown.settings")}</a>
+            <button ref={settingsRef} type="button">
+            {t("global.dropdown.language")}       
+            </button >
+            <Link to="/">{t("global.dropdown.signout")}</Link>
           </div>
+
+          <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
+            <LanguageSelector />
+            <a ref={backRef}>{t("global.dropdown.return")}</a>
+          </div>
+
           <div>
+
+          
 
           </div>
         </div>
@@ -337,7 +386,8 @@ function UserProfile(){
 }
 
 function Dashboard(){
-  
+  const {t} = useTranslation();
+
     return(
     <div className="dashboard">
       <div className="topbar">
@@ -351,7 +401,7 @@ function Dashboard(){
                 alt="logo"
               />
             </div>
-            <div className="name">Restroom Finder</div>
+            <div className="name">{t("global.header.name")}</div>
             
           </div>
           {UserProfile()}

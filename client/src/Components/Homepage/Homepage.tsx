@@ -8,6 +8,8 @@ import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
 import Login from "../Login/Login.tsx"; //Importing Login.js
 import restroomSign from "./restroomsign.jpg";
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../../Translations/language-selector';
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -22,6 +24,8 @@ function Homepage() {
     setShowLogin(!showLogin);
     setShowSignUp(false); //hide sign up if not being used
   };
+
+  const {t} = useTranslation();
 
   return (
     <div className="page">
@@ -44,8 +48,8 @@ function Homepage() {
         // Placeholder for homepage content
         <>
           <div className="Welcome-message">
-            <h1>Welcome to out Restroom Finding App!</h1>
-            <h1>Find your next restroom here.</h1>
+            <h1>{t("global.landing.title")}</h1>
+            <h1>{t("global.landing.description")}</h1>
             <img
               src={restroomSign}
               alt="Restroom Sign"

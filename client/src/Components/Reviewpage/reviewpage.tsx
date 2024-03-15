@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../../Translations/language-selector';
 import "./reviewpage.css";
 
 interface Review {
@@ -50,53 +52,55 @@ function ReviewPage() {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
 
+  const {t} = useTranslation();
+
   return (
     <div className="review-page">
       <div className="header-container">
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
-          Add Review
+        {t("global.addreviews.addreview")}
         </button>
-        <div className="review-header">Restroom's Reviews</div>
+        <div className="review-header">{t("global.reviews.title")}</div>
       </div>
       {addingReview && (
         <div className="add-review-dropdown">
-          <label>Name:</label>
+          <label>{t("global.addreviews.name")}</label>
           <input
             type="text"
             value={newReview.customerName}
             onChange={(e) => setNewReview({ ...newReview, customerName: e.target.value })}
           />
-          <label>Cleanliness out of 10:</label>
+          <label>{t("global.addreviews.cleanliness")}</label>
           <input
             type="number"
             value={newReview.cleanliness}
             onChange={(e) => handleNumberChange(e, 'cleanliness')}
           />
-          <label>Amenities out of 10:</label>
+          <label>{t("global.addreviews.amenities")}</label>
           <input
             type="number"
             value={newReview.amenities}
             onChange={(e) => handleNumberChange(e, 'amenities')}
           />
-          <label>Accessibility out of 10:</label>
+          <label>{t("global.addreviews.accessibility")}</label>
           <input
             type="number"
             value={newReview.accessibility}
             onChange={(e) => handleNumberChange(e, 'accessibility')}
           />
-          <label>Description:</label>
+          <label>{t("global.addreviews.description")}</label>
           <input
             type="text"
             value={newReview.description}
             onChange={(e) => setNewReview({ ...newReview, description: e.target.value })}
           />
-          <label>Image:</label>
+          <label>{t("global.addreviews.image")}</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setNewReview({ ...newReview, image: e.target.files ? e.target.files[0] : null })}
           />
-          <button onClick={handleAddReview}>Add</button>
+          <button onClick={handleAddReview}>{t("global.addreviews.add")}</button>
         </div>
       )}
       <div className="reviews-container">

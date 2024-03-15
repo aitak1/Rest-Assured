@@ -1,0 +1,36 @@
+{
+    "landing": {
+        "title": "Welcome to out Restroom Finding App!",
+        "description": "Find your next restroom here."
+    },
+    "header": {
+        "name": "Restroom Finder"
+    },
+    "dashboard": {
+        "title": "Locations",
+        "reviews": "Reviews",
+        "search": "Search",
+        "searchbar": "Location..."
+    },
+    "dropdown" : {
+        "profile": "Profile",
+        "settings" : "Settings",
+        "language" : "Language",
+        "signout" : "Sign Out",
+        "return" : "Return"
+    },
+    "reviews": {
+        "title": "Restroom's Review"
+
+    },
+    "addreviews" : {
+        "addreview": "Add Review",
+        "name": "Name:",
+        "cleanliness": "Cleanliness out of 10:",
+        "amenities": "Amenities out of 10:",
+        "accessibility": "Accessibility out of 10:",
+        "description": "Description:",
+        "add": "Add",
+        "image": "Image:"
+    }
+}
