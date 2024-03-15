@@ -60,7 +60,7 @@ function ReviewPage() {
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
         {t("global.addreviews.addreview")}
         </button>
-        <div className="review-header">Restroom's Reviews</div>
+        <div className="review-header">{t("global.reviews.title")}</div>
       </div>
       {addingReview && (
         <div className="add-review-dropdown">

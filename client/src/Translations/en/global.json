@@ -20,6 +20,7 @@
         "return" : "Return"
     },
     "reviews": {
+        "title": "Restroom's Review"
 
     },
     "addreviews" : {

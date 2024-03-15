@@ -11,23 +11,6 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
     debug: true,
     fallbackLng: "en",
     returnObjects: true,
-   /* resources: {
-        en: {
-            translation: {
-                greeting: "Restroom Finder",
-            },
-        },
-        es: {
-            translation: {
-                greeting: "Buscador de Baños",
-            },
-        },
-        fr: {
-            translation: {
-                greeting: "Recherche de toilettes",
-            },
-        }
-    }*/
     resources: {
         en: {
             translation: {
