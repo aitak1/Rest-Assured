@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
 import Login from "../Login/Login.tsx"; //Importing Login.js
-import restroomSign from "./restroomsign.jpg";
+//import restroomSign from "./restroomsign.jpg";
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -47,7 +47,7 @@ function Homepage() {
             <h1>Welcome to out Restroom Finding App!</h1>
             <h1>Find your next restroom here.</h1>
             <img
-              src={restroomSign}
+              src="/assets/restroomsign.jpg"
               alt="Restroom Sign"
               className="restroom-image"
             />

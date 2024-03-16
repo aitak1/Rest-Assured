@@ -43,7 +43,7 @@ function Posting() {
         <Link to="/dashboard" className="back-to-dashboard-link">
           Back To Dashboard
         </Link>
-        <div className="posting-name">Create Your Garage Sale Post</div>
+        <div className="posting-name"> Add Restroom </div>
       </div>
       <form onSubmit={handleSubmit} className="posting-form">
         {/* Existing and additional fields */}

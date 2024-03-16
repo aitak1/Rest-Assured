@@ -1,13 +1,6 @@
-//posting.css
+
 /* General styling to maintain consistency with Homepage */
-body {
-  background: linear-gradient(
-    0,
-    #ffffff,
-    #91e29e,
-    #41d159
-  ); /* Consistent background */
-}
+
 
 .page {
   display: flex;
@@ -19,7 +12,7 @@ body {
 .topnav {
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(108, 175, 108);
+  background-color: rgb(42, 42, 165);
   overflow: hidden;
 }
 

@@ -1,28 +1,31 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
 
 
-//testing marking 'garage sale' locations
-const locationsArray =[
-  "908 Granview Drive, Lewisville, TX, USA",
-  "2021 Vista Drive, Lewisville, TX, USA",
-  "1812 Blair Oak Drive, Lewisville, TX, USA",
-  "118 Lynn Avenue, Lewisville, TX, USA",
-  "2003 Buffalo Bend Dr lewisville tx"
+//testing marking 'bathroom' locations
+const locationsArray = [
+  { address: "908 Granview Drive, Lewisville, TX, USA", distance: 1.1 },
+  { address: "2021 Vista Drive, Lewisville, TX, USA", distance: 2.3 },
+  { address: "1812 Blair Oak Drive, Lewisville, TX, USA", distance: 0.8 },
+  { address: "118 Lynn Avenue, Lewisville, TX, USA", distance: 3.5 },
+  { address: "2003 Buffalo Bend Dr lewisville tx", distance: 2.0 },
+  { address: " 801 W Main St, Lewisville, TX 75067", distance: 4.4 }
 ];
-let nearbyLocations=[] as string[];
-//const navigate = useNavigate();
+let nearbyLocations=[] as { address: string, distance: number }[];
+let globalDistance = .5;
 
 //add markers for garage sale locations within radius of user position
 const findTheWay = async (circle, map, userPosition) => {
-  //nearbyLocations.length = 0;
+  nearbyLocations = [];
+  const processedAddresses = new Set();
   for(const location of locationsArray){
+    if (!processedAddresses.has(location.address)) {
     try {
       // Perform geocoding to convert address to coordinates using a geocoding service
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location.address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
       );
   
       if (response.ok) {
@@ -35,16 +38,9 @@ const findTheWay = async (circle, map, userPosition) => {
           );
           if(distance <= circle.getRadius())
           {
-            nearbyLocations.push(location);
-            new google.maps.Marker({
-              position: {lat , lng},
-              map,
-              title: location,
-              icon: {
-                url: "/assets/marker.PNG",
-                scaledSize: new google.maps.Size(140, 110)
-              }
-            });
+            location.distance = parseFloat((distance / 1609.34).toFixed(1));
+            nearbyLocations.push(Object.assign({}, location));
+            processedAddresses.add(location.address);
           }
         } else {
           console.log(data);
@@ -57,20 +53,29 @@ const findTheWay = async (circle, map, userPosition) => {
       console.error("Error during geocoding:", error);
     }
   }
+  nearbyLocations.sort((a, b) => {
+    return a.distance - b.distance;
+  });
+  console.log(locationsArray.length, nearbyLocations.length);
+}
     
 };
 
+//deal with the search bar, map api, and search functions
 function SearchLocation(){
-  const [location, setLocation] = useState('');
-  const [opened, setOpen] = useState(false);
-  const [userPosition, setUserPosition] = useState({ lat: 33.253946, lng: -97.152896 });
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [location, setLocation] = useState(''); //location in search bar
+  const [opened, setOpen] = useState(false);  //to activate circle radius on map
+  const [userPosition, setUserPosition] = useState({ lat: 33.253946, lng: -97.152896 });  //auto set users position
+  const [map, setMap] = useState<google.maps.Map | null>(null); //google map api
+  const [distance, setDistance] = useState(.5);
+  const isFindTheWayRunning = useRef(false);
 
+  //load google map api and operate location search functions
   useEffect(() => {
         const loader = new Loader({
           apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
           version: 'weekly',
-          libraries: ['places'],
+          libraries: ['places', 'geometry'],
         });
     
         loader.load().then(() => {
@@ -82,58 +87,63 @@ function SearchLocation(){
               featureType: 'poi',
               elementType: 'labels',
               stylers: [
-                { visibility: 'off' } // Hide points of interest labels
+                { visibility: 'off' } //hide all extra markers
               ]
             }
           ];
     
-          if (!mapElement || !inputElement) {
+          if (!mapElement || !inputElement) { //if map isnt loaded or input is empty
             return;
           }
     
-          const mapInstance = new window.google.maps.Map(mapElement, {
+          //setting map info
+          const mapInstance = new window.google.maps.Map(mapElement, { 
             center: { lat: 33.253946, lng: -97.152896 },
             zoom: userPosition ? 17 : 1,
             styles: mapStyles
           });
 
-          setMap(mapInstance);
+          setMap(mapInstance);  //store map info 
     
-          const searchBox = new window.google.maps.places.SearchBox(inputElement);
+          const searchBox = new window.google.maps.places.SearchBox(inputElement);  //suggest locations based on user input
     
-          searchBox.addListener('places_changed', handleSearch);
+          searchBox.addListener('places_changed', handleSearch);  //handle search for whichever location user selects
     
           const searchButton = document.getElementById('searchButton');
           if (searchButton) {
             searchButton.addEventListener('click', handleSearch);
           }
     
-          function handleSearch() {
-            const places = searchBox.getPlaces();
+          function handleSearch() { //search based on user selection
+            const places = searchBox.getPlaces(); 
     
-            if (!places || places.length === 0) {
+            if (!places || places.length === 0) { //if places not loaded or no places shown
               return;
             }
-            //setOpen(true);
-            const place = places[0];
-            if (place.geometry && place.geometry.location) {
-              const { lat, lng } = place.geometry.location;
+
+            const place = places[0];  //store place user selected
+            if (place.geometry && place.geometry.location) {  //check if location is valid
+              setOpen(true);  //allow circle radius to appear
+              setLocation(place.formatted_address ?? ''); //store the selected location in user input bar
+
+              //store lat and lng of selected place as users location
+              const { lat, lng } = place.geometry.location; 
               const newPosition = { lat: lat(), lng: lng() };
               setUserPosition(newPosition);
-              mapInstance.panTo(newPosition);
-              
+              mapInstance.panTo(newPosition); //zoom in to users new position
             }
           }
-            //inputElement.value = "";
-        //  });
-        }).catch(error => {
+        }).catch(error => { //if map failed to load
           console.error('Error loading Google Maps API:', error);
         });
-      }, [userPosition]);
+      }, [userPosition, distance]); //depends on if userPosition changes
 
+  //add markers to map and create circle radius
   useEffect(() => {
-    if (!map || !userPosition) return;
+
+    if (!map || !userPosition) return;  //if map failed to load or user position undefined
   
+    //allow marker for user position after first valid address 
     if(opened){
     map.panTo(userPosition);
     const marker = new google.maps.Marker({
@@ -146,40 +156,56 @@ function SearchLocation(){
       },
     });
     
-    
+    //create circle for map
     const circle = new google.maps.Circle({
-                    map,
-                    center: userPosition,
-                    radius: .5 * 1609.34, // 5 miles in meters
-                    fillColor: '#4285F4', // Blue fill color
-                    fillOpacity: 0.2, // Adjust the opacity as needed
-                    strokeColor: '#4285F4', // Blue border color
-                    strokeOpacity: 0.8, // Adjust the opacity as needed
-                    strokeWeight: 2 // Border thickness
-                  });
+        map,
+        center: userPosition,
+        radius: distance * 1609.34, // within distance miles
+        fillColor: '#4285F4', // Blue fill color
+        fillOpacity: 0.2, // Adjust the opacity as needed
+        strokeColor: '#4285F4', // Blue border color
+        strokeOpacity: 0.8, // Adjust the opacity as needed
+        strokeWeight: 2 // Border thickness
+      });
+
+      
           
-                  // Adjust the map bounds to include the marker and circle
+    // Adjust the map bounds to include the marker and circle
     const bounds = new google.maps.LatLngBounds();
     bounds.extend(marker.getPosition()!);
     bounds.union(circle.getBounds()!);
     map.fitBounds(bounds); 
 
-    findTheWay(circle, map, userPosition);
+    //add markers for locations within radius
+    //findTheWay(circle, map, userPosition);
+    if(circle !== undefined){
+            if(!isFindTheWayRunning.current){
+            isFindTheWayRunning.current = true;
+            findTheWay(circle, map, userPosition).finally(() => {
+              isFindTheWayRunning.current = false;
+            });
+          }
+        }
+
+    //zoom in 
     const zoomLevel = map.getZoom();
     if (zoomLevel && zoomLevel > 15) {
       map.setZoom(17);
     }
     }
   
-  }, [userPosition, map]);
+  }, [userPosition, map, distance]);  //when userPosition or map changes
 
+  //another handle search function using 'enter' and search button
   const handleSearch = async () => {
-    if (location.trim() !== '') {
+    if (location.trim() !== '') { //if location input isnt empty
+      //request geocode for location
       try {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
         );
-  
+        
+        //if gets response, update user position with data recieved 
         if (response.ok) {
           const data = await response.json();
           if (data.results && data.results[0] && data.results[0].geometry) {
@@ -189,20 +215,17 @@ function SearchLocation(){
             console.log("User position updated successfully!");
           } else {
             console.log(data);
-            //alert("Invalid location");
           }
-        } else {
+        } else {  //if no response
           console.error("Geocoding request failed");
         }
-      } catch (error) {
+      } catch (error) { //if error in connecting to googleapis
         console.error("Error during geocoding:", error);
       }
-      //setLocation("");
-    } else {
-      //alert("Please enter a location");
     }
   };
 
+  //handle current location 
   const handleCurrentLocation = async () => {
     try {
       if (navigator.geolocation) {
@@ -214,13 +237,10 @@ function SearchLocation(){
             };
             setOpen(true);
             setUserPosition(newPosition);
-            //setAddressValidity(true);
-            //await loadMap(); // Assuming loadMap is an async function
             console.log("User position updated successfully:", newPosition);
           },
           (error) => {
             console.error('Error getting user location:', error);
-           // setAddressValidity(false);
           }
         );
       } else {
@@ -228,19 +248,76 @@ function SearchLocation(){
       }
     } catch (error) {
       console.error('Error getting user location:', error);
-      //setAddressValidity(false);
     }
   };
   
   const handleEnterKey = (e) => {
           if (e.key === 'Enter') {
-            handleSearch(); // Trigger search function on Enter key press
+            handleSearch(); //call search function with 'enter' key press
           }
         };
     
+        function SavedSales() {
+          const [dropdownOpen, setdropdownOpen] = useState(false);
+          const [savedDistance, setSavedDistance] = useState(.5);
+        
+          const handleDistanceDropdown = () => {
+            setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+          };
+          const handleDistanceChange = (newDistance) =>{
+            setDistance(newDistance);
+            setSavedDistance(newDistance);
+          };
+          return (
+            <div className="saved">
+            <div className="sidebar-container">
+            <div className="sidebar">
+                <div className="name">
+                  Locations
+                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>Add</Link></button>
+                </div>
+                <div className="locationSettings">
+                  <button className="setDistance"  onClick={handleDistanceDropdown}>
+                        <text>Within {distance} miles </text>
+                      <img
+                          //src="https://i.seadn.io/gcs/files/3085b3fc65f00b28699b43efb4434eec.png?auto=format&dpr=1&w=1000"
+                          src="https://static.thenounproject.com/png/551749-200.png"
+                          className="open-dropdown"
+                          alt=""
+                        />
+                    </button>
+                    <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+                      <p onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</p>
+                      <p onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</p>
+                      <p onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</p>
+                      <p onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</p>
+                      <p onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</p>
+                      <p onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</p>
+                    </div>
+                </div>
+                <ul>
+                  {nearbyLocations.map((location, index) => (
+                //<li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
+                    <li key={`${location.address}-${index}`}>
+                      <div className="locationInfo">
+                        <span className="location-text">{location.address}</span>
+                        <span className="routeDistance">{location.distance}</span>
+                      </div>
+                      <button className="result-sales-button">
+                        <Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+            </div>
+            </div>
+            </div>
+          );
+        }
 
   return (
-        <div className="lower-content">
+    <div className="lower-content">
+        {SavedSales()}
           <div className="search-map">
             <div className="input-container">
               <input
@@ -264,42 +341,55 @@ function SearchLocation(){
             </div>
             <div className="map" id="map"></div>
           </div>
-        </div>
+          </div>
       );
 }
 
-function SavedSales() {
-  return (
-    <div className="saved">
-    <div className="sidebar-container">
-    <div className="sidebar">
-        <div className="name">
-          Locations
-        </div>
-        <ul>
-          {locationsArray.map(location => (
-        <li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
-      ))}
-        </ul>
-    </div>
-    </div>
-    </div>
-  );
-}
+// function SavedSales() {
+//   const [dropdownOpen, setdropdownOpen] = useState(false);
+//   const [savedDistance, setSavedDistance] = useState(globalDistance);
 
-// function ResultSales() {
+//   const handleDistanceDropdown = () => {
+//     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+//   };
+//   const handleDistanceChange = (newDistance) =>{
+//     globalDistance = newDistance;
+//     setSavedDistance(newDistance);
+//   };
 //   return (
-//     <div className="result">
+//     <div className="saved">
 //     <div className="sidebar-container">
 //     <div className="sidebar">
 //         <div className="name">
-//           Results
+//           Locations
+//           <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>Add</Link></button>
 //         </div>
-//         <ol>
-//           <li>First</li>
-//           <li>Second</li>
-//           <li>Third</li>
-//         </ol>
+//         <div className="locationSettings">
+//           <button className="setDistance"  onClick={handleDistanceDropdown}>
+//                 <text>Within {globalDistance} miles </text>
+//               <img
+//                   //src="https://i.seadn.io/gcs/files/3085b3fc65f00b28699b43efb4434eec.png?auto=format&dpr=1&w=1000"
+//                   src="https://static.thenounproject.com/png/551749-200.png"
+//                   className="open-dropdown"
+//                   alt=""
+//                 />
+//             </button>
+//             <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
+//               <p onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</p>
+//               <p onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</p>
+//             </div>
+//         </div>
+//         <ul>
+//           {locationsArray.map(location => (
+//         //<li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
+//             <li key={location}>
+//               <span className="location-text">{location}</span>
+//               <button className="result-sales-button">
+//                 <Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link>
+//               </button>
+//             </li>
+//           ))}
+//         </ul>
 //     </div>
 //     </div>
 //     </div>
@@ -329,39 +419,54 @@ function UserProfile(){
             <a href="https://www.google.com/">Settings</a>
             <Link to="/">Sign Out</Link>
           </div>
-          <div>
-
-          </div>
         </div>
   );
 }
 
+// function UserNotifications(){
+// }
+
+// async function notifyUser(notificationText = "Thank you for enabling notifications!") { //logic for notifying a user
+// }
+
 function Dashboard(){
+
+  //states
+  // const [userResponded, setUserResponded] = useState(false);
+  // const [dropdownOpen, setdropdownOpen] = useState(false);
+  // const handleSettingsDropdown = () => {
+  //   setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+  // };
+
+  // async function enableNotifsAndClose() {
+  //   await notifyUser().then(() => {
+  //     setUserResponded(true);
+  //   });
+  // }
+
+  // function disableNotifsAndClose() {
+    
+  //   setUserResponded(true);
+  // }
+
   
     return(
     <div className="dashboard">
       <div className="topbar">
-          {/* {UserProfile()} */}
           <div className="content">
             <div className="image-container">
               <img
-                //src="https://media.istockphoto.com/id/482430364/photo/blue-wooden-wall-with-the-inscription-garage-sale.jpg?s=1024x1024&w=is&k=20&c=59RBAF6v6sbtJDIWLRWRbTIMlDoCUv3sCJNSIWAQbv8="
                 src="/assets/tempLogo.PNG"
                 className="logo"
                 alt="logo"
               />
             </div>
             <div className="name">Restroom Finder</div>
-            
           </div>
           {UserProfile()}
       </div>
-      {/* before */}
-      <div className="lower-content">
-        {SavedSales()}
         {SearchLocation()}
-        {/* {ResultSales()} */}
-      </div>
+
     </div>
   );
 }
