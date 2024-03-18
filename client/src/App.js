@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/dashboard" element={<Dashboard key="dashboard"/>} />
-          <Route path="/reviewpage" element={<ReviewPage key="reviewpage"/>} />
+          <Route path="/reviewpage/:id/:position" element={<ReviewPage key="reviewpage"/>} />
           <Route path="/create-post" element={<Posting key="create-post" />} />
           {/* Other routes */}
         </Routes>

@@ -1,14 +1,13 @@
 
 import React, { useState, useEffect, useRef, useCallback, ReactHTMLElement } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./dashboard.css"; 
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../../Translations/language-selector';
 
 import { db } from "../../firebase.ts";
 import {collection, getDocs, } from 'firebase/firestore'
-
 
 //testing marking 'bathroom' locations
 const locationsArray = [
@@ -21,7 +20,7 @@ const locationsArray = [
   { address: "835 W Main St, Lewisville, TX 75067", distance: 4.4 },
   { address: "1288 W Main Street, Lewisville , TX", distance: 4.4 }
 ];
-let nearbyLocations=[] as { address: string, distance: number }[];
+let nearbyLocations=[] as {id : string, name: string, address: string, distance: number }[];
 interface MarkerWithInfoWindow extends google.maps.Marker {
   infoWindow: google.maps.InfoWindow;
 }
@@ -31,6 +30,7 @@ let locationMarkers: MarkerWithInfoWindow[] = []; // Variable to store location 
 
 //deal with the search bar, map api, and search functions
 function SearchLocation(){
+  const navigate = useNavigate();
   const [dataLoaded, setDataLoaded] = useState(false);
   const [location, setLocation] = useState(''); //location in search bar
   const [opened, setOpen] = useState(false);  //to activate circle radius on map
@@ -59,7 +59,7 @@ function SearchLocation(){
     }
   }, []);
   const [routeBool, setRouteBool] = useState(false);
-  let routeIndex = null;
+  let routeIndex: number | null = null;
 
   //nearbyLocations = [];
   console.log("martinnn");
@@ -88,6 +88,7 @@ function SearchLocation(){
           const city = data.city;
           const state = data.state;
           const country = data.country;
+          const name = data.name;
     
           // Concatenate street, city, state, and country to form complete address
           const address = `${street}, ${city}, ${state}, ${country}`;
@@ -115,7 +116,7 @@ function SearchLocation(){
               if (distance <= circle.getRadius()) {
                 // Push the location to the nearbyLocations array
                 const distanceInMiles = parseFloat((distance / 1609.34).toFixed(2));
-                nearbyLocations.push({ address, distance: distanceInMiles });
+                nearbyLocations.push({ id: doc.id, name, address, distance: distanceInMiles });
 
                 // const locationName = data.results[0].address_components.find(component =>
                 //       component.types.includes('establishment')
@@ -124,7 +125,7 @@ function SearchLocation(){
                 const marker = new google.maps.Marker({
                       position: { lat, lng },
                       map,
-                      title: address,
+                      title: name,
                       icon: {
                         url: "/assets/marker.PNG",
                         scaledSize: new google.maps.Size(30, 45)
@@ -152,16 +153,16 @@ function SearchLocation(){
     
         // Sort nearby locations by distance
         nearbyLocations.sort((a, b) => a.distance - b.distance);
-        locationMarkers.sort((markerA, markerB) => {
-          const locationA = nearbyLocations.find(location => location.address === markerA.getTitle());
-          const locationB = nearbyLocations.find(location => location.address === markerB.getTitle());
-          if (locationA && locationB) {
-              return locationA.distance - locationB.distance;
-          } else {
-              // Handle cases where a location is not found for a marker
-              return 0;
+
+        const sortedMarkers: MarkerWithInfoWindow[] = [];
+        nearbyLocations.forEach(location => {
+          const marker = locationMarkers.find(marker => marker.getTitle() === location.name);
+          if (marker) {
+            console.log("OKAMA WAY");
+              sortedMarkers.push(marker);
           }
       });
+      locationMarkers = [...sortedMarkers];
         setDataLoaded(true);
         if(dataLoaded){
           console.log('yooo whats good');
@@ -486,28 +487,55 @@ function SearchLocation(){
             setSavedDistance(newDistance);
           };
 
-          const highlightMarker = (index: number) => {
-            if (locationMarkers[index]) {
+          const highlightMarker = async (index: number) => {
+              //routeIndex = index;
+              if (locationMarkers[index]) {
+                await resetMarker();
+                const newIcon = {
+                  url: "/assets/highlighted-marker.PNG",
+                        scaledSize: new google.maps.Size(30, 45)
+              };
+              locationMarkers[index].setIcon(newIcon);
+              console.log("yooooooo");
               locationMarkers[index].setAnimation(google.maps.Animation.BOUNCE);
+              locationMarkers[index].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
             }
           };
           
           // Function to reset the marker
-          const resetMarker = (index: number) => {
-            if (locationMarkers[index]) {
-              locationMarkers[index].setAnimation(null);
-            }
-          };
+          const resetMarker = () => {
+            return new Promise<void>((resolve) => {
+                const resetIcon = {
+                    url: "/assets/marker.PNG",
+                    scaledSize: new google.maps.Size(30, 45)
+                };
+                locationMarkers.forEach(marker => {
+                    marker.setIcon(resetIcon);
+                    console.log('broooooo');
+                    marker.setAnimation(null);
+                });
+                resolve(); // Resolve the Promise after resetting all markers
+            });
+};
 
-          const handleListItemClick = (index) => {
+          const handleListItemClick = (index: number) => {
             // Close any previously opened InfoWindows
             //closeAllInfoWindows();
-            
+            locationMarkers[index].setAnimation(null);
             // Open InfoWindow for the clicked marker
-            const marker = locationMarkers[index];
-            const infoWindow = marker.infoWindow;
-            infoWindow.open(map, marker);
+           // const marker = locationMarkers[index];
+           // const infoWindow = marker.infoWindow;
+           // infoWindow.open(map, marker);
         };
+
+        const navigateToReviewPage = (index : number) =>{
+          routeIndex = index;
+          console.log("HORSEEEEE", routeIndex);
+          if(routeIndex || routeIndex === 0)
+            navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${userPosition}`);
+          else
+            console.log("PROBLEM", routeIndex);
+        }
         
         const closeAllInfoWindows = () => {
             locationMarkers.forEach(marker => {
@@ -520,7 +548,7 @@ function SearchLocation(){
             <div className="sidebar">
                 <div className="name">
                 {t("global.dashboard.title")}
-                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
+                  <button className="add-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
                 </div>
                 <div className="locationSettings">
                   <button className="setDistance"  onClick={handleDistanceDropdown}>
@@ -547,18 +575,25 @@ function SearchLocation(){
                 //<li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
                     <li key={`${location.address}-${index}`}
                     onMouseEnter={() => highlightMarker(index)} 
-                    onMouseLeave={()=>resetMarker(index)}
-                    onClick={()=>{resetMarker(index);}}>
+                    onClick={()=>handleListItemClick(index)}>
                       <div className="locationInfo">
+                        <span className="name-text">{location.name}</span>
                         <span className="location-text">{location.address}</span>
                         <span className="routeDistance">{location.distance} miles</span>
                       </div>
+                      {/* <Link to="/reviewpage" ></Link> */}
                       <button className="result-sales-button"
-                      onClick={()=>testing(index)}
-                      >
-                        --
-                        {/* <Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link> */}
+                        onClick={()=> navigateToReviewPage(index)}>
+                      
+                        <img
+                          //src="https://i.seadn.io/gcs/files/3085b3fc65f00b28699b43efb4434eec.png?auto=format&dpr=1&w=1000"
+                          src="/assets/arrow.PNG"
+                          className="array-image"
+                          alt=""
+                        />
+                      
                       </button>
+                    
                     </li>
                   ))}
                 </ul>

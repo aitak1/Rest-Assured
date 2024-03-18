@@ -232,12 +232,23 @@ html, body{
   font-size: 20px;
   margin-bottom: 15px;
   border-radius: 5px;
-  background-color: rgb(208, 208, 244);
+  background-color: rgb(225, 225, 245);
   box-shadow: 1px 1px 1px 1px rgba(54, 20, 179, 0.316);
 }
 
 .dashboard .sidebar-container .sidebar .location-text {
   flex: 1; /* Take up remaining space */
+  font-weight:300;
+}
+.dashboard .sidebar-container .sidebar .routeDistance {
+  flex: 1; /* Take up remaining space */
+  font-weight:300;
+  font-size: 17px;
+}
+.dashboard .sidebar-container .sidebar .name-text {
+  flex: 1; /* Take up remaining space */
+  font-size: 23px;
+  font-weight: 540;
 }
 
 .dashboard .sidebar-container .sidebar li:hover{
@@ -328,6 +339,20 @@ ul {
   background-color: purple;
   color: white;
   border: none;
+  padding: 0px 16px;
+  border-radius: 5px;
+  margin: 9px -10px 9px 5px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.result-sales-button img{
+  height:20px;
+  width: auto;
+  border-radius: 50%;
+}
+.add-button {
+  color: white;
+  border: none;
   padding: 5px;
   border-radius: 5px;
   margin-left: 5px;
@@ -338,10 +363,6 @@ ul {
   display: flex;
   flex-direction: column;
   align-items: left;
-}
-Link{
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Inherit text color from parent */
 }
 
 .result-sales-button:hover {
