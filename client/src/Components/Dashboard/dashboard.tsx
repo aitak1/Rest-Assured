@@ -530,9 +530,10 @@ function SearchLocation(){
 
         const navigateToReviewPage = (index : number) =>{
           routeIndex = index;
+          const positionString = `${userPosition.lat},${userPosition.lng}`;
           console.log("HORSEEEEE", routeIndex);
           if(routeIndex || routeIndex === 0)
-            navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${userPosition}`);
+            navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${positionString}`);
           else
             console.log("PROBLEM", routeIndex);
         }

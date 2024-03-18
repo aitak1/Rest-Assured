@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 import { Link } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
@@ -30,7 +31,10 @@ interface Review {
 
 function ReviewPage() {
   const { id } = useParams();
-  const { position } = useParams();
+  const { position } = useParams<{ position: string }>();
+  const positionArray = (position ? position.split(',').map(Number) : []) || [];
+  const [getAddress, setAddress] = useState('');
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   //const [restroomData, setRestroomData] = useState(null);
   const [restroomData, setRestroomData] = useState<RestroomData | null>(null);
   const [addingReview, setAddingReview] = useState(false);
@@ -67,6 +71,31 @@ function ReviewPage() {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
 
+  const displayRoute = () => {
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    const originHOLD: google.maps.LatLngLiteral = { lat: positionArray[0], lng: positionArray[1] };
+
+    
+    //setAddress(`${data.street}, ${data.city}, ${data.state}, ${data.country}`);
+
+    const request = {
+      origin:originHOLD,
+      destination: originHOLD,
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+
+    directionsService.route(request, (result, status) => {
+      if (status === "OK") {
+        directionsRenderer.setDirections(result);
+      } else {
+        console.error("Directions request failed due to " + status);
+      }
+    });
+  };
+
   useEffect(() => {
     const fetchRestroomData = async () => {
       if (!id) return; // Exit early if ID is undefined
@@ -78,13 +107,15 @@ function ReviewPage() {
         if (docSnap.exists()) {
           // If the document exists, set the restroom data state
           const data = docSnap.data();
+          const hold = `${data.street}, ${data.city}, ${data.state}, ${data.country}`;
+          setAddress(hold);
           setRestroomData({
             name: data.name,
             street: data.street,
             city: data.city,
             state: data.city,
             country: data.country,
-            address: data.address,
+            address: `${data.street}, ${data.city}, ${data.state}, ${data.country}`,
             direction: data.directions,
             comments: data.comment
             // Add more fields as needed
@@ -127,6 +158,41 @@ function ReviewPage() {
     fetchRestroomData(); // Fetch restroom data when component mounts
   }, [id]); // Re-fetch data when the ID changes
 
+  useEffect(() => {
+    const loader = new Loader({
+      apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
+      version: 'weekly',
+      libraries: ['places', 'geometry'], // You can add "directions" here for routes
+    });
+
+    loader.load().then(() => {
+      const mapElement = document.getElementById('map');
+      if(!mapElement || !position) return;
+      const mapStyles = [
+        {
+          featureType: 'poi',
+          elementType: 'labels',
+          stylers: [
+            { visibility: 'off' } //hide all extra markers
+          ]
+        }
+      ];
+
+
+      const center: google.maps.LatLngLiteral = { lat: positionArray[0], lng: positionArray[1] };
+
+      const makeMap = new google.maps.Map(mapElement, {
+        center,
+        zoom: 12,
+        styles: mapStyles
+      });
+      setMap(makeMap);
+      displayRoute();
+    });
+  }, []);
+
+
+
   return (
     <div className="review-page">
       <div className="header-container">
@@ -142,6 +208,7 @@ function ReviewPage() {
           <div className="place-name">{restroomData?.name}</div>
           <div className="place-address">Address: {restroomData?.address}</div>
           <div className="place-directions">Directions: {restroomData?.direction}</div>
+          <div className="map" id="map" style={{ height: '500px', width: 'auto'}}></div>
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">
