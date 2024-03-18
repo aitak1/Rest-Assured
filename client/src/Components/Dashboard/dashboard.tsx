@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, ReactHTMLElement } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import "./dashboard.css"; 
+import { db } from "../../firebase.ts";
+import {collection, getDocs, } from 'firebase/firestore'
 
 
 //testing marking 'bathroom' locations
@@ -72,83 +74,104 @@ function SearchLocation(){
       locationMarkers = [];
     }
     const processedAddresses = new Set();
-    for(const location of locationsArray){
       //if (!processedAddresses.has(location.address)) {
       try {
         // Perform geocoding to convert address to coordinates using a geocoding service
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location.address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
-        );
+        const restroomSnap = await getDocs(collection(db, "restrooms"));
+        await Promise.all(restroomSnap.docs.map(async (doc) => {
+          const data = doc.data();
+          const street = data.street;
+          const city = data.city;
+          const state = data.state;
+          const country = data.country;
     
-        if (response.ok) {
-          const data = await response.json();
-          if (data.results && data.results[0] && data.results[0].geometry) {
-            const { lat, lng } = data.results[0].geometry.location;
-            const distance = google.maps.geometry.spherical.computeDistanceBetween(
-              new google.maps.LatLng(lat, lng),
-              new google.maps.LatLng(userPosition.lat, userPosition.lng)
-            );
-            if(distance <= circle.getRadius())
-            {
-              location.distance = parseFloat((distance / 1609.34).toFixed(2));
-              nearbyLocations.push(Object.assign({}, location));
+          // Concatenate street, city, state, and country to form complete address
+          const address = `${street}, ${city}, ${state}, ${country}`;
+    
+          console.log("Attempting geocoding for address:", address);
+    
+          // Perform geocoding to convert address to coordinates
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+          );
+    
+          if (response.ok) {
+            const geoData = await response.json();
+            console.log("Geocoding response:", geoData); // Log the response from geocoding API
+            if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
+              const { lat, lng } = geoData.results[0].geometry.location;
+    
+              // Calculate distance between the location and user's position
+              const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(lat, lng),
+                new google.maps.LatLng(userPosition.lat, userPosition.lng)
+              );
+    
+              // Check if the location is within the selected radius
+              if (distance <= circle.getRadius()) {
+                // Push the location to the nearbyLocations array
+                const distanceInMiles = parseFloat((distance / 1609.34).toFixed(2));
+                nearbyLocations.push({ address, distance: distanceInMiles });
 
-              const locationName = data.results[0].address_components.find(component =>
-                component.types.includes('establishment')
-              )?.long_name || '';
-              console.log(locationName);
-  
-             // processedAddresses.add(location.address);
-             const marker = new google.maps.Marker({
-              position: { lat, lng },
-              map,
-              title: location.address,
-              icon: {
-                url: "/assets/marker.PNG",
-                scaledSize: new google.maps.Size(30, 45)
+                // const locationName = data.results[0].address_components.find(component =>
+                //       component.types.includes('establishment')
+                //     )?.long_name || '';
+                //     console.log(locationName);
+                const marker = new google.maps.Marker({
+                      position: { lat, lng },
+                      map,
+                      title: address,
+                      icon: {
+                        url: "/assets/marker.PNG",
+                        scaledSize: new google.maps.Size(30, 45)
+                      }
+                    })as MarkerWithInfoWindow;
+
+                    const infoWindow = new google.maps.InfoWindow({
+                            content: `<div>${address}</div><div>Distance: ${distanceInMiles} miles</div>`
+                          });
+
+                    marker.addListener('click', () => {
+                          infoWindow.open(map, marker);
+                        });      
+                    locationMarkers.push(marker);
+
               }
-            }) as MarkerWithInfoWindow;
-
-            let infoWindow;
-            if(locationName !== ''){
-              infoWindow = new google.maps.InfoWindow({
-                content: `<div>${location.address}</div><div>Distance: ${location.distance} miles</div>`
-              });
-            }
-            else{
-            infoWindow = new google.maps.InfoWindow({
-              content: `<div>${locationName}</div><div>${location.address}</div><div>Distance: ${location.distance} miles</div>`
-            });
-          }
-
-            // Add click event listener to open InfoWindow
-            marker.addListener('click', () => {
-              infoWindow.open(map, marker);
-            });
-            locationMarkers.push(marker);
+            } else {
+              console.error("Invalid location:", address);
             }
           } else {
-            console.log(data);
-            alert("Invalid location");
+            console.error("Geocoding request failed");
+  
           }
-        } else {
-          console.error("Geocoding request failed");
+        }));
+    
+        // Sort nearby locations by distance
+        nearbyLocations.sort((a, b) => a.distance - b.distance);
+        locationMarkers.sort((markerA, markerB) => {
+          const locationA = nearbyLocations.find(location => location.address === markerA.getTitle());
+          const locationB = nearbyLocations.find(location => location.address === markerB.getTitle());
+          if (locationA && locationB) {
+              return locationA.distance - locationB.distance;
+          } else {
+              // Handle cases where a location is not found for a marker
+              return 0;
+          }
+      });
+        setDataLoaded(true);
+        if(dataLoaded){
+          console.log('yooo whats good');
         }
+        
+        // Log the number of locations found
+        console.log("Number of nearby restroom locations:", nearbyLocations.length);
+    
       } catch (error) {
-        console.error("Error during geocoding:", error);
+        console.error("Error fetching restroom data:", error);
       }
-    //}
-    nearbyLocations.sort((a, b) => {
-      return a.distance - b.distance;
-    });
-    console.log(locationsArray.length, nearbyLocations.length);
-    setDataLoaded(true);
-    if(dataLoaded){
-      console.log('yooo whats good');
-    }
-  }
-      
-  };
+    };
+
+
   //load google map api and operate location search functions
   useEffect(() => {
 
