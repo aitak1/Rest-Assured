@@ -82,14 +82,15 @@ function ReviewPage() {
     //setAddress(`${data.street}, ${data.city}, ${data.state}, ${data.country}`);
 
     const request = {
-      origin:originHOLD,
-      destination: originHOLD,
+      origin: { lat: 33.253946, lng: -97.2 }, // Use user's position as the origin
+            destination: { lat: 33.253946, lng: -97.152896 },
       travelMode: google.maps.TravelMode.DRIVING,
     };
 
     directionsService.route(request, (result, status) => {
       if (status === "OK") {
         directionsRenderer.setDirections(result);
+        console.log("IN BITCH");
       } else {
         console.error("Directions request failed due to " + status);
       }
@@ -182,14 +183,29 @@ function ReviewPage() {
       const center: google.maps.LatLngLiteral = { lat: positionArray[0], lng: positionArray[1] };
 
       const makeMap = new google.maps.Map(mapElement, {
-        center,
-        zoom: 12,
+        center: { lat: 33.253946, lng: -97.152896 },
+        zoom: 17,
         styles: mapStyles
       });
+      
+      makeMap.panTo({ lat: 33.253946, lng: -97.152896 });
       setMap(makeMap);
-      displayRoute();
+      const marker = new google.maps.Marker({
+        position: { lat: 33.253946, lng: -97.152896 },
+        map,
+        title: 'hi',
+        icon: {
+          url: "/assets/marker.PNG",
+          scaledSize: new google.maps.Size(30, 45)
+        }
+      });
+      //displayRoute();
     });
   }, []);
+
+  useEffect(() =>{
+    console.log("POR QUE");
+  },[map]);
 
 
 
