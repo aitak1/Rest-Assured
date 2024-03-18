@@ -26,8 +26,8 @@ body {
   color: #333; /* Or any color that fits your design */
 }
 
-.restroom-image {
-  max-width: 80%;
+.restroom-image{
+  max-width: 30%;
   height: auto;
   margin: 0 auto;
   display: block;

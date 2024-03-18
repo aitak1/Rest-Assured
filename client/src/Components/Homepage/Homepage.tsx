@@ -7,9 +7,10 @@ import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
 import SignUp from "../SignUp/SignUp.tsx"; // Importing SignUp.js
 import Login from "../Login/Login.tsx"; //Importing Login.js
-import restroomSign from "./restroomsign.jpg";
+//import restroomSign from "./restroomsign.jpg";
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../../Translations/language-selector';
+
 
 function Homepage() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -51,7 +52,7 @@ function Homepage() {
             <h1>{t("global.landing.title")}</h1>
             <h1>{t("global.landing.description")}</h1>
             <img
-              src={restroomSign}
+              src="/assets/restroomsign.jpg"
               alt="Restroom Sign"
               className="restroom-image"
             />

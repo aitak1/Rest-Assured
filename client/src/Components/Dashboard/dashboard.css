@@ -5,13 +5,13 @@ html, body{
     margin:0;
     padding:0;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
 }
 
 .dashboard{
   width:100%;
-  height:100%;
+  height: inherit;
   background-color: rgb(210, 208, 208);
+  padding-bottom: 5px;
 }
 
 .dashboard .topbar {
@@ -23,8 +23,6 @@ html, body{
   width: 100%;
   padding: 7px;
   height: 70px;
-  /* box-sizing: border-box;
-  border-bottom: 8px solid rgb(157, 222, 248); */
 }
 
 .dashboard .content{
@@ -92,7 +90,6 @@ html, body{
 .dashboard .profile button:hover{
   background-color:  #ddd;
 }
-
 .dashboard .dropdown-content{
   display: none; /* Initially hide the dropdown content */
   position: absolute;
@@ -103,7 +100,7 @@ html, body{
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   border-radius: 10%;
-  z-index: 1;
+  z-index: 2;
 }
 .dashboard .dropdown-content a {
   color: black;
@@ -121,8 +118,11 @@ html, body{
 /* going into dangerous territory */
 .dashboard .lower-content{
   flex-direction: row;
-  /* height: calc(100% - 70px); */
-  padding-top: 90px;/* padding-top: 103px; */
+  /* height: calc(100vh - 90px);
+  padding-top: 90px;padding-top: 103px; */
+  height: inherit;
+  min-height: 600px;
+  padding-top: 90px;
   display: flex;
   width: 100%;
   gap: 5px;
@@ -131,77 +131,114 @@ html, body{
   position: sticky;
   max-width: 30vw;
   min-width: 450px;
-  height: 100vh;
-  min-height: 600px;
+  height: 100%;
   display: block;
   border-radius: 10px;
   flex: 1;
   margin-right: 5px;
 }
 .dashboard .lower-content .saved .sidebar{
+  position: absolute;
   max-width: 30vw;
   min-width: 450px;
-  height: calc(100% - 95px);
+  height: inherit;
   background-color: #f2f2f2; 
   display: block;
   border-radius: 10px;
   flex: 1;
   margin-left: 5px;
+  overflow-y: auto;
 }
-/* .dashboard .lower-content .result .sidebar {
-  max-width: 30vw;
-  min-width: 300px;
-  height: 85vh;
-  background-color: #f2f2f2; 
-  display: block;
- 
-  border-radius: 10px;
-  flex: 1;
-  margin-right: 5px;
-} */
 .dashboard .sidebar .name{
   color: white;
   width: auto;
   font-size: 30px;
   text-align:left;
-  /* text-shadow: 0 0 2px whitesmoke; */
-  /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
   background-color: rgb(40, 40, 135);
   border-top-left-radius: 10px; /* Adjust this value */
   border-top-right-radius: 10px;
   padding: 10px;
+  display: flex;
+  flex-direction: row; /* Change to row */
+  justify-content: space-between; /* Distribute items along the main axis */
+  align-items: center;
+}
+.dashboard .sidebar .name button{
+  background-color:  rgb(72, 72, 185);
+  padding: 10px;
+}
+.dashboard .sidebar .name button:hover{
+  background-color:  rgb(26, 26, 197);
+}
+
+.dashboard .sidebar .locationSettings{
+    background-color: rgb(237, 237, 236);
+    padding: 10px;
+    position: relative;
+}
+.dashboard .sidebar .locationSettings .setDistance {
+  border: none;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  border-radius: 4px;
+  height: auto;
+  background-color: whitesmoke;
+}
+.dashboard .sidebar .locationSettings .setDistance img{
+  height: 10px;
+}
+.dashboard .sidebar .locationSettings .setDistance:hover{
+  background-color: rgb(199, 198, 198);
+  cursor: pointer;
+}
+.dashboard .sidebar .locationSettings .setDistance .dropdown-content{
+  display: none; /* Initially hide the dropdown content */
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 1;
+  padding: 5px;
+}
+.dashboard .sidebar .locationSettings .setDistance .dropdown-content p{
+  padding: 5px;
+}
+.dashboard .sidebar .locationSettings .setDistance .dropdown-content p:hover{
+  cursor: pointer;
+  background-color: #ddd;
 }
 .dashboard .sidebar-container .sidebar li{
-  padding-left: 15px;
+  display: flex;
+  padding: 2px 15px 2px 15px;
   font-size: 20px;
   margin-bottom: 15px;
-  display: block;
   border-radius: 5px;
   background-color: rgb(208, 208, 244);
 }
+
+.dashboard .sidebar-container .sidebar .location-text {
+  flex: 1; /* Take up remaining space */
+}
+
 .dashboard .sidebar-container .sidebar li:hover{
   background-color: rgb(184, 184, 220);
   cursor:pointer;
 }
-
 .dashboard .lower-content .search-map{
-  margin-top: -95px;
-  display: flex;
+  position: relative;
   flex-direction: column;
-  /* justify-content: flex-start; */
-  margin-right: 5px;
   width: 100%;
-  flex-grow: 1;
-  min-height: 500px;
+  height: inherit;
+  min-height: 600px;
+  padding-right: 5px;
 }
-.dashboard .search-map .input-container{
-  position: sticky;
+.dashboard .lower-content .search-map .input-container{
   padding-left: 0px;
+  padding-top: 0px;
   display: flex;
   flex-direction: row;
   white-space: nowrap;
   min-width: 80%; /*when window maximized, take entire top bar*/
-  max-width: 600px; /*hides the body bkgrnd???*/
   min-height: 10px;
   margin-bottom: 10px;
 }
@@ -246,20 +283,20 @@ html, body{
 }
 
 .dashboard .lower-content .search-map .map{
-  height: calc(100%);
+  height: calc(100vh - 148px);
+  min-height: 638px;
   position: relative;
   width:100%;
   flex-grow: 1;
   flex-shrink: 1;
   border-radius: 10px;
 }
-.dashboard .lower-content .search-map{
-  position: relative;
-  flex-direction: column;
-  /* background-color: orange; */
-  /* display: flex; */
-  width: 100%;
-  height: 100%;
+
+@media(max-width: 1220px)
+{
+  .dashboard .lower-content .search-map .map{
+    height: calc(100vh - 166px);
+  }
 }
 
 ul {
@@ -268,13 +305,19 @@ ul {
 }
 
 .result-sales-button {
-  background-color: rgb(157, 222, 248);
+  background-color: purple;
   color: white;
   border: none;
   padding: 5px;
   border-radius: 5px;
   margin-left: 5px;
   cursor: pointer;
+}
+.locationInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
 }
 Link{
   text-decoration: none; /* Remove underline */
@@ -283,4 +326,8 @@ Link{
 
 .result-sales-button:hover {
   background-color: rgb(104, 183, 214);
+}
+
+.routeDistance {
+  margin-right: 10px; /* Adjust spacing between distance and review button */
 }
