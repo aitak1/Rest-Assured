@@ -1,7 +1,11 @@
+
 import React, { useState, useEffect, useRef, useCallback, ReactHTMLElement } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 import { Link } from 'react-router-dom';
 import "./dashboard.css"; 
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../../Translations/language-selector';
+
 import { db } from "../../firebase.ts";
 import {collection, getDocs, } from 'firebase/firestore'
 
@@ -464,8 +468,11 @@ function SearchLocation(){
    // setRouteBool(true);
  };
     
-        function SavedSales({ update }) {
+
+        const {t} = useTranslation();
+       function SavedSales({ update }) {
           const [dropdownOpenB, setdropdownOpenB] = useState(false);
+          const {t} = useTranslation();
           const [savedDistance, setSavedDistance] = useState(.5);
           //setDataLoaded(false);
           console.log("radishes");
@@ -512,8 +519,8 @@ function SearchLocation(){
             <div className="sidebar-container">
             <div className="sidebar">
                 <div className="name">
-                  Locations
-                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>Add</Link></button>
+                {t("global.dashboard.title")}
+                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.reviews")}</Link></button>
                 </div>
                 <div className="locationSettings">
                   <button className="setDistance"  onClick={handleDistanceDropdown}>
@@ -570,14 +577,14 @@ function SearchLocation(){
                 id="locationInput"
                 name="location"
                 type="text"
-                placeholder="Location..."
+                placeholder={t("global.dashboard.searchbar")}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 onKeyDown={ handleEnterKey}
                 aria-label="Search Location"
               />
               <button id="searchButton" type="button" className="searchButton" onClick={handleSearch}>
-                Search
+              {t("global.dashboard.search")}
               </button>
               <img className="currentLocationButton" 
                 onClick={handleCurrentLocation}
@@ -594,7 +601,6 @@ function SearchLocation(){
 // function SavedSales() {
 //   const [dropdownOpen, setdropdownOpen] = useState(false);
 //   const [savedDistance, setSavedDistance] = useState(globalDistance);
-
 //   const handleDistanceDropdown = () => {
 //     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
 //   };
@@ -643,13 +649,47 @@ function SearchLocation(){
 // }
 
 function UserProfile(){
+  const {t} = useTranslation();
   const [dropdownOpen, setdropdownOpen] = useState(false);
   const handleProfileDropdown = () => {
     setdropdownOpen(!dropdownOpen); // Toggle the dropdown
   };
 
+  const [languagesOpen, setlanguagesOpen] = useState(false);
+  const handleLanguagesDropdown = () => {
+    setlanguagesOpen(!languagesOpen); // Toggle the dropdown
+  };
+
+  let settingsRef = useRef();
+  let profileRef = useRef();
+  let backRef = useRef();
+  //let testRef = useRef();
+
+  useEffect(() =>{
+    let handler = (e)=> {
+      if(settingsRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(true);
+      }
+      if(!profileRef.current.contains(e.target)){
+        setdropdownOpen(false);
+        setlanguagesOpen(false);
+      }
+      if(backRef.current.contains(e.target)){
+        setdropdownOpen(true);
+        setlanguagesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+
+    return() => {
+      document.removeEventListener("mousedown", handler);
+    }
+  })
+
+
   return (
-    <div className="profile">
+    <div className="profile" ref={profileRef}>
             <button type="button"  onClick={handleProfileDropdown}>
               Name
             <img
@@ -661,9 +701,22 @@ function UserProfile(){
             
           </button>
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-            <a href="https://www.google.com/">Profile</a>
-            <a href="https://www.google.com/">Settings</a>
-            <Link to="/">Sign Out</Link>
+            <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
+            <a>{t("global.dropdown.settings")}</a>
+            <button ref={settingsRef} type="button">
+            {t("global.dropdown.language")}       
+            </button >
+            <Link to="/">{t("global.dropdown.signout")}</Link>
+          </div>
+          <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
+            <LanguageSelector />
+            <a ref={backRef}>{t("global.dropdown.return")}</a>
+          </div>
+
+          <div>
+
+          
+
           </div>
         </div>
   );
@@ -676,32 +729,13 @@ function UserProfile(){
 // }
 
 function Dashboard(){
-
   
   useEffect(() => {
     // Set nearbyLocations to empty array when component is mounted
     nearbyLocations = [];
     console.log("jorge")
   }, []);
-  //states
-  // const [userResponded, setUserResponded] = useState(false);
-  // const [dropdownOpen, setdropdownOpen] = useState(false);
-  // const handleSettingsDropdown = () => {
-  //   setdropdownOpen(!dropdownOpen); // Toggle the dropdown
-  // };
-
-  // async function enableNotifsAndClose() {
-  //   await notifyUser().then(() => {
-  //     setUserResponded(true);
-  //   });
-  // }
-
-  // function disableNotifsAndClose() {
-    
-  //   setUserResponded(true);
-  // }
-
-  
+   const {t} = useTranslation();
     return(
     <div className="dashboard">
       <div className="topbar">
@@ -713,7 +747,7 @@ function Dashboard(){
                 alt="logo"
               />
             </div>
-            <div className="name">Restroom Finder</div>
+            <div className="name">{t("global.header.name")}</div>        
           </div>
           {UserProfile()}
       </div>
