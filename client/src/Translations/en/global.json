@@ -1,7 +1,10 @@
 {
     "landing": {
-        "title": "Welcome to out Restroom Finding App!",
-        "description": "Find your next restroom here."
+        "title": "Welcome to our Restroom Finding App!",
+        "description": "Find your next restroom here.",
+        "home": "Home",
+        "login": "Log In",
+        "signup": "Sign Up"
     },
     "header": {
         "name": "Restroom Finder"
@@ -11,7 +14,9 @@
         "reviews": "Reviews",
         "addPost": "Add",
         "search": "Search",
-        "searchbar": "Location..."
+        "searchbar": "Location...",
+        "within": "Within",
+        "distancemetric": "miles"
     },
     "dropdown" : {
         "profile": "Profile",
@@ -19,6 +24,18 @@
         "language" : "Language",
         "signout" : "Sign Out",
         "return" : "Return"
+    },
+    "addrestroom": {
+        "title": "Add Restroom",
+        "backbtn": "Back to Dashboard",
+        "name": "Optional Name:",
+        "date": "Date:",
+        "starttime": "Start Time:",
+        "endtime": "End Time:",
+        "description": "Description:",
+        "address": "Address:",
+        "image": "Image (Optional):",
+        "submitbtn": "Submit Restroom"
     },
     "reviews": {
         "title": "Restroom's Review"

@@ -1,7 +1,10 @@
 {
     "landing": {
         "title": "Bienvenue sur notre application de recherche de toilettes!",
-        "description": "Trouvez vos prochaines toilettes ici."
+        "description": "Trouvez vos prochaines toilettes ici.",
+        "home": "Page d'accueil",
+        "login": "Se connecter",
+        "signup": "S'inscrire"
     },
     "header": {
         "name": "Recherche de toilettes"
@@ -11,7 +14,9 @@
         "reviews": "Commentaires",
         "addPost": "Ajouter",
         "search": "Recherche",
-        "searchbar": "Emplacement..."
+        "searchbar": "Emplacement...",
+        "within": "Dans un rayon de",
+        "distancemetric": "milles"
     },
     "dropdown" : {
         "profile": "Profil",
@@ -19,6 +24,18 @@
         "language" : "Langue",
         "signout" : "Se Déconnecter",
         "return" : "Retour"
+    },
+    "addrestroom": {
+        "title": "Ajouter des toilettes",
+        "backbtn": "Retour au précédent",
+        "name": "Nom facultatif:",
+        "date": "Date:",
+        "starttime": "Heure de début:",
+        "endtime": "Heure de fin:",
+        "description": "Description:",
+        "address": "Adresse:",
+        "image": "Image (facultatif):",
+        "submitbtn": "Soumettre les toilettes:"
     },
     "reviews": {
         "title": "Examen des Toilettes"

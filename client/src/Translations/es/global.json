@@ -1,7 +1,10 @@
 {
     "landing": {
         "title": "¡Bienvenidos a nuestra aplicación de búsqueda de baños!",
-        "description": "Encuentra tu próximo baño aquí."
+        "description": "Encuentra tu próximo baño aquí.",
+        "home": "Página Principal",
+        "login": "Acceso",
+        "signup": "Inscribirse"
     },
     "header": {
         "name": "Buscador de Baños"
@@ -11,7 +14,9 @@
         "reviews": "Opiniones",
         "addPost": "Agregar",
         "search": "Buscar",
-        "searchbar": "Ubicación..."
+        "searchbar": "Ubicación...",
+        "within": "Dentro de",
+        "distancemetric": "millas"
     },
     "dropdown" : {
         "profile": "Perfil",
@@ -19,6 +24,18 @@
         "language" : "Idioma",
         "signout" : "Desconectar",
         "return" : "Regresar"
+    },
+    "addrestroom": {
+        "title": "Agregar un Baño",
+        "backbtn": "Volver de Página",
+        "name": "Nombre Opcional:",
+        "date": "Fecha:",
+        "starttime": "Hora de inicio:",
+        "endtime": "Hora de finalización:",
+        "description": "Descripción:",
+        "address": "Dirección:",
+        "image": "Imagen (Opcional):",
+        "submitbtn": "Enviar Baño:"
     },
     "reviews": {
         "title": "Revisión del Baño"

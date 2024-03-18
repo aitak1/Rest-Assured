@@ -1,6 +1,7 @@
 //posting.tsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import "./posting.css"; // Ensure this path is correct and the styles are similar to SignUp.css
 
 function Posting() {
@@ -37,18 +38,20 @@ function Posting() {
     navigate("/dashboard"); // Navigate back or to another route on successful submission
   };
 
+  const {t} = useTranslation();
+
   return (
     <div className="page">
       <div className="topnav">
         <Link to="/dashboard" className="back-to-dashboard-link">
-          Back To Dashboard
+        {t("global.addrestroom.backbtn")}
         </Link>
-        <div className="posting-name"> Add Restroom </div>
+        <div className="posting-name"> {t("global.addrestroom.title")} </div>
       </div>
       <form onSubmit={handleSubmit} className="posting-form">
         {/* Existing and additional fields */}
         <div className="form-group">
-          <label>Optional Name:</label>
+          <label>{t("global.addrestroom.name")}</label>
           <input
             type="text"
             name="name"
@@ -57,7 +60,7 @@ function Posting() {
           />
         </div>
         <div className="form-group">
-          <label>Date:</label>
+          <label>{t("global.addrestroom.date")}</label>
           <input
             type="date"
             name="date"
@@ -66,7 +69,7 @@ function Posting() {
           />
         </div>
         <div className="form-group">
-          <label>Start Time:</label>
+          <label>{t("global.addrestroom.starttime")}</label>
           <input
             type="time"
             name="startTime"
@@ -75,7 +78,7 @@ function Posting() {
           />
         </div>
         <div className="form-group">
-          <label>End Time:</label>
+          <label>{t("global.addrestroom.endtime")}</label>
           <input
             type="time"
             name="endTime"
@@ -84,7 +87,7 @@ function Posting() {
           />
         </div>
         <div className="form-group">
-          <label>Description:</label>
+          <label>{t("global.addrestroom.description")}</label>
           <textarea
             name="description"
             value={saleDetails.description}
@@ -92,7 +95,7 @@ function Posting() {
           ></textarea>
         </div>
         <div className="form-group">
-          <label>Address:</label>
+          <label>{t("global.addrestroom.address")}</label>
           <input
             type="text"
             name="address"
@@ -101,11 +104,11 @@ function Posting() {
           />
         </div>
         <div className="form-group">
-          <label>Image (Optional):</label>
+          <label>{t("global.addrestroom.image")}</label>
           <input type="file" name="image" onChange={handleChange} />
         </div>
         <button type="submit" className="submit-button">
-          Submit Post
+        {t("global.addrestroom.submitbtn")}
         </button>
       </form>
     </div>

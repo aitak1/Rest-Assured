@@ -32,15 +32,15 @@ function Homepage() {
     <div className="page">
       <div className="topnav">
         <a className="active" href="#home">
-          Home
+        {t("global.landing.home")}
         </a>
         <a href="#Login" onClick={toggleLogin}>
-          Log In
+        {t("global.landing.login")}
         </a>
         <a href="#SignUp" onClick={toggleSignUp}>
-          Sign Up
+        {t("global.landing.signup")}
         </a>
-        <div className="homepage-name">Restroom Finder</div>
+        <div className="homepage-name">{t("global.header.name")}</div>
       </div>
 
       {showSignUp && <SignUp onNavigateBack={() => setShowSignUp(false)} />}
