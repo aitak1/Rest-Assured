@@ -691,10 +691,9 @@ function UserProfile(){
   return (
     <div className="profile" ref={profileRef}>
             <button type="button"  onClick={handleProfileDropdown}>
-              Name
             <img
                 //src="https://i.seadn.io/gcs/files/3085b3fc65f00b28699b43efb4434eec.png?auto=format&dpr=1&w=1000"
-                src="https://i.pinimg.com/736x/b9/49/0a/b9490abd30c15850908b8ee0570f8b19.jpg"
+                src="/assets/hamburger.PNG"
                 className="pfp"
                 alt="profile_picture"
               />
@@ -703,7 +702,7 @@ function UserProfile(){
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
             <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
             <a>{t("global.dropdown.settings")}</a>
-            <button ref={settingsRef} type="button">
+            <button className="language-btn" ref={settingsRef} type="button">
             {t("global.dropdown.language")}       
             </button >
             <Link to="/">{t("global.dropdown.signout")}</Link>

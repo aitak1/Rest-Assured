@@ -74,19 +74,26 @@ html, body{
   display: inline-block;
 }
 .dashboard .profile img{
+  padding-top: 10px;
+  padding-right: 5px;
   height: 35px;
   width: auto;
-  border-radius: 50%;
   align-self: center;
 }
 .dashboard .profile button {
-  background-color: rgb(157, 222, 248);
+  background-color: rgba(0, 0, 0, 0);
   text-align: center;
   padding: 4px 5px;
   border: none;
-  border-radius: 10px;
   cursor: pointer;
+  display: flex;
 }
+
+.dashboard .profile .language-btn {
+  display: block;
+  margin: auto;
+}
+
 .dashboard .profile button:hover{
   background-color:  #ddd;
 }
