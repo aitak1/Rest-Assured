@@ -114,6 +114,13 @@ html, body{
 .dashboard .show {
   display: block; /* Display the dropdown content when the "show" class is added */
 }
+.dashboard .sidebar .locationSettings .dropdown-contentB.flex {
+  display: flex; /* Display the dropdown content when the "show" class is added */
+}
+
+.dashboard .sidebar .locationSettings .dropdown-contentB.hidden {
+  display: none; /* Display the dropdown content when the "show" class is added */
+}
 
 /* going into dangerous territory */
 .dashboard .lower-content{
@@ -192,18 +199,30 @@ html, body{
   background-color: rgb(199, 198, 198);
   cursor: pointer;
 }
-.dashboard .sidebar .locationSettings .setDistance .dropdown-content{
-  display: none; /* Initially hide the dropdown content */
+ /* .dashboard .sidebar .locationSettings .dropdown-contentB{
+  display: none;
+  left: 10%;
+  top: 80%;
   position: absolute;
-  left: 0;
-  top: 100%;
-  z-index: 1;
-  padding: 5px;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+}  */
+.dashboard .sidebar .locationSettings .dropdown-contentB{
+  display: none; /* Initially hide the dropdown content */
+  background-color: white;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 10%;
+  left: 10%;
+  top: 80%;
+  position: absolute;
+  flex-direction: column;
+} 
+.dashboard .sidebar .locationSettings .dropdown-contentB span{
+  padding: 10px;
 }
-.dashboard .sidebar .locationSettings .setDistance .dropdown-content p{
-  padding: 5px;
-}
-.dashboard .sidebar .locationSettings .setDistance .dropdown-content p:hover{
+.dashboard .sidebar .locationSettings .dropdown-contentB span:hover{
   cursor: pointer;
   background-color: #ddd;
 }
@@ -214,6 +233,7 @@ html, body{
   margin-bottom: 15px;
   border-radius: 5px;
   background-color: rgb(208, 208, 244);
+  box-shadow: 1px 1px 1px 1px rgba(54, 20, 179, 0.316);
 }
 
 .dashboard .sidebar-container .sidebar .location-text {

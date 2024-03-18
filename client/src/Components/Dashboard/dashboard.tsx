@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+
+import React, { useState, useEffect, useRef, useCallback, ReactHTMLElement } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link, useNavigate } from 'react-router-dom';
-import "./dashboard.css";
+import { Link } from 'react-router-dom';
+import "./dashboard.css"; 
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../../Translations/language-selector';
+
 import { db } from "../../firebase.ts";
 import {collection, getDocs, } from 'firebase/firestore'
 
@@ -15,87 +17,169 @@ const locationsArray = [
   { address: "1812 Blair Oak Drive, Lewisville, TX, USA", distance: 0.8 },
   { address: "118 Lynn Avenue, Lewisville, TX, USA", distance: 3.5 },
   { address: "2003 Buffalo Bend Dr lewisville tx", distance: 2.0 },
-  { address: " 801 W Main St, Lewisville, TX 75067", distance: 4.4 }
+  { address: "801 W Main St, Lewisville, TX 75067", distance: 4.4 },
+  { address: "835 W Main St, Lewisville, TX 75067", distance: 4.4 },
+  { address: "1288 W Main Street, Lewisville , TX", distance: 4.4 }
 ];
 let nearbyLocations=[] as { address: string, distance: number }[];
-let globalDistance = .5;
+interface MarkerWithInfoWindow extends google.maps.Marker {
+  infoWindow: google.maps.InfoWindow;
+}
+let locationMarkers: MarkerWithInfoWindow[] = []; // Variable to store location markers
 
-//add markers for garage sale locations within radius of user position
-const findTheWay = async (circle, map, userPosition) => {
-    nearbyLocations = []; // Clear previous nearby locations
-  
-    try {
-      const restroomSnap = await getDocs(collection(db, "restrooms"));
-  
-      await Promise.all(restroomSnap.docs.map(async (doc) => {
-        const data = doc.data();
-        const street = data.street;
-        const city = data.city;
-        const state = data.state;
-        const country = data.country;
-  
-        // Concatenate street, city, state, and country to form complete address
-        const address = `${street}, ${city}, ${state}, ${country}`;
-  
-        console.log("Attempting geocoding for address:", address);
-  
-        // Perform geocoding to convert address to coordinates
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
-        );
-  
-        if (response.ok) {
-          const geoData = await response.json();
-          console.log("Geocoding response:", geoData); // Log the response from geocoding API
-          if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
-            const { lat, lng } = geoData.results[0].geometry.location;
-  
-            // Calculate distance between the location and user's position
-            const distance = google.maps.geometry.spherical.computeDistanceBetween(
-              new google.maps.LatLng(lat, lng),
-              new google.maps.LatLng(userPosition.lat, userPosition.lng)
-            );
-  
-            // Check if the location is within the selected radius
-            if (distance <= circle.getRadius()) {
-              // Push the location to the nearbyLocations array
-              const distanceInMiles = parseFloat((distance / 1609.34).toFixed(1));
-              nearbyLocations.push({ address, distance: distanceInMiles });
-            }
-          } else {
-            console.error("Invalid location:", address);
-          }
-        } else {
-          console.error("Geocoding request failed");
-        }
-      }));
-  
-      // Sort nearby locations by distance
-      nearbyLocations.sort((a, b) => a.distance - b.distance);
-      
-      // Log the number of locations found
-      console.log("Number of nearby restroom locations:", nearbyLocations.length);
-  
-    } catch (error) {
-      console.error("Error fetching restroom data:", error);
-    }
-  };
-  
-
-   
 
 
 //deal with the search bar, map api, and search functions
 function SearchLocation(){
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [location, setLocation] = useState(''); //location in search bar
   const [opened, setOpen] = useState(false);  //to activate circle radius on map
   const [userPosition, setUserPosition] = useState({ lat: 33.253946, lng: -97.152896 });  //auto set users position
   const [map, setMap] = useState<google.maps.Map | null>(null); //google map api
   const [distance, setDistance] = useState(.5);
+  //const [infoWindow, setInfoWindow] = useState(null);
   const isFindTheWayRunning = useRef(false);
+  const [searchUpdatedPosition, setSearchUpdatedPosition] = useState(false);
+  const [rerenderSavedSales, setRerenderSavedSales] = useState(false);
+  const [circle, setCircle] = useState<google.maps.Circle | null>(null);
+  const memoizedFindTheWay = useCallback(async (circle, map, userPosition) => {
+    try {
+      // Your asynchronous logic goes here
+      // For example:
+      const result = await findTheWay(circle, map, userPosition);
+      // Process the result if needed
+      return result;
+    } catch (error) {
+      // Handle errors
+      console.error('Error:', error);
+    } finally {
+      // Finally block executes whether there's an error or not
+      // You can perform cleanup or other actions here
+      console.log('Finally block executed');
+    }
+  }, []);
+  const [routeBool, setRouteBool] = useState(false);
+  let routeIndex = null;
+
+  //nearbyLocations = [];
+  console.log("martinnn");
+
+  const findTheWay = async (circle, map, userPosition) => {
+    nearbyLocations = [];
+  
+    if(locationMarkers.length !=0)
+    {
+      locationMarkers.forEach(marker => {
+        console.log('delete');
+        // Remove the marker from the map
+        marker.setMap(null);
+    });
+    // Empty the locationMarkers array
+      locationMarkers = [];
+    }
+    const processedAddresses = new Set();
+      //if (!processedAddresses.has(location.address)) {
+      try {
+        // Perform geocoding to convert address to coordinates using a geocoding service
+        const restroomSnap = await getDocs(collection(db, "restrooms"));
+        await Promise.all(restroomSnap.docs.map(async (doc) => {
+          const data = doc.data();
+          const street = data.street;
+          const city = data.city;
+          const state = data.state;
+          const country = data.country;
+    
+          // Concatenate street, city, state, and country to form complete address
+          const address = `${street}, ${city}, ${state}, ${country}`;
+    
+          console.log("Attempting geocoding for address:", address);
+    
+          // Perform geocoding to convert address to coordinates
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+          );
+    
+          if (response.ok) {
+            const geoData = await response.json();
+            console.log("Geocoding response:", geoData); // Log the response from geocoding API
+            if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
+              const { lat, lng } = geoData.results[0].geometry.location;
+    
+              // Calculate distance between the location and user's position
+              const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(lat, lng),
+                new google.maps.LatLng(userPosition.lat, userPosition.lng)
+              );
+    
+              // Check if the location is within the selected radius
+              if (distance <= circle.getRadius()) {
+                // Push the location to the nearbyLocations array
+                const distanceInMiles = parseFloat((distance / 1609.34).toFixed(2));
+                nearbyLocations.push({ address, distance: distanceInMiles });
+
+                // const locationName = data.results[0].address_components.find(component =>
+                //       component.types.includes('establishment')
+                //     )?.long_name || '';
+                //     console.log(locationName);
+                const marker = new google.maps.Marker({
+                      position: { lat, lng },
+                      map,
+                      title: address,
+                      icon: {
+                        url: "/assets/marker.PNG",
+                        scaledSize: new google.maps.Size(30, 45)
+                      }
+                    })as MarkerWithInfoWindow;
+
+                    const infoWindow = new google.maps.InfoWindow({
+                            content: `<div>${address}</div><div>Distance: ${distanceInMiles} miles</div>`
+                          });
+
+                    marker.addListener('click', () => {
+                          infoWindow.open(map, marker);
+                        });      
+                    locationMarkers.push(marker);
+
+              }
+            } else {
+              console.error("Invalid location:", address);
+            }
+          } else {
+            console.error("Geocoding request failed");
+  
+          }
+        }));
+    
+        // Sort nearby locations by distance
+        nearbyLocations.sort((a, b) => a.distance - b.distance);
+        locationMarkers.sort((markerA, markerB) => {
+          const locationA = nearbyLocations.find(location => location.address === markerA.getTitle());
+          const locationB = nearbyLocations.find(location => location.address === markerB.getTitle());
+          if (locationA && locationB) {
+              return locationA.distance - locationB.distance;
+          } else {
+              // Handle cases where a location is not found for a marker
+              return 0;
+          }
+      });
+        setDataLoaded(true);
+        if(dataLoaded){
+          console.log('yooo whats good');
+        }
+        
+        // Log the number of locations found
+        console.log("Number of nearby restroom locations:", nearbyLocations.length);
+    
+      } catch (error) {
+        console.error("Error fetching restroom data:", error);
+      }
+    };
+
 
   //load google map api and operate location search functions
   useEffect(() => {
+
+    console.log("BITCCCCHHHHH");
         const loader = new Loader({
           apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
           version: 'weekly',
@@ -116,29 +200,42 @@ function SearchLocation(){
             }
           ];
     
-          if (!mapElement || !inputElement) { //if map isnt loaded or input is empty
+          if (!mapElement || !inputElement || !userPosition) { //if map isnt loaded or input is empty
             return;
           }
+          setSearchUpdatedPosition(false);
     
           //setting map info
-          const mapInstance = new window.google.maps.Map(mapElement, { 
-            center: { lat: 33.253946, lng: -97.152896 },
-            zoom: userPosition ? 17 : 1,
-            styles: mapStyles
-          });
+          let mapInstance;
+          if(!routeBool)
+          {
+            mapInstance = new window.google.maps.Map(mapElement, { 
+              center: { lat: 33.253946, lng: -97.152896 },
+              zoom: userPosition ? 17 : 1,
+              styles: mapStyles
+            });
+          }
+          else
+          {
+            mapInstance = new window.google.maps.Map(mapElement, { 
+              center: userPosition,
+              zoom: userPosition ? 17 : 1,
+              styles: mapStyles
+            });
+          }
 
           setMap(mapInstance);  //store map info 
     
           const searchBox = new window.google.maps.places.SearchBox(inputElement);  //suggest locations based on user input
     
-          searchBox.addListener('places_changed', handleSearch);  //handle search for whichever location user selects
+          searchBox.addListener('places_changed', horsie);  //handle search for whichever location user selects
     
-          const searchButton = document.getElementById('searchButton');
-          if (searchButton) {
-            searchButton.addEventListener('click', handleSearch);
-          }
+          // const searchButton = document.getElementById('searchButton');
+          // if (searchButton) {
+          //   searchButton.addEventListener('click', handleSearch);
+          // }
     
-          function handleSearch() { //search based on user selection
+          function horsie() { //search based on user selection
             const places = searchBox.getPlaces(); 
     
             if (!places || places.length === 0) { //if places not loaded or no places shown
@@ -155,17 +252,54 @@ function SearchLocation(){
               const newPosition = { lat: lat(), lng: lng() };
               setUserPosition(newPosition);
               mapInstance.panTo(newPosition); //zoom in to users new position
-            }
+             
+            //   console.log(routeBool, routeIndex);
+            //   if(!routeBool || routeIndex===null) return;
+            //   console.log("WHORE");
+            //   const directionsService = new google.maps.DirectionsService();
+            //   const directionsRenderer = new google.maps.DirectionsRenderer();
+
+            //   directionsRenderer.setMap(map);
+            //   const position = locationMarkers[routeIndex].getPosition();
+            //   let request;
+
+            //   if(position){
+            //   request = {
+            //     origin: {
+            //       lat: userPosition.lat,
+            //       lng: userPosition.lng
+            //     }, // Use user's position as the origin
+            //     destination: {
+            //       lat: position.lat(),
+            //       lng: position.lng()
+            //     },
+            //     travelMode: google.maps.TravelMode.DRIVING,
+            //   };
+            // }
+
+            //   directionsService.route(request, (result, status) => {
+            //     if (status === "OK") {
+            //       directionsRenderer.setDirections(result);
+            //     } else {
+            //       console.error("Directions request failed due to " + status);
+            //     }
+            //   });
+            //   setRouteBool(false);
+             }
           }
         }).catch(error => { //if map failed to load
           console.error('Error loading Google Maps API:', error);
         });
-      }, [userPosition, distance]); //depends on if userPosition changes
 
+        console.log('AMMMEEERRRIIICAAAA');
+      }, [userPosition, distance, routeBool]); //depends on if userPosition changes
+
+      
   //add markers to map and create circle radius
   useEffect(() => {
 
     if (!map || !userPosition) return;  //if map failed to load or user position undefined
+    if(routeBool) return;
   
     //allow marker for user position after first valid address 
     if(opened){
@@ -176,40 +310,71 @@ function SearchLocation(){
       title: 'Your Location',
       icon: {
         url: "/assets/userMarker.PNG",
-        scaledSize: new google.maps.Size(90, 70)
+        scaledSize: new google.maps.Size(29, 52)
       },
     });
+    //locationMarkers.push(marker);
+  //   locationMarkers.forEach((marker) => {
+  //     const newMarker = new google.maps.Marker({
+  //         position: marker.getPosition(),
+  //         map: map,
+  //         // Set other properties of the marker as needed
+  //     });
+  //     console.log('horseshit',locationMarkers.length);
+  
+  //     // Optionally, you can store the new markers in a separate array if needed
+  //     // newMarkers.push(newMarker);
+  // });
     
     //create circle for map
-    const circle = new google.maps.Circle({
-        map,
-        center: userPosition,
-        radius: distance * 1609.34, // within distance miles
-        fillColor: '#4285F4', // Blue fill color
-        fillOpacity: 0.2, // Adjust the opacity as needed
-        strokeColor: '#4285F4', // Blue border color
-        strokeOpacity: 0.8, // Adjust the opacity as needed
-        strokeWeight: 2 // Border thickness
-      });
+    if (circle) {
+      circle.setMap(null);
+    }
+
+    // Create new circle
+    const newCircle = new google.maps.Circle({
+      map,
+      center: userPosition,
+      radius: distance * 1609.34, // Convert miles to meters
+      fillColor: '#4285F4',
+      fillOpacity: 0.2,
+      strokeColor: '#4285F4',
+      strokeOpacity: 0.8,
+      strokeWeight: 2
+    });
+
+    // Set the new circle instance
+    setCircle(newCircle);
 
       
           
     // Adjust the map bounds to include the marker and circle
     const bounds = new google.maps.LatLngBounds();
     bounds.extend(marker.getPosition()!);
-    bounds.union(circle.getBounds()!);
+    bounds.union(newCircle.getBounds()!);
     map.fitBounds(bounds); 
 
     //add markers for locations within radius
     //findTheWay(circle, map, userPosition);
-    if(circle !== undefined){
-            if(!isFindTheWayRunning.current){
-            isFindTheWayRunning.current = true;
-            findTheWay(circle, map, userPosition).finally(() => {
-              isFindTheWayRunning.current = false;
-            });
-          }
+    if(newCircle !== undefined){
+
+      memoizedFindTheWay(newCircle, map, userPosition);
+           
+
         }
+
+        console.log('horseshit p2',locationMarkers.length); 
+
+//     locationMarkers.forEach((marker) => {
+//     const newMarker = new google.maps.Marker({
+//         position: marker.getPosition(),
+//         map: map,
+//         // Set other properties of the marker as needed
+//     });
+
+//     // Optionally, you can store the new markers in a separate array if needed
+//     // newMarkers.push(newMarker);
+// });
 
     //zoom in 
     const zoomLevel = map.getZoom();
@@ -217,12 +382,27 @@ function SearchLocation(){
       map.setZoom(17);
     }
     }
+
+    setRerenderSavedSales(prevState => !prevState);
   
-  }, [userPosition, map, distance]);  //when userPosition or map changes
+  }, [map]);  // map changes
+
+  useEffect(() => {
+    // Perform actions that depend on dataLoaded here
+    // For example, you can fetch data or trigger other updates
+    // This effect will re-run whenever dataLoaded changes
+    if (dataLoaded) {
+      // Perform actions here that need to be executed when dataLoaded changes
+      console.log('Data loaded!');
+      setDataLoaded(false);
+      
+    }
+  }, [dataLoaded]);
 
   //another handle search function using 'enter' and search button
   const handleSearch = async () => {
     if (location.trim() !== '') { //if location input isnt empty
+      console.log('HEYOOOO TEST');
       //request geocode for location
       try {
         const response = await fetch(
@@ -236,6 +416,7 @@ function SearchLocation(){
             const { lat, lng } = data.results[0].geometry.location;
             setOpen(true);
             setUserPosition({ lat, lng });
+            setSearchUpdatedPosition(true);
             console.log("User position updated successfully!");
           } else {
             console.log(data);
@@ -276,24 +457,63 @@ function SearchLocation(){
   };
   
   const handleEnterKey = (e) => {
-          if (e.key === 'Enter') {
-            handleSearch(); //call search function with 'enter' key press
-          }
+          // if (e.key === 'Enter') {
+          //   handleSearch(); //call search function with 'enter' key press
+          // }
         };
+
+ const testing = (index) => {
+   // routeIndex = index;
+    console.log("whoisit");
+   // setRouteBool(true);
+ };
     
+
         const {t} = useTranslation();
-        function SavedSales() {
+       function SavedSales({ update }) {
+          const [dropdownOpenB, setdropdownOpenB] = useState(false);
           const {t} = useTranslation();
-          const [dropdownOpen, setdropdownOpen] = useState(false);
           const [savedDistance, setSavedDistance] = useState(.5);
+          //setDataLoaded(false);
+          console.log("radishes");
         
           const handleDistanceDropdown = () => {
-            setdropdownOpen(!dropdownOpen); // Toggle the dropdown
+            setdropdownOpenB(!dropdownOpenB); // Toggle the dropdown
+            console.log('wassuuuppp guurll');
           };
           const handleDistanceChange = (newDistance) =>{
             setDistance(newDistance);
             setSavedDistance(newDistance);
           };
+
+          const highlightMarker = (index: number) => {
+            if (locationMarkers[index]) {
+              locationMarkers[index].setAnimation(google.maps.Animation.BOUNCE);
+            }
+          };
+          
+          // Function to reset the marker
+          const resetMarker = (index: number) => {
+            if (locationMarkers[index]) {
+              locationMarkers[index].setAnimation(null);
+            }
+          };
+
+          const handleListItemClick = (index) => {
+            // Close any previously opened InfoWindows
+            //closeAllInfoWindows();
+            
+            // Open InfoWindow for the clicked marker
+            const marker = locationMarkers[index];
+            const infoWindow = marker.infoWindow;
+            infoWindow.open(map, marker);
+        };
+        
+        const closeAllInfoWindows = () => {
+            locationMarkers.forEach(marker => {
+                marker.infoWindow.close();
+            });
+        };
           return (
             <div className="saved">
             <div className="sidebar-container">
@@ -304,33 +524,40 @@ function SearchLocation(){
                 </div>
                 <div className="locationSettings">
                   <button className="setDistance"  onClick={handleDistanceDropdown}>
-                        <text>Within {distance} miles </text>
+                        <span>Within {distance} miles </span>
                       <img
                           //src="https://i.seadn.io/gcs/files/3085b3fc65f00b28699b43efb4434eec.png?auto=format&dpr=1&w=1000"
                           src="https://static.thenounproject.com/png/551749-200.png"
                           className="open-dropdown"
                           alt=""
                         />
-                    </button>
-                    <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-                      <p onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</p>
-                      <p onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</p>
-                      <p onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</p>
-                      <p onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</p>
-                      <p onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</p>
-                      <p onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</p>
+                  </button>
+                    <div className={`dropdown-contentB ${dropdownOpenB ? 'flex' : 'hidden'}`}>
+                      <span onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</span>
+                      <span onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</span>
+                      <span onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</span>
+                      <span onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</span>
+                      <span onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</span>
+                      <span onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</span>
                     </div>
+
                 </div>
                 <ul>
                   {nearbyLocations.map((location, index) => (
                 //<li key={location}>{location}  <button className="result-sales-button"><Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link></button></li>
-                    <li key={`${location.address}-${index}`}>
+                    <li key={`${location.address}-${index}`}
+                    onMouseEnter={() => highlightMarker(index)} 
+                    onMouseLeave={()=>resetMarker(index)}
+                    onClick={()=>{resetMarker(index);}}>
                       <div className="locationInfo">
                         <span className="location-text">{location.address}</span>
-                        <span className="routeDistance">{location.distance}</span>
+                        <span className="routeDistance">{location.distance} miles</span>
                       </div>
-                      <button className="result-sales-button">
-                        <Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link>
+                      <button className="result-sales-button"
+                      onClick={()=>testing(index)}
+                      >
+                        --
+                        {/* <Link to="/reviewpage" style={{ textDecoration: 'none', color: 'inherit'}}>Review</Link> */}
                       </button>
                     </li>
                   ))}
@@ -343,7 +570,7 @@ function SearchLocation(){
 
   return (
     <div className="lower-content">
-        {SavedSales()}
+        <SavedSales update={dataLoaded} />
           <div className="search-map">
             <div className="input-container">
               <input
@@ -502,7 +729,13 @@ function UserProfile(){
 // }
 
 function Dashboard(){
-  const {t} = useTranslation();
+  
+  useEffect(() => {
+    // Set nearbyLocations to empty array when component is mounted
+    nearbyLocations = [];
+    console.log("jorge")
+  }, []);
+   const {t} = useTranslation();
     return(
     <div className="dashboard">
       <div className="topbar">
