@@ -9,6 +9,7 @@
     "dashboard": {
         "title": "المواقع",
         "reviews": "مراجعات",
+        "addPost": "يضيف",
         "search": "يبحث",
         "searchbar": "موقع..."
     },

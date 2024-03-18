@@ -520,7 +520,7 @@ function SearchLocation(){
             <div className="sidebar">
                 <div className="name">
                 {t("global.dashboard.title")}
-                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.reviews")}</Link></button>
+                  <button className="result-sales-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
                 </div>
                 <div className="locationSettings">
                   <button className="setDistance"  onClick={handleDistanceDropdown}>

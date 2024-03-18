@@ -9,6 +9,7 @@
     "dashboard": {
         "title": "Ubicaciones",
         "reviews": "Opiniones",
+        "addPost": "Agregar",
         "search": "Buscar",
         "searchbar": "Ubicación..."
     },

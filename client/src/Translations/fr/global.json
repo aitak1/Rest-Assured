@@ -9,6 +9,7 @@
     "dashboard": {
         "title": "Emplacements",
         "reviews": "Commentaires",
+        "addPost": "Ajouter",
         "search": "Recherche",
         "searchbar": "Emplacement..."
     },

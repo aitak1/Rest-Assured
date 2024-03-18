@@ -9,6 +9,7 @@
     "dashboard": {
         "title": "Locations",
         "reviews": "Reviews",
+        "addPost": "Add",
         "search": "Search",
         "searchbar": "Location..."
     },
