@@ -22,7 +22,7 @@ html, body{
   background-color:  rgb(42, 42, 165);
   width: 100%;
   padding: 7px;
-  height: 70px;
+  height: 66px;
 }
 
 .dashboard .content{
@@ -129,7 +129,7 @@ html, body{
   padding-top: 90px;padding-top: 103px; */
   height: inherit;
   min-height: 600px;
-  padding-top: 90px;
+  padding-top: 86px;
   display: flex;
   width: 100%;
   gap: 5px;
@@ -156,6 +156,10 @@ html, body{
   margin-left: 5px;
   overflow-y: auto;
 }
+
+/* .dashboard .lower-content .saved .sidebar .displayLocations.ul{
+  overflow-y: auto;
+} */
 .dashboard .sidebar .name{
   color: white;
   width: auto;
@@ -181,7 +185,8 @@ html, body{
 .dashboard .sidebar .locationSettings{
     background-color: rgb(237, 237, 236);
     padding: 10px;
-    position: relative;
+    position: sticky;
+
 }
 .dashboard .sidebar .locationSettings .setDistance {
   border: none;
@@ -341,7 +346,10 @@ ul {
   border: none;
   padding: 0px 16px;
   border-radius: 5px;
-  margin: 9px -10px 9px 5px;
+  margin-right: -5px;
+  margin-top: 5px;
+  height: 60px;
+  width: 60px;
   cursor: pointer;
   border-radius: 50%;
 }
@@ -371,4 +379,35 @@ ul {
 
 .routeDistance {
   margin-right: 10px; /* Adjust spacing between distance and review button */
+}
+.dashboard .sidebar .name,
+.dashboard .sidebar .locationSettings {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(40, 40, 135);
+}
+
+.dashboard .sidebar .name {
+  color: white;
+  font-size: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard .sidebar .name button {
+  background-color: rgb(72, 72, 185);
+  padding: 10px;
+}
+
+.dashboard .sidebar .name button:hover {
+  background-color: rgb(26, 26, 197);
+}
+
+.dashboard .sidebar .locationSettings {
+  background-color: rgb(237, 237, 236);
+  padding: 10px;
+  top: 55px; /* Adjust this value to match the height of the .name element */
 }

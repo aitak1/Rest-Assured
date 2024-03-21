@@ -257,7 +257,8 @@
   border-radius: 10px; /* Adjust border-radius as needed */
 }
 
-.review-page .header-container .place-details .place-info-container .map{
+.review-page .map{
   height: 500px;
   width: auto;
+  border-radius: 10px;
 }

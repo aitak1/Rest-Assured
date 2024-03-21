@@ -71,32 +71,6 @@ function ReviewPage() {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
 
-  const displayRoute = () => {
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-
-    const originHOLD: google.maps.LatLngLiteral = { lat: positionArray[0], lng: positionArray[1] };
-
-    
-    //setAddress(`${data.street}, ${data.city}, ${data.state}, ${data.country}`);
-
-    const request = {
-      origin: { lat: 33.253946, lng: -97.2 }, // Use user's position as the origin
-            destination: { lat: 33.253946, lng: -97.152896 },
-      travelMode: google.maps.TravelMode.DRIVING,
-    };
-
-    directionsService.route(request, (result, status) => {
-      if (status === "OK") {
-        directionsRenderer.setDirections(result);
-        console.log("IN BITCH");
-      } else {
-        console.error("Directions request failed due to " + status);
-      }
-    });
-  };
-
   useEffect(() => {
     const fetchRestroomData = async () => {
       if (!id) return; // Exit early if ID is undefined
@@ -160,6 +134,7 @@ function ReviewPage() {
   }, [id]); // Re-fetch data when the ID changes
 
   useEffect(() => {
+    //load map into page
     const loader = new Loader({
       apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
       version: 'weekly',
@@ -179,33 +154,84 @@ function ReviewPage() {
         }
       ];
 
-
-      const center: google.maps.LatLngLiteral = { lat: positionArray[0], lng: positionArray[1] };
-
       const makeMap = new google.maps.Map(mapElement, {
         center: { lat: 33.253946, lng: -97.152896 },
         zoom: 17,
         styles: mapStyles
-      });
+      });    
       
-      makeMap.panTo({ lat: 33.253946, lng: -97.152896 });
-      setMap(makeMap);
-      const marker = new google.maps.Marker({
-        position: { lat: 33.253946, lng: -97.152896 },
-        map,
-        title: 'hi',
-        icon: {
-          url: "/assets/marker.PNG",
-          scaledSize: new google.maps.Size(30, 45)
-        }
-      });
-      //displayRoute();
+      console.log('part 1');
+        
+      setMap(makeMap);  //set changes to map
     });
   }, []);
 
-  useEffect(() =>{
-    console.log("POR QUE");
-  },[map]);
+  //whenever map changes
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("POR QUE");
+  
+      if (!map) return; //if map not loaded
+      //display route
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      let destLat: number = 33.253946;
+      let destLng: number = -97.136407;
+  
+      if (!restroomData) return;
+      const address = `${restroomData.street}, ${restroomData.city}, ${restroomData.state}, ${restroomData.country}`;
+  
+      console.log("Attempting geocoding for address:", address);
+  
+      // Perform geocoding to convert address to coordinates
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+      );
+  
+      if (response.ok) {
+        const geoData = await response.json();
+        console.log("Geocoding response:", geoData); // Log the response from geocoding API
+        if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
+          const { lat, lng } = geoData.results[0].geometry.location;
+          destLat = lat;
+          destLng = lng;
+          console.log("ayo");
+        }
+      }
+  
+      console.log('part 2');
+      directionsRenderer.setMap(map);
+      let request;
+  
+      request = {
+        origin: {
+          lat: positionArray[0], lng: positionArray[1]
+        }, // Use user's position as the origin
+        destination: {
+          lat: destLat, lng: destLng
+        },
+        travelMode: google.maps.TravelMode.DRIVING,
+      };
+  
+      directionsService.route(request, (result, status) => {
+        if (status === "OK") {
+          directionsRenderer.setDirections(result);
+          console.log("IN BICH");
+        } else {
+          console.error("Directions request failed due to " + status);
+        }
+      });
+      console.log('rerun');
+    };
+  
+    fetchData(); // Call the async function
+  
+    // Return a cleanup function if needed
+    return () => {
+      // Cleanup code here
+    };
+  }, [map, restroomData]); // Dependency array
+  
 
 
 
@@ -224,7 +250,7 @@ function ReviewPage() {
           <div className="place-name">{restroomData?.name}</div>
           <div className="place-address">Address: {restroomData?.address}</div>
           <div className="place-directions">Directions: {restroomData?.direction}</div>
-          <div className="map" id="map" style={{ height: '500px', width: 'auto'}}></div>
+          <div className="map" id="map"></div>
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">
