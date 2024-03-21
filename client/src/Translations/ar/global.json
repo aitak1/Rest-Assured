@@ -1,0 +1,38 @@
+{
+    "landing": {
+        "title": "مرحبًا بك في تطبيقنا للعثور على دورات المياه!",
+        "description": "ابحث عن دورة المياه التالية هنا.",
+        "searchbar": "أدخل عنوانًا:",
+        "addrestroom": "إضافة دورة مياه"
+      },
+    "header": {
+        "name": "مكتشف مرحاض"
+    },
+    "dashboard": {
+        "title": "المواقع",
+        "reviews": "مراجعات",
+        "addPost": "يضيف",
+        "search": "يبحث",
+        "searchbar": "موقع..."
+    },
+    "dropdown" : {
+        "profile": "حساب تعريفي",
+        "settings" : "إعدادات",
+        "language" : "لغة",
+        "signout" : "خروج",
+        "return" : "يعود"
+    },
+    "reviews": {
+        "title": "مراجعة الحمام"
+    },
+    "addreviews" : {
+        "addreview": "إنشاء مراجعة",
+        "name": "اسم:",
+        "cleanliness": "النظافة من 10:",
+        "amenities": "وسائل الراحة من 10:",
+        "accessibility": "إمكانية الوصول من 10:",
+        "description": "وصف:",
+        "add": "يخلق",
+        "image": "صورة:"
+    }
+}
