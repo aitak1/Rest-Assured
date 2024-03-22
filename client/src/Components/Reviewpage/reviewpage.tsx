@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import "./reviewpage.css";
 
 // Define a custom interface for restroom data
@@ -49,13 +49,45 @@ function ReviewPage() {
     date: new Date(), // Initialize date with current date
   });
   const [reviewsData, setReviewsData] = useState<Review[]>([
-    //reviewerName: "User 1", cleanliness: 4, amenities: 3, accessibility: 5, description: "Very Clean bathroom!", image: null, date: new Date() 
-
   ]);
+  /*useEffect(() => {
+    if (id === "CaCKeanWrTIkBrlBLeuT") {
+      // If the ID matches, add a default review to reviewsData
+      setReviewsData([
+        {
+          reviewerName: "John Doe",
+          cleanliness: 4,
+          amenities: 3,
+          accessibility: 5,
+          description: "Very Clean bathroom!",
+          image: null,
+          date: new Date()
+        }
+      ]);
+    }
+  }, [id]);*/
 
-  const handleAddReview = () => {
+  const handleAddReview = async () => {
     const updatedReviews = [...reviewsData, { ...newReview }];
     setReviewsData(updatedReviews);
+    
+    try {
+      // Add the new review to Firestore
+      const docRef = await addDoc(collection(db, 'reviews'), {
+        reviewerName: newReview.reviewerName,
+        cleanliness: newReview.cleanliness,
+        amenities: newReview.amenities,
+        accessibility: newReview.accessibility,
+        description: newReview.description,
+        date: newReview.date,
+        restroomsID: `/restrooms/${id}` // Use the restroom ID from the URL
+      });
+      console.log("New review added with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding review: ", error);
+    }
+
+    // Reset the new review form
     setNewReview({
       reviewerName: "",
       cleanliness: 0,
@@ -103,35 +135,55 @@ function ReviewPage() {
         console.error("Error fetching restroom data:", error);
       }
     };
-    const restroomId = "your_restroom_id";
+    //const restroomId = "your_restroom_id";
+    
+    fetchRestroomData();
+    //fetchReviews(); // Fetch restroom data when component mounts
+  }, [id]); // Re-fetch data when the ID changes
 
+  useEffect(() => {
     // Function to fetch reviews associated with the restroom ID
     const fetchReviews = async () => {
       try {
         const reviewRef = collection(db, 'reviews');
-        const q = query(reviewRef, where("restroomID", "==", `/restrooms/${id}`));
-        const querySnapshot = await getDocs(q);
-        const reviewData: Review[] = [];
+        console.log("Review collection reference:", reviewRef);
+    
+        const querySnapshot = await getDocs(reviewRef);
+        console.log("Query snapshot:", querySnapshot);
+    
+        //let updatedReviews: Review[] = []; // Create a new array to hold the updated reviews
+        const updatedReviews: Review[] = []; 
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          reviewData.push({
-            reviewerName: data.reviewerName,
-            cleanliness: data.cleanliness,
-            amenities: data.amenities,
-            accessibility: data.accessibility,
-            description: data.description,
-            image: null, // Assuming image is not stored in the reviews collection
-            date: data.date.toDate(), // Assuming 'date' is stored as a Firestore Timestamp
-          });
+          const reviewData = doc.data();
+          console.log("Review data:", reviewData);
+          
+          // Assuming restroomsID is stored as a complete URL, like `/restrooms/123`
+          if (reviewData.restroomsID === `/restrooms/${id}`) {
+            const review: Review = {
+              reviewerName: reviewData.reviewerName,
+              cleanliness: reviewData.cleanliness,
+              amenities: reviewData.amenities,
+              accessibility: reviewData.accessibility,
+              description: reviewData.description,
+              image: null, // Assuming image is not stored in reviews collection
+              date: reviewData.date.toDate(), // Convert Firestore Timestamp to JavaScript Date object
+            };
+            //updatedReviews = [...updatedReviews, review]; // Using spread operator to add review to array
+            //reviewsData.push(review);
+            updatedReviews.push(review);
+            //setReviewsData(prevReviews => [...prevReviews, review]);
+            console.log("Review data:", reviewData);
+          }
         });
-        setReviewsData(reviewData);
+    
+        //console.log("Fetched reviews:", updatedReviews);
+        //setReviewsData(updatedReviews);
+        setReviewsData(updatedReviews);
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
-    };
-
-    fetchRestroomData();
-    fetchRestroomData(); // Fetch restroom data when component mounts
+    } 
+    fetchReviews(); // Fetch restroom data when component mounts
   }, [id]); // Re-fetch data when the ID changes
 
   useEffect(() => {
@@ -166,6 +218,7 @@ function ReviewPage() {
       setMap(makeMap);  //set changes to map
     });
   }, []);
+  
 
   //whenever map changes
   useEffect(() => {
@@ -233,11 +286,11 @@ function ReviewPage() {
     };
   }, [map, restroomData]); // Dependency array
   
-
   const handleDashboardReturn = () => {
     navigate(`/dashboard?latLng=${position}`);
   };
 
+  console.log("Reviews data:", );
   return (
     <div className="review-page">
       <div className="header-container">
@@ -245,7 +298,7 @@ function ReviewPage() {
           Add Review
         </button>
         <div className="review-header">Restroom's information</div>
-        <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
+        <button className="add-review-btn" onClick={() => setAddingReview(true)}></button>
       </div>
       <div className="place-details">
         <div className="place-info-container">
@@ -309,24 +362,29 @@ function ReviewPage() {
           <button onClick={handleAddReview}>Add</button>
         </div>
       )}
+      
       <div className = "reviews-box">
       <div className="reviews-container">
-        {reviewsData.map((review, index) => (
-          <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 2.5 ? 'light-red' : 'light-green'}`}>
-            <div className="reviewer-name">{review.reviewerName}</div>
-            <div className="cleanliness star-rating">{`Cleanliness: ${'★'.repeat(review.cleanliness)}`}</div>
-            <div className="amenities star-rating">{`Amenities: ${'★'.repeat(review.amenities)}`}</div>
-            <div className="accessibility star-rating">{`Accessibility: ${'★'.repeat(review.accessibility)}`}</div>
-            <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/5`}</div>
-            <div className="description">{review.description}</div>
-            <div className="date">Date: {review.date.toLocaleDateString()}</div>
-            {review.image && (
-              <div className="photo">
-                <img src={URL.createObjectURL(review.image)} alt="Review" />
-              </div>
-            )}
-          </div>
-        ))}
+        {reviewsData.length > 0 ? (
+          reviewsData.map((review, index) => (
+            <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 2.5 ? 'light-red' : 'light-green'}`}>
+              <div className="reviewer-name">{review.reviewerName}</div>
+              <div className="cleanliness star-rating">{`Cleanliness: ${'★'.repeat(review.cleanliness)}`}</div>
+              <div className="amenities star-rating">{`Amenities: ${'★'.repeat(review.amenities)}`}</div>
+              <div className="accessibility star-rating">{`Accessibility: ${'★'.repeat(review.accessibility)}`}</div>
+              <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/5`}</div>
+              <div className="description">{review.description}</div>
+              <div className="date">Date: {review.date.toLocaleDateString()}</div>
+              {review.image && (
+                <div className="photo">
+                  <img src={URL.createObjectURL(review.image)} alt="Review" />
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div>No reviews available</div>
+        )}
       </div>
       </div>
     </div>
