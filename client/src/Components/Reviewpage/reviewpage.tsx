@@ -29,8 +29,16 @@ interface Review {
   date: Date; // Add date property
 }
 
+interface RouteStep {
+  instruction: string;
+  distance: string;
+  duration: string;
+  travelMode: string;
+}
+
 function ReviewPage() {
   const navigate = useNavigate();
+  const [routeSteps, setRouteSteps] = useState<RouteStep[]>([]);
   const { id } = useParams();
   const { position } = useParams<{ position: string }>();
   const positionArray = (position ? position.split(',').map(Number) : []) || [];
@@ -270,7 +278,25 @@ function ReviewPage() {
       directionsService.route(request, (result, status) => {
         if (status === "OK") {
           directionsRenderer.setDirections(result);
-          console.log("IN BICH");
+          
+          if (result) {
+            const steps: RouteStep[] = [];
+            const route = result.routes[0];
+            if (route) {
+              const legs = route.legs;
+              legs.forEach((leg, legIndex) => {
+                leg.steps.forEach((step, stepIndex) => {
+                  steps.push({
+                    instruction: step.instructions,
+                    distance: step.distance ? step.distance.text : "Unknown",
+                    duration: step.duration ? step.duration.text : "Unknown",
+                    travelMode: step.travel_mode,
+                  });
+                });
+              });
+            }
+            setRouteSteps(steps);
+          }
         } else {
           console.error("Directions request failed due to " + status);
         }
@@ -298,15 +324,27 @@ function ReviewPage() {
           Add Review
         </button>
         <div className="review-header">Restroom's information</div>
-        <button className="add-review-btn" onClick={() => setAddingReview(true)}></button>
+        <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
       </div>
       <div className="place-details">
         <div className="place-info-container">
           <div className="place-info">
           <div className="place-name">{restroomData?.name}</div>
           <div className="place-address">Address: {restroomData?.address}</div>
-          <div className="place-directions">Directions: {restroomData?.direction}</div>
+          <div className="place-directions">Building Directions: {restroomData?.direction}</div>
           <div className="map" id="map"></div>
+          <div className="route-steps-container">
+            <p>Street Directions</p>
+      {routeSteps.map((step, index) => (
+        <div key={index}>
+          <p className="route-step">Step {index + 1}</p>
+          <p className="route-step">Instructions: <span dangerouslySetInnerHTML={{ __html: step.instruction }} /></p>
+          <p className="route-step">Distance: <span dangerouslySetInnerHTML={{ __html: step.distance }} /></p>
+          <p className="route-step">Duration: <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p>
+          <p></p>
+        </div>
+      ))}
+    </div>
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">

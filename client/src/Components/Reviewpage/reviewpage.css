@@ -262,3 +262,10 @@
   width: auto;
   border-radius: 10px;
 }
+.route-steps-container {
+  text-align: left; /* Center-align the steps to the right */
+}
+
+.route-step {
+  margin-bottom: -20px; /* Adjust the margin to reduce line space between steps */
+}
