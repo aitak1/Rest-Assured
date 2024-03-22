@@ -24,12 +24,10 @@ html, body{
   padding: 7px;
   height: 66px;
 }
-
 .dashboard .content{
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* overflow: wrap; */
   }
 .dashboard .content img{
   width: auto; 
@@ -156,10 +154,6 @@ html, body{
   margin-left: 5px;
   overflow-y: auto;
 }
-
-/* .dashboard .lower-content .saved .sidebar .displayLocations.ul{
-  overflow-y: auto;
-} */
 .dashboard .sidebar .name{
   color: white;
   width: auto;
@@ -186,7 +180,6 @@ html, body{
     background-color: rgb(237, 237, 236);
     padding: 10px;
     position: sticky;
-
 }
 .dashboard .sidebar .locationSettings .setDistance {
   border: none;

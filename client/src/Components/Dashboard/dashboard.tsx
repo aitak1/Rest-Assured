@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, ReactHTMLElement } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import "./dashboard.css"; 
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../../Translations/language-selector';
@@ -27,6 +27,8 @@ function SearchLocation(){
   const [map, setMap] = useState<google.maps.Map | null>(null); //google map api
   const [distance, setDistance] = useState(globalDistance); //within radius of global distance
   const [circle, setCircle] = useState<google.maps.Circle | null>(null);
+  let locationUpdate = false;
+  const currentLocation = useLocation();
   const memoizedFindTheWay = useCallback(async (circle, map, userPosition) => {
     try {
       // Your asynchronous logic goes here
@@ -43,6 +45,7 @@ function SearchLocation(){
       console.log('Finally block executed');
     }
   }, []);
+  let locationHome = false;
 
   let routeIndex: number | null = null;
 
@@ -149,7 +152,6 @@ function SearchLocation(){
 
   //load google map api and operate location search functions
   useEffect(() => {
-
     //load map
         const loader = new Loader({
           apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
@@ -282,6 +284,62 @@ function SearchLocation(){
   
   }, [map]);  // map changes
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const positionParam = searchParams.get("latLng");
+  const getFormattedAddress = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+      );
+      if (!response.ok) {
+        throw new Error('Failed to fetch address');
+      }
+      const data = await response.json();
+      if (data.status === 'OK' && data.results && data.results.length > 0) {
+        return data.results[0].formatted_address;
+      } else {
+        throw new Error('No address found');
+      }
+    } catch (error) {
+      console.error('Error fetching address:', error.message);
+      return null;
+    }
+  };
+  
+  useEffect(() => {
+    if(positionParam?.trim() != '' && positionParam)
+    {
+     console.log(positionParam, "SAVE MEEEE jk");
+     const positionArray = positionParam.split(',').map(Number);
+    if (positionArray.length === 2) {
+      const newPosition = { lat: positionArray[0], lng: positionArray[1] };
+      getFormattedAddress(positionArray[0], positionArray[1])
+    .then((formattedAddress) => {
+      console.log('Formatted Address:', formattedAddress);
+      setLocation(formattedAddress);
+      locationUpdate = true;
+      console.log('Location',location);
+      handleSearch();
+    })
+    .catch((error) => {
+      console.error('Error:', error.message);
+    })
+    //setUserPosition(newPosition);
+  }
+    }
+     
+    // Store the initial address value obtained from the URL in the ref
+    
+  }, [positionParam]);
+
+  useEffect(() => {
+    console.log('UPDATE: ', locationUpdate);
+    if(!locationUpdate || !location) return;
+    console.log()
+    handleSearch();
+    locationUpdate = false;
+  },[location]);
+
   //to reset dataloaded to prepare for next sidebar update
   useEffect(() => {
     if (dataLoaded) {
@@ -290,8 +348,12 @@ function SearchLocation(){
     }
   }, [dataLoaded]);
 
+
+
   //another handle search function using 'enter' and search button
   const handleSearch = async () => {
+    console.log(location.trim());
+    console.log(location);
     if (location.trim() !== '') { //if location input isnt empty
       console.log('HEYOOOO TEST');
       //request geocode for location
@@ -346,7 +408,41 @@ function SearchLocation(){
     }
   };
 
-    
+  useEffect(() => {
+    const searchParams = new URLSearchParams(currentLocation.search);
+    if (searchParams.get('useLocation') === 'true') {
+     handleCurrentLocation();
+    }
+   // Removed extraneous closing brace and corrected dependency array
+   }, [currentLocation.search]);
+
+   const initialAddressRef = useRef<string | null>(null);
+
+   useEffect(() => {
+     // Parse the URL parameters
+     const searchParams = new URLSearchParams(window.location.search);
+     // Get the 'address' parameter from the URL
+     const addressParam = searchParams.get("address");
+     if(addressParam)
+     {
+      initialAddressRef.current = addressParam;
+      setLocation(addressParam);
+     }
+      
+     // Store the initial address value obtained from the URL in the ref
+     
+   }, []);
+ 
+   useEffect(() => {
+     const initialAddress = initialAddressRef.current;
+     if (initialAddress) {
+       // This block of code will run after the initial address has been obtained
+       console.log(initialAddress);
+       // You can call any function here that needs to be executed after obtaining the initial address
+       handleSearch();
+       console.log("work?");
+     }
+   }, [initialAddressRef]);
 
         const {t} = useTranslation();
        function SavedSales({ update }) {
@@ -432,7 +528,7 @@ function SearchLocation(){
             <div className="sidebar">
                 <div className="name">
                 {t("global.dashboard.title")}
-                  <button className="add-button"><Link to="/create-post" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
+                  <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
                 </div>
                 <div className="locationSettings">
                   <button className="setDistance"  onClick={handleDistanceDropdown}>

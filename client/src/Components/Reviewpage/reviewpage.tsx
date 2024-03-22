@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -30,6 +30,7 @@ interface Review {
 }
 
 function ReviewPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { position } = useParams<{ position: string }>();
   const positionArray = (position ? position.split(',').map(Number) : []) || [];
@@ -233,7 +234,9 @@ function ReviewPage() {
   }, [map, restroomData]); // Dependency array
   
 
-
+  const handleDashboardReturn = () => {
+    navigate(`/dashboard?latLng=${position}`);
+  };
 
   return (
     <div className="review-page">
@@ -242,7 +245,7 @@ function ReviewPage() {
           Add Review
         </button>
         <div className="review-header">Restroom's information</div>
-        <Link to="/dashboard" className="go-back-btn">Dashboard</Link>
+        <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
       </div>
       <div className="place-details">
         <div className="place-info-container">
