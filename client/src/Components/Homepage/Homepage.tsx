@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Homepage.css"; // Import your CSS file here
-import restroomSign from "./restroomsign.jpg"; // Make sure this path is correct
+//import restroomSign from "./restroomsign.jpg"; // Make sure this path is correct
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ function Homepage() {
         <div className="search-bar-container">
           <input
             type="text"
-            placeholder={t("global.landing.searchbar")}
+            placeholder={t("Location")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
@@ -47,11 +47,11 @@ function Homepage() {
           </button>
         </div>
         <button onClick={handleAddRestroom} className="add-restroom-button">
-          {t("global.landing.addrestroom")}
+          {t("Add Restroom")}
         </button>
         <div className="image-container">
           <img
-            src={restroomSign}
+            src={"/assets/testing.png"}
             alt={t("global.restroomSignAlt")} // The key might need to be updated according to your JSON file
             className="restroom-image"
           />

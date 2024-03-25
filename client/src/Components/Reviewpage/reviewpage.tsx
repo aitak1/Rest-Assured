@@ -334,7 +334,7 @@ function ReviewPage() {
           <div className="place-directions">Building Directions: {restroomData?.direction}</div>
           <div className="map" id="map"></div>
           <div className="route-steps-container">
-            <p>Street Directions</p>
+            {/* <p>Street Directions</p>
       {routeSteps.map((step, index) => (
         <div key={index}>
           <p className="route-step">Step {index + 1}</p>
@@ -343,7 +343,7 @@ function ReviewPage() {
           <p className="route-step">Duration: <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p>
           <p></p>
         </div>
-      ))}
+      ))} */}
     </div>
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
