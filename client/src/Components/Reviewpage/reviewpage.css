@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(0, #ffffff, #91c8e2, #417fd1);
+  background:  rgb(42, 42, 165);
   padding: 7px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -18,7 +18,7 @@
   width: 60%;
   font-size: 24px;
   font-weight: bold;
-  color: blue;
+  color: white;
   flex-grow: 1;
   margin-bottom: 10px;
 }
@@ -33,6 +33,21 @@
 }
 
 .add-review-btn:hover { 
+  background-color: #ffffff;
+  color: black;
+}
+
+.go-back-btn {
+  text-decoration: none; /* Remove underline */
+  background-color: #1039a8; /* Red color for the "go back" button */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.go-back-btn:hover {
   background-color: #ffffff;
   color: black;
 }
@@ -75,6 +90,17 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+}
+
+.review-box {
+  display : block;
+  width: 60%; /* Same width as the header */
+  margin: 0 auto; /* Center the container */
+  background-color: white;
+  border-radius: 20px; /* Adjust border radius for the circular effect */
+  padding: 20px; /* Add padding for content */
+  margin-top: 20px; /* Add space below the header */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
 }
 
 .review-rectangle {
@@ -124,4 +150,122 @@
 
 .light-green {
   background-color: #e6ffe6; /* Light green */
+}
+
+/* New styles for stars */
+.star-rating {
+  display: inline-block;
+  unicode-bidi: bidi-override;
+  color: #f0c040;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.star-rating span {
+  display: inline-block;
+  position: relative;
+  width: 1.1em;
+}
+
+.star-rating span:before {
+  content: "\2605";
+  position: absolute;
+  opacity: 0;
+}
+
+/* Adjusting star colors */
+.cleanliness .star-rating span:before,
+.amenities .star-rating span:before,
+.accessibility .star-rating span:before {
+  color: #f0c040; /* Yellow */
+}
+
+.light-red .star-rating span:before {
+  color: #ff6347; /* Light red */
+}
+
+.light-green .star-rating span:before {
+  color: #32cd32; /* Light green */
+}
+
+.star-rating {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.star-rating span::before {
+  content: "\2605"; /* Unicode character for star */
+}
+
+.place-name-container {
+  display: flex;
+  justify-content: center;
+}
+
+.place-name {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: left;
+  color: rgb(42, 42, 165); /* Set the text color to white */
+}
+.place-details {
+  text-align: center;
+  color: rgb(42, 42, 165);
+}
+
+.place-info {
+  margin-bottom: 20px;
+}
+
+.place-address,
+.place-directions,
+.place-comments {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.place-comments {
+  margin-top: 20px;
+}
+
+.review-bar {
+  background-color: rgb(42, 42, 165);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px 20px; /* Adjust padding as needed */
+  margin-bottom: 20px;
+  border-radius: 10px; /* Set border-radius to make it a circular rectangle */
+}
+
+.place-info-container {
+  background-color: white;
+  border-radius: 10px; /* Adjust border-radius for a circular rectangle */
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.image-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Adjust border-radius as needed */
+}
+
+.review-page .map{
+  height: 500px;
+  width: auto;
+  border-radius: 10px;
+}
+.route-steps-container {
+  text-align: left; /* Center-align the steps to the right */
+}
+
+.route-step {
+  margin-bottom: -20px; /* Adjust the margin to reduce line space between steps */
 }

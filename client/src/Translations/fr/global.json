@@ -4,7 +4,9 @@
         "description": "Trouvez vos prochaines toilettes ici.",
         "home": "Page d'accueil",
         "login": "Se connecter",
-        "signup": "S'inscrire"
+        "signup": "S'inscrire",
+        "searchbar": "Rechercher une adresse",
+        "addrestroom": "Ajouter des toilettes"
     },
     "header": {
         "name": "Recherche de toilettes"
@@ -26,16 +28,25 @@
         "return" : "Retour"
     },
     "addrestroom": {
-        "title": "Ajouter des toilettes",
-        "backbtn": "Retour au précédent",
-        "name": "Nom facultatif:",
-        "date": "Date:",
-        "starttime": "Heure de début:",
-        "endtime": "Heure de fin:",
-        "description": "Description:",
-        "address": "Adresse:",
-        "image": "Image (facultatif):",
-        "submitbtn": "Soumettre les toilettes:"
+        "title": "Soumettre des Toilettes",
+        "backbtn": "Retour au Tableau de Bord",
+        "name": "Nom:",
+        "street": "Rue:",
+        "city": "Ville:",
+        "state": "État:",
+        "country": "Pays:",
+        "accessible": "Accessible:",
+        "unisex": "Unisexe:",
+        "submitbtn": "Enregistrer les Toilettes",
+        "changetable": "Table à Langer:",
+        "directions": "Directions:",
+        "comment": "Commentaire:",
+        "cancel": "Annuler",
+        "option": "Sélectionnez une Option",
+        "yes": "Oui",
+        "no": "Non",
+        "dirdesc": "Deuxième étage à l'arrière..., etc.",
+        "commdesc": "Il faut être un client payant..., etc."
     },
     "reviews": {
         "title": "Examen des Toilettes"

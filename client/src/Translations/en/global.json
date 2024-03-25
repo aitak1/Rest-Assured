@@ -4,7 +4,9 @@
         "description": "Find your next restroom here.",
         "home": "Home",
         "login": "Log In",
-        "signup": "Sign Up"
+        "signup": "Sign Up",
+        "searchbar": "Search address",
+        "addrestroom": "Add Restroom"
     },
     "header": {
         "name": "Restroom Finder"
@@ -26,16 +28,25 @@
         "return" : "Return"
     },
     "addrestroom": {
-        "title": "Add Restroom",
+        "title": "Submit a Restroom",
         "backbtn": "Back to Dashboard",
-        "name": "Optional Name:",
-        "date": "Date:",
-        "starttime": "Start Time:",
-        "endtime": "End Time:",
-        "description": "Description:",
-        "address": "Address:",
-        "image": "Image (Optional):",
-        "submitbtn": "Submit Restroom"
+        "name": "Name:",
+        "street": "Street:",
+        "city": "City:",
+        "state": "State:",
+        "country": "Country:",
+        "accessible": "Accessible:",
+        "unisex": "Unisex:",
+        "submitbtn": "Save Restroom",
+        "changetable": "Changing Table:",
+        "directions": "Directions:",
+        "comment": "Comment:",
+        "cancel": "Cancel",
+        "option": "Select Option",
+        "yes": "Yes",
+        "no": "No",
+        "dirdesc": "Second floor in the back..., etc.",
+        "commdesc": "Have to be a paying customer..., etc."
     },
     "reviews": {
         "title": "Restroom's Review"

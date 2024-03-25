@@ -4,7 +4,9 @@
         "description": "Encuentra tu próximo baño aquí.",
         "home": "Página Principal",
         "login": "Acceso",
-        "signup": "Inscribirse"
+        "signup": "Inscribirse",
+        "searchbar": "Buscar dirección",
+        "addrestroom": "Agregar Baño"
     },
     "header": {
         "name": "Buscador de Baños"
@@ -26,16 +28,25 @@
         "return" : "Regresar"
     },
     "addrestroom": {
-        "title": "Agregar un Baño",
-        "backbtn": "Volver de Página",
-        "name": "Nombre Opcional:",
-        "date": "Fecha:",
-        "starttime": "Hora de inicio:",
-        "endtime": "Hora de finalización:",
-        "description": "Descripción:",
-        "address": "Dirección:",
-        "image": "Imagen (Opcional):",
-        "submitbtn": "Enviar Baño:"
+        "title": "Enviar un Baño",
+        "backbtn": "Back to Dashboard",
+        "name": "Nombre:",
+        "street": "Calle:",
+        "city": "Ciudad:",
+        "state": "Estado:",
+        "country": "País:",
+        "accessible": "Accesible:",
+        "unisex": "Unisexo:",
+        "submitbtn": "Guardar Baño",
+        "changetable": "Mesa de Cambiar Pañales:",
+        "directions": "Direcciones:",
+        "comment": "Commentarios:",
+        "cancel": "Cancelar",
+        "option": "Seleccionar Opción",
+        "yes": "Si",
+        "no": "No",
+        "dirdesc": "Segundo piso atrás..., etc.",
+        "commdesc": "Tiene que ser un cliente de pago..., etc."
     },
     "reviews": {
         "title": "Revisión del Baño"
