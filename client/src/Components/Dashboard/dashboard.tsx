@@ -10,9 +10,13 @@ import { db } from "../../firebase.ts";
 import {collection, getDocs, } from 'firebase/firestore'
 
 //store all essential info for nearby locations
-let nearbyLocations=[] as {id : string, name: string, address: string, distance: number, latS: number, lngS: number }[];
+let nearbyLocations=[] as {id : string, name: string, address: string, distance: number, latS: number, lngS: number, rating:{positive: number, negative: number} }[];
 interface MarkerWithInfoWindow extends google.maps.Marker {
   infoWindow: google.maps.InfoWindow;
+}
+interface Rating {
+  positive: number;
+  negative: number;
 }
 let locationMarkers: MarkerWithInfoWindow[] = []; //store location markers and info windows
 let globalDistance = .5;
@@ -74,6 +78,9 @@ function SearchLocation(){
           const state = data.state;
           const country = data.country;
           const name = data.name;
+          const rating = {positive: data.thumbs_up, negative: data.thumbs_down} as Rating;
+
+          console.log('MAMA MIA',typeof rating.positive);
     
           // Concatenate street, city, state, and country to form complete address
           const address = `${street}, ${city}, ${state}, ${country}`;
@@ -102,7 +109,7 @@ function SearchLocation(){
 
                 // Push the location to the nearbyLocations array
                 const distanceInMiles = parseFloat((distance / 1609.34).toFixed(2));
-                nearbyLocations.push({ id: doc.id, name, address, distance: distanceInMiles, latS: lat, lngS: lng});
+                nearbyLocations.push({ id: doc.id, name, address, distance: distanceInMiles, latS: lat, lngS: lng, rating});
               }
             } else {
               console.error("Invalid location:", address); //print error
@@ -127,9 +134,45 @@ function SearchLocation(){
                   }
                 })as MarkerWithInfoWindow;
                 //info to display when marker selected
-                const infoWindow = new google.maps.InfoWindow({
-                        content: `<div>${location.address}</div><div>Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div><div>${location.id}</div>`
-                      });
+                let color = "";
+                let positive = location.rating.positive;
+                let negative = location.rating.negative;
+                let total = negative + positive;
+                let overallRating = positive / total * 100;
+                
+
+                if(total === 0)
+                {
+                  color = "rgb(40, 40, 135)";
+                }
+                else if(overallRating  < 70 && overallRating >= 40)
+                {
+                  color = "orange";
+                }
+
+                else if(overallRating < 40)
+                {
+                  color = "red";
+                }
+
+                else
+                {
+                  color = "green";
+                }
+
+                let infoWindow;
+                if(total === 0)
+                {
+                  infoWindow = new google.maps.InfoWindow({
+                    content: `<div>${location.address}</div><div>Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div><div style="text-align: center; color: white; padding: 4px; background: ${color}">No ratings</div>`
+                  });
+                }
+                else
+                {
+                  infoWindow = new google.maps.InfoWindow({
+                          content: `<div>${location.address}</div><div>Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div><div style="text-align: center; color: white; padding: 4px; background: ${color}">${(overallRating).toFixed(1)}%</div>`
+                        });
+                }
 
                 marker.addListener('click', () => {
                       infoWindow.open(map, marker);
@@ -653,7 +696,6 @@ function UserProfile(){
   return (
     <div className="profile" ref={profileRef}>
             <button type="button"  onClick={handleProfileDropdown}>
-              Name
             <img
                 src="https://i.pinimg.com/736x/b9/49/0a/b9490abd30c15850908b8ee0570f8b19.jpg"
                 className="pfp"
@@ -696,7 +738,7 @@ function Dashboard(){
           <div className="content">
             <div className="image-container">
               <img
-                src="/assets/tempLogo.PNG"
+                src="/assets/Main Logo.PNG"
                 className="logo"
                 alt="logo"
               />
