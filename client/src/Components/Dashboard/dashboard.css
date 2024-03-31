@@ -4,13 +4,14 @@ html, body{
     min-height: 100%;
     margin:0;
     padding:0;
-
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .dashboard{
   width:100%;
-  height:100%;
-  background-color:rgb(157, 222, 248);
+  height: inherit;
+  background-color: rgb(210, 208, 208);
+  padding-bottom: 5px;
 }
 
 .dashboard .topbar {
@@ -18,27 +19,27 @@ html, body{
   display: flex;
   flex-direction: row;
   position: fixed;
-  background-color:  #41d159;
+  background-color:  rgb(42, 42, 165);
   width: 100%;
   padding: 7px;
-  box-sizing: border-box;
-  border-bottom: 8px solid rgb(157, 222, 248);
+  height: 66px;
 }
-
 .dashboard .content{
   display: flex;
   flex-direction: row;
   align-items: center;
-  overflow: wrap;
   }
 .dashboard .content img{
   width: auto; 
-  height: 80px; 
+  height: 70px; 
   display: block; 
-  border: 2px solid #000; 
+  border-radius: 10px;
+  margin-top: -10px;
 }
 .dashboard .content .name {
-  padding-left: 30px;
+  padding-top: 10px;
+  color: white;
+  padding-left: 0px;
   font-size: 45px;
   white-space: wrap;
   overflow: hidden;
@@ -73,34 +74,33 @@ html, body{
   display: inline-block;
 }
 .dashboard .profile img{
-  height: 40px;
+  height: 35px;
   width: auto;
   border-radius: 50%;
   align-self: center;
 }
 .dashboard .profile button {
-  background-color: #4CAF50;
+  background-color: rgb(157, 222, 248);
   text-align: center;
   padding: 4px 5px;
   border: none;
-  border-radius: 20%;
+  border-radius: 10px;
   cursor: pointer;
 }
 .dashboard .profile button:hover{
-  background-color:  rgb(157, 222, 248);
+  background-color:  #ddd;
 }
-
 .dashboard .dropdown-content{
   display: none; /* Initially hide the dropdown content */
   position: absolute;
   right: 0%;
   top: 100%;
-  background-color: #f1f1f1;
+  background-color: white;
   min-width: 100px;
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   border-radius: 10%;
-  z-index: 1;
+  z-index: 2;
 }
 .dashboard .dropdown-content a {
   color: black;
@@ -114,71 +114,162 @@ html, body{
 .dashboard .show {
   display: block; /* Display the dropdown content when the "show" class is added */
 }
+.dashboard .sidebar .locationSettings .dropdown-contentB.flex {
+  display: flex; /* Display the dropdown content when the "show" class is added */
+}
+
+.dashboard .sidebar .locationSettings .dropdown-contentB.hidden {
+  display: none; /* Display the dropdown content when the "show" class is added */
+}
 
 /* going into dangerous territory */
 .dashboard .lower-content{
   flex-direction: row;
-  padding-top: 103px;
-  /* background-color: orange; */
+  /* height: calc(100vh - 90px);
+  padding-top: 90px;padding-top: 103px; */
+  height: inherit;
+  min-height: 600px;
+  padding-top: 86px;
   display: flex;
   width: 100%;
   gap: 5px;
 }
-.dashboard .lower-content .saved .sidebar{
+.dashboard .lower-content .saved .sidebar-container{
+  position: sticky;
   max-width: 30vw;
-  min-width: 300px;
-  height: 100vh;
+  min-width: 450px;
+  height: 100%;
+  display: block;
+  border-radius: 10px;
+  flex: 1;
+  margin-right: 5px;
+}
+.dashboard .lower-content .saved .sidebar{
+  position: absolute;
+  max-width: 30vw;
+  min-width: 450px;
+  height: inherit;
   background-color: #f2f2f2; 
   display: block;
-  border: 2px solid #000; 
-  border-radius: 1%;
+  border-radius: 10px;
   flex: 1;
   margin-left: 5px;
-}
-.dashboard .lower-content .result .sidebar {
-  max-width: 30vw;
-  min-width: 300px;
-  height: 100vh;
-  background-color: #f2f2f2; 
-  display: block;
-  border: 2px solid #000; 
-  border-radius: 1%;
-  flex: 1;
-  margin-right: 5px;
+  overflow-y: auto;
 }
 .dashboard .sidebar .name{
-  position: sticky;
-  top: 105px;
+  color: white;
   width: auto;
   font-size: 30px;
-  text-align: center;
-  background-color: #41d159;
-  border-top: 2px solid #000; 
+  text-align:left;
+  background-color: rgb(40, 40, 135);
+  border-top-left-radius: 10px; /* Adjust this value */
+  border-top-right-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row; /* Change to row */
+  justify-content: space-between; /* Distribute items along the main axis */
+  align-items: center;
+}
+.dashboard .sidebar .name button{
+  background-color:  rgb(72, 72, 185);
   padding: 10px;
 }
-.dashboard .sidebar li{
-  font-size: 20px;
-  margin-bottom: 15px;
+.dashboard .sidebar .name button:hover{
+  background-color:  rgb(26, 26, 197);
 }
 
-.dashboard .lower-content .search-map{
-  margin-top: -100px;
+.dashboard .sidebar .locationSettings{
+    background-color: rgb(237, 237, 236);
+    padding: 10px;
+    position: sticky;
+}
+.dashboard .sidebar .locationSettings .setDistance {
+  border: none;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  border-radius: 4px;
+  height: auto;
+  background-color: whitesmoke;
+}
+.dashboard .sidebar .locationSettings .setDistance img{
+  height: 10px;
+}
+.dashboard .sidebar .locationSettings .setDistance:hover{
+  background-color: rgb(199, 198, 198);
+  cursor: pointer;
+}
+ /* .dashboard .sidebar .locationSettings .dropdown-contentB{
+  display: none;
+  left: 10%;
+  top: 80%;
+  position: absolute;
+  width: fit-content;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  margin-right: 5px;
-  width: 100%;
-  flex-grow: 1;
+}  */
+.dashboard .sidebar .locationSettings .dropdown-contentB{
+  display: none; /* Initially hide the dropdown content */
+  background-color: white;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 10%;
+  left: 10%;
+  top: 80%;
+  position: absolute;
+  flex-direction: column;
+} 
+.dashboard .sidebar .locationSettings .dropdown-contentB span{
+  padding: 10px;
 }
-.dashboard .search-map .input-container{
-  top: 110px;
-  position: sticky;
+.dashboard .sidebar .locationSettings .dropdown-contentB span:hover{
+  cursor: pointer;
+  background-color: #ddd;
+}
+.dashboard .sidebar-container .sidebar li{
+  display: flex;
+  padding: 2px 15px 2px 15px;
+  font-size: 20px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  background-color: rgb(225, 225, 245);
+  box-shadow: 1px 1px 1px 1px rgba(54, 20, 179, 0.316);
+}
+
+.dashboard .sidebar-container .sidebar .location-text {
+  flex: 1; /* Take up remaining space */
+  font-weight:300;
+}
+.dashboard .sidebar-container .sidebar .routeDistance {
+  flex: 1; /* Take up remaining space */
+  font-weight:300;
+  font-size: 17px;
+}
+.dashboard .sidebar-container .sidebar .name-text {
+  flex: 1; /* Take up remaining space */
+  font-size: 23px;
+  font-weight: 540;
+}
+
+.dashboard .sidebar-container .sidebar li:hover{
+  background-color: rgb(184, 184, 220);
+  cursor:pointer;
+}
+.dashboard .lower-content .search-map{
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+  height: inherit;
+  min-height: 600px;
+  padding-right: 5px;
+}
+.dashboard .lower-content .search-map .input-container{
   padding-left: 0px;
+  padding-top: 0px;
   display: flex;
   flex-direction: row;
   white-space: nowrap;
-  min-width: 420px;
-  max-width: 4300px;
+  min-width: 80%; /*when window maximized, take entire top bar*/
   min-height: 10px;
   margin-bottom: 10px;
 }
@@ -190,19 +281,22 @@ html, body{
   margin-top: 8px;
   margin-right: 8px;
   width: 500px;
-  border-radius: 4%;
+  border-radius: 10px;
+  border: none;
   flex: 1;
 }
 .dashboard .input-container .searchButton{
   padding: 6px;
-  margin-top: 8px;
+  margin-top: 9px;
   margin-right: 16px;
+  margin-left: 0px;
   height: 38px;
-  background: #41d159;
+  background: rgb(157, 222, 248);
   font-size: 17px;
   border: black;
   cursor: pointer;
-  border-radius: 4%;
+  border-radius: 10%;
+  z-index: 1;
 }
 .dashboard .input-container .currentLocationButton{
   padding-top: 10px;
@@ -217,29 +311,99 @@ html, body{
 }
 
 .dashboard .lower-content .searchButton:hover{
-  background-color:  #309c42;
+  background-color:  rgb(104, 183, 214);
 }
 
 .dashboard .lower-content .search-map .map{
-  position: sticky;
-  overflow: hidden;
+  height: calc(100vh - 148px);
+  min-height: 638px;
+  position: relative;
   width:100%;
-  height: 80vh;
-  padding-top: 5px;
   flex-grow: 1;
+  flex-shrink: 1;
+  border-radius: 10px;
 }
 
+@media(max-width: 1220px)
+{
+  .dashboard .lower-content .search-map .map{
+    height: calc(100vh - 166px);
+  }
+}
+
+ul {
+  padding: 7px;
+  list-style-type: none;
+}
 
 .result-sales-button {
-  background-color: #4caf50;
+  background-color: purple;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 0px 16px;
   border-radius: 5px;
+  margin-right: -5px;
+  margin-top: 5px;
+  height: 60px;
+  width: 60px;
   cursor: pointer;
-  margin-top: 10px; 
+  border-radius: 50%;
+}
+.result-sales-button img{
+  height:20px;
+  width: auto;
+  border-radius: 50%;
+}
+.add-button {
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.locationInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
 }
 
 .result-sales-button:hover {
-  background-color: #309c42;
+  background-color: rgb(104, 183, 214);
+}
+
+.routeDistance {
+  margin-right: 10px; /* Adjust spacing between distance and review button */
+}
+.dashboard .sidebar .name,
+.dashboard .sidebar .locationSettings {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(40, 40, 135);
+}
+
+.dashboard .sidebar .name {
+  color: white;
+  font-size: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard .sidebar .name button {
+  background-color: rgb(72, 72, 185);
+  padding: 10px;
+}
+
+.dashboard .sidebar .name button:hover {
+  background-color: rgb(26, 26, 197);
+}
+
+.dashboard .sidebar .locationSettings {
+  background-color: rgb(237, 237, 236);
+  padding: 10px;
+  top: 55px; /* Adjust this value to match the height of the .name element */
 }

@@ -1,15 +1,26 @@
-import React, { useState } from "react";
-import { Link } from 'react-router-dom';
-<<<<<<< Updated upstream
-=======
+import React, { useState, useEffect } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
+import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
->>>>>>> Stashed changes
+import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
 import "./reviewpage.css";
 
+// Define a custom interface for restroom data
+interface RestroomData {
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  address: string;
+  direction: string;
+  comments: string;
+  // Add more fields as needed
+}
+
 interface Review {
-  customerName: string;
+  reviewerName: string;
   cleanliness: number;
   amenities: number;
   accessibility: number;
@@ -18,10 +29,26 @@ interface Review {
   date: Date; // Add date property
 }
 
+interface RouteStep {
+  instruction: string;
+  distance: string;
+  duration: string;
+  travelMode: string;
+}
+
 function ReviewPage() {
+  const navigate = useNavigate();
+  const [routeSteps, setRouteSteps] = useState<RouteStep[]>([]);
+  const { id } = useParams();
+  const { position } = useParams<{ position: string }>();
+  const positionArray = (position ? position.split(',').map(Number) : []) || [];
+  const [getAddress, setAddress] = useState('');
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  //const [restroomData, setRestroomData] = useState(null);
+  const [restroomData, setRestroomData] = useState<RestroomData | null>(null);
   const [addingReview, setAddingReview] = useState(false);
   const [newReview, setNewReview] = useState<Review>({
-    customerName: "",
+    reviewerName: "",
     cleanliness: 0,
     amenities: 0,
     accessibility: 0,
@@ -30,10 +57,6 @@ function ReviewPage() {
     date: new Date(), // Initialize date with current date
   });
   const [reviewsData, setReviewsData] = useState<Review[]>([
-<<<<<<< Updated upstream
-    { customerName: "User 1", cleanliness: 4, amenities: 3, accessibility: 5, description: "Very Clean bathroom!", image: null, date: new Date() },
-=======
->>>>>>> Stashed changes
   ]);
   /*useEffect(() => {
     if (id === "CaCKeanWrTIkBrlBLeuT") {
@@ -67,6 +90,23 @@ function ReviewPage() {
         date: newReview.date,
         restroomsID: `/restrooms/${id}` // Use the restroom ID from the URL
       });
+       // Calculate overall quality of the review
+    const overallQuality = calculateOverallQuality(newReview);
+    let thumbsType: string;
+    // Determine thumbs type based on overall quality
+    if (overallQuality <= 2.5) {
+      thumbsType = "thumbs_down";
+    } else {
+      thumbsType = "thumbs_up";
+    }
+
+    // Update thumbs count in Firestore
+    const restroomRef = doc(db, 'restrooms', id || '');
+    await updateDoc(restroomRef, {
+      [thumbsType]: increment(1) // Increment thumbs count by 1
+    });
+
+    console.log(`${thumbsType} updated successfully for restroom ${id}`);
       console.log("New review added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding review: ", error);
@@ -74,7 +114,7 @@ function ReviewPage() {
 
     // Reset the new review form
     setNewReview({
-      customerName: "",
+      reviewerName: "",
       cleanliness: 0,
       amenities: 0,
       accessibility: 0,
@@ -89,8 +129,6 @@ function ReviewPage() {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
 
-<<<<<<< Updated upstream
-=======
   useEffect(() => {
     const fetchRestroomData = async () => {
       if (!id) return; // Exit early if ID is undefined
@@ -127,9 +165,6 @@ function ReviewPage() {
     fetchRestroomData();
     //fetchReviews(); // Fetch restroom data when component mounts
   }, [id]); // Re-fetch data when the ID changes
-
-
-
 
   useEffect(() => {
     // Function to fetch reviews associated with the restroom ID
@@ -176,10 +211,6 @@ function ReviewPage() {
     fetchReviews(); // Fetch restroom data when component mounts
   }, [id]); // Re-fetch data when the ID changes
 
-
-
-
-
   useEffect(() => {
     //load map into page
     const loader = new Loader({
@@ -212,11 +243,12 @@ function ReviewPage() {
       setMap(makeMap);  //set changes to map
     });
   }, []);
+  
 
   //whenever map changes
   useEffect(() => {
     const fetchData = async () => {
-      //console.log("POR QUE");
+      console.log("POR QUE");
   
       if (!map) return; //if map not loaded
       //display route
@@ -228,7 +260,7 @@ function ReviewPage() {
       if (!restroomData) return;
       const address = `${restroomData.street}, ${restroomData.city}, ${restroomData.state}, ${restroomData.country}`;
   
-      //console.log("Attempting geocoding for address:", address);
+      console.log("Attempting geocoding for address:", address);
   
       // Perform geocoding to convert address to coordinates
       const response = await fetch(
@@ -237,16 +269,16 @@ function ReviewPage() {
   
       if (response.ok) {
         const geoData = await response.json();
-        //console.log("Geocoding response:", geoData); // Log the response from geocoding API
+        console.log("Geocoding response:", geoData); // Log the response from geocoding API
         if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
           const { lat, lng } = geoData.results[0].geometry.location;
           destLat = lat;
           destLng = lng;
-          //console.log("ayo");
+          console.log("ayo");
         }
       }
   
-      //console.log('part 2');
+      console.log('part 2');
       directionsRenderer.setMap(map);
       let request;
   
@@ -263,12 +295,30 @@ function ReviewPage() {
       directionsService.route(request, (result, status) => {
         if (status === "OK") {
           directionsRenderer.setDirections(result);
-          //console.log("IN BICH");
+          
+          if (result) {
+            const steps: RouteStep[] = [];
+            const route = result.routes[0];
+            if (route) {
+              const legs = route.legs;
+              legs.forEach((leg, legIndex) => {
+                leg.steps.forEach((step, stepIndex) => {
+                  steps.push({
+                    instruction: step.instructions,
+                    distance: step.distance ? step.distance.text : "Unknown",
+                    duration: step.duration ? step.duration.text : "Unknown",
+                    travelMode: step.travel_mode,
+                  });
+                });
+              });
+            }
+            setRouteSteps(steps);
+          }
         } else {
           console.error("Directions request failed due to " + status);
         }
       });
-      //console.log('rerun');
+      console.log('rerun');
     };
   
     fetchData(); // Call the async function
@@ -278,25 +328,43 @@ function ReviewPage() {
       // Cleanup code here
     };
   }, [map, restroomData]); // Dependency array
+  
+  const handleDashboardReturn = () => {
+    navigate(`/dashboard?latLng=${position}`);
+  };
+
   console.log("Reviews data:", );
->>>>>>> Stashed changes
   return (
+    <div className="page-wrapper">
     <div className="review-page">
       <div className="header-container">
+        <div className="review-header">Restroom's information</div>
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
           Add Review
         </button>
-        <div className="review-header">Restroom's information</div>
-        <Link to="/dashboard" className="go-back-btn">Dashboard</Link>
+        <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
       </div>
       <div className="place-details">
         <div className="place-info-container">
           <div className="place-info">
-          <div className="place-name">Place Name</div>
-          <div className="place-address">Address: 123 Main St, City, Country</div>
-          <div className="place-directions">Directions: im lost</div>
+          <div className="place-name">{restroomData?.name}</div>
+          <div className="place-address">Address: {restroomData?.address}</div>
+          <div className="place-directions">Building Directions: {restroomData?.direction}</div>
+          <div className="map" id="map"></div>
+          <div className="route-steps-container">
+            {/* <p>Street Directions</p>
+      {routeSteps.map((step, index) => (
+        <div key={index}>
+          <p className="route-step">Step {index + 1}</p>
+          <p className="route-step">Instructions: <span dangerouslySetInnerHTML={{ __html: step.instruction }} /></p>
+          <p className="route-step">Distance: <span dangerouslySetInnerHTML={{ __html: step.distance }} /></p>
+          <p className="route-step">Duration: <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p>
+          <p></p>
+        </div>
+      ))} */}
+    </div>
           </div>
-      <div className="place-comments">Comments: This sucks.</div>
+      <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">
       <img src="Comp/Reviewpage/Handicap_toliet_2.jpg" alt="Place Image" /> 
       </div>
@@ -308,8 +376,8 @@ function ReviewPage() {
           <label>Name:</label>
           <input
             type="text"
-            value={newReview.customerName}
-            onChange={(e) => setNewReview({ ...newReview, customerName: e.target.value })}
+            value={newReview.reviewerName}
+            onChange={(e) => setNewReview({ ...newReview, reviewerName: e.target.value })}
           />
           <label>Cleanliness:</label>
           <input
@@ -353,24 +421,6 @@ function ReviewPage() {
       
       <div className = "reviews-box">
       <div className="reviews-container">
-<<<<<<< Updated upstream
-        {reviewsData.map((review, index) => (
-          <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 2.5 ? 'light-red' : 'light-green'}`}>
-            <div className="customer-name">{review.customerName}</div>
-            <div className="cleanliness star-rating">{`Cleanliness: ${'★'.repeat(review.cleanliness)}`}</div>
-            <div className="amenities star-rating">{`Amenities: ${'★'.repeat(review.amenities)}`}</div>
-            <div className="accessibility star-rating">{`Accessibility: ${'★'.repeat(review.accessibility)}`}</div>
-            <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/5`}</div>
-            <div className="description">{review.description}</div>
-            <div className="date">Date: {review.date.toLocaleDateString()}</div>
-            {review.image && (
-              <div className="photo">
-                <img src={URL.createObjectURL(review.image)} alt="Review" />
-              </div>
-            )}
-          </div>
-        ))}
-=======
         {reviewsData.length > 0 ? (
           reviewsData.map((review, index) => (
             <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 2.5 ? 'light-red' : 'light-green'}`}>
@@ -391,9 +441,9 @@ function ReviewPage() {
         ) : (
           <div>No reviews available</div>
         )}
->>>>>>> Stashed changes
       </div>
       </div>
+    </div>
     </div>
   );
 }
