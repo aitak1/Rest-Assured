@@ -10,16 +10,14 @@ import { db } from "../../firebase.ts";
 import {collection, getDocs, } from 'firebase/firestore'
 
 //store all essential info for nearby locations
-let nearbyLocations=[] as {id : string, name: string, address: string, distance: number, latS: number, lngS: number, rating:{positive: number, negative: number} }[];
+let nearbyLocations=[] as {id : string, name: string, address: string, distance: number, latS: number, lngS: number, rating: number, color: string}[];
 interface MarkerWithInfoWindow extends google.maps.Marker {
   infoWindow: google.maps.InfoWindow;
 }
-interface Rating {
-  positive: number;
-  negative: number;
-}
+
 let locationMarkers: MarkerWithInfoWindow[] = []; //store location markers and info windows
 let globalDistance = .5;
+let globalLocation: string;
 
 //deal with the search bar, map api, and search functions
 function SearchLocation(){
@@ -31,13 +29,12 @@ function SearchLocation(){
   const [map, setMap] = useState<google.maps.Map | null>(null); //google map api
   const [distance, setDistance] = useState(globalDistance); //within radius of global distance
   const [circle, setCircle] = useState<google.maps.Circle | null>(null);
-  let locationUpdate = false;
   const currentLocation = useLocation();
-  const memoizedFindTheWay = useCallback(async (circle, map, userPosition) => {
+  const memoizedFindTheWay = useCallback(async (circle, map, userPosition, sortByRatings) => {
     try {
       // Your asynchronous logic goes here
       // For example:
-      const result = await findTheWay(circle, map, userPosition);
+      const result = await findTheWay(circle, map, userPosition, sortByRatings);
       // Process the result if needed
       return result;
     } catch (error) {
@@ -49,12 +46,24 @@ function SearchLocation(){
       console.log('Finally block executed');
     }
   }, []);
-  let locationHome = false;
+
+  const [sortByRatings, setSortByRatings] = useState(false);
+
 
   let routeIndex: number | null = null;
 
+  const navigateToReviewPage = (index : number) =>{
+    routeIndex = index;
+    const positionString = `${userPosition.lat},${userPosition.lng}`;
+    console.log("HORSEEEEE", routeIndex);
+    if(routeIndex || routeIndex === 0)
+      navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${positionString}`);
+    else
+      console.log("PROBLEM", routeIndex);
+  }
+
   //find locations within certain radius and create markers, store data, signal for sidebar to rerender
-  const findTheWay = async (circle, map, userPosition) => {
+  const findTheWay = async (circle, map, userPosition, sortByRatings) => {
     nearbyLocations = [];
   
     //remove all markers from map
@@ -78,9 +87,36 @@ function SearchLocation(){
           const state = data.state;
           const country = data.country;
           const name = data.name;
-          const rating = {positive: data.thumbs_up, negative: data.thumbs_down} as Rating;
+          const positive = data.thumbs_up as number;
+          const negative =  data.thumbs_down as number;
+          const total = positive + negative;
 
-          console.log('MAMA MIA',typeof rating.positive);
+          let color = "";
+          let overallRating = positive / total * 100;
+          
+
+          if(total === 0)
+          {
+            overallRating = 0;
+            color = "rgb(40, 40, 135)";
+          }
+          else if(overallRating  < 70 && overallRating >= 40)
+          {
+            color = "orange";
+          }
+
+          else if(overallRating < 40)
+          {
+            color = "red";
+          }
+
+          else
+          {
+            color = "green";
+          }
+          overallRating /= 20;
+
+          //console.log('MAMA MIA',typeof rating.positive);
     
           // Concatenate street, city, state, and country to form complete address
           const address = `${street}, ${city}, ${state}, ${country}`;
@@ -109,7 +145,7 @@ function SearchLocation(){
 
                 // Push the location to the nearbyLocations array
                 const distanceInMiles = parseFloat((distance / 1609.34).toFixed(2));
-                nearbyLocations.push({ id: doc.id, name, address, distance: distanceInMiles, latS: lat, lngS: lng, rating});
+                nearbyLocations.push({ id: doc.id, name, address, distance: distanceInMiles, latS: lat, lngS: lng, rating: overallRating, color});
               }
             } else {
               console.error("Invalid location:", address); //print error
@@ -119,11 +155,14 @@ function SearchLocation(){
           }
         }));
     
-        // Sort nearby locations by distance
-        nearbyLocations.sort((a, b) => a.distance - b.distance);
-
+        console.log("SPEAK YOUR TRUTH ",sortByRatings);
+        // Sort nearby locations by distance or rating
+        if(sortByRatings)
+          nearbyLocations.sort((a, b) => b.rating - a.rating);
+        else
+          nearbyLocations.sort((a, b) => a.distance - b.distance);
         //create markers relative to nearby locations as well as info boxes to associate with them when hovering
-        nearbyLocations.forEach( (location) => {
+        nearbyLocations.forEach( (location, index) => {
           const marker = new google.maps.Marker({
                   position: { lat:location.latS, lng: location.lngS },
                   map,
@@ -134,45 +173,37 @@ function SearchLocation(){
                   }
                 })as MarkerWithInfoWindow;
                 //info to display when marker selected
-                let color = "";
-                let positive = location.rating.positive;
-                let negative = location.rating.negative;
-                let total = negative + positive;
-                let overallRating = positive / total * 100;
-                
-
-                if(total === 0)
-                {
-                  color = "rgb(40, 40, 135)";
-                }
-                else if(overallRating  < 70 && overallRating >= 40)
-                {
-                  color = "orange";
-                }
-
-                else if(overallRating < 40)
-                {
-                  color = "red";
-                }
-
-                else
-                {
-                  color = "green";
-                }
 
                 let infoWindow;
-                if(total === 0)
+                if(location.rating === 0)
                 {
                   infoWindow = new google.maps.InfoWindow({
-                    content: `<div>${location.address}</div><div>Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div><div style="text-align: center; color: white; padding: 4px; background: ${color}">No ratings</div>`
-                  });
+                    content: `
+                      <div>${location.address}</div>
+                      <div style="margin-bottom: 4px;">Distance: ${location.distance} mi / ${(location.distance * 1.60934).toFixed(3)} km</div>
+                      <div style="border-radius: 3px; margin-bottom: 4px; text-align: center; color: white; padding: 4px; background: ${location.color}">No ratings</div>
+                      <button class="navigate-button" id="navigateButton-${index}" style="border-radius: 3px; margin-bottom: 4px;">View more information</button>`,
+                });
                 }
                 else
                 {
                   infoWindow = new google.maps.InfoWindow({
-                          content: `<div>${location.address}</div><div>Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div><div style="text-align: center; color: white; padding: 4px; background: ${color}">${(overallRating).toFixed(1)}%</div>`
-                        });
+                    content: `
+                      <div>${location.address}</div>
+                      <div style="margin-bottom: 4px;">Distance: ${location.distance} mi / ${(location.distance* 1.60934).toFixed(3)} km</div>
+                      <div style="border-radius: 3px; margin-bottom: 4px; text-align: center; color: white; padding: 4px; background: ${location.color}">${(location.rating).toFixed(1)} / 5.0 ★</div>
+                      <button class="navigate-button" id="navigateButton-${index}" style="border-radius: 3px; margin-bottom: 4px;">View more information</button>`
+                  });
                 }
+
+                google.maps.event.addListener(infoWindow, 'domready', () => {
+                  const navigateButton = document.getElementById(`navigateButton-${index}`);
+                  if (navigateButton) {
+                    navigateButton.addEventListener('click', () => {
+                      navigateToReviewPage(index); // Call your function here
+                    });
+                  }
+                });
 
                 marker.addListener('click', () => {
                       infoWindow.open(map, marker);
@@ -247,14 +278,15 @@ function SearchLocation(){
             if (place.geometry && place.geometry.location) {  //check if location is valid
               setOpen(true);  //allow circle radius to appear
               setLocation(place.formatted_address ?? ''); //store the selected location in user input bar
-
               //store lat and lng of selected place as users location
               const { lat, lng } = place.geometry.location; 
               const newPosition = { lat: lat(), lng: lng() };
               setUserPosition(newPosition);
              // holdPosition = {...newPosition};
               mapInstance.panTo(newPosition); //zoom in to users new position
-             
+              //globalLocation = location;
+
+              console.log("savior sir", globalLocation, location);
             }
           }
         }).catch(error => { //if map failed to load
@@ -313,75 +345,25 @@ function SearchLocation(){
 
     //add markers for locations within radius
     if(newCircle !== undefined){
-      memoizedFindTheWay(newCircle, map, userPosition);     
+      memoizedFindTheWay(newCircle, map, userPosition, sortByRatings);     
     }
 
-        console.log('horset p2',locationMarkers.length); 
-
-    //zoom in 
-    const zoomLevel = map.getZoom();
-    if (zoomLevel && zoomLevel > 15) {
-      map.setZoom(17);
-    }
+        console.log('horset p2',locationMarkers.length);
     }
   
-  }, [map]);  // map changes
-
-  const searchParams = new URLSearchParams(window.location.search);
-  const positionParam = searchParams.get("latLng");
-  const getFormattedAddress = async (latitude, longitude) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
-      );
-      if (!response.ok) {
-        throw new Error('Failed to fetch address');
-      }
-      const data = await response.json();
-      if (data.status === 'OK' && data.results && data.results.length > 0) {
-        return data.results[0].formatted_address;
-      } else {
-        throw new Error('No address found');
-      }
-    } catch (error) {
-      console.error('Error fetching address:', error.message);
-      return null;
-    }
-  };
+  }, [map, sortByRatings]);  // map changes
   
   useEffect(() => {
-    if(positionParam?.trim() != '' && positionParam)
-    {
-     console.log(positionParam, "SAVE MEEEE jk");
-     const positionArray = positionParam.split(',').map(Number);
-    if (positionArray.length === 2) {
-      const newPosition = { lat: positionArray[0], lng: positionArray[1] };
-      getFormattedAddress(positionArray[0], positionArray[1])
-    .then((formattedAddress) => {
-      console.log('Formatted Address:', formattedAddress);
-      setLocation(formattedAddress);
-      locationUpdate = true;
-      console.log('Location',location);
+    if(globalLocation && globalLocation.trim() !== '')
+      {setLocation(globalLocation);
       handleSearch();
-    })
-    .catch((error) => {
-      console.error('Error:', error.message);
-    })
-    //setUserPosition(newPosition);
-  }
-    }
-     
-    // Store the initial address value obtained from the URL in the ref
-    
-  }, [positionParam]);
+    console.log(location, globalLocation );}
+    else{
+      console.log("oh woe is me", globalLocation);
 
-  useEffect(() => {
-    console.log('UPDATE: ', locationUpdate);
-    if(!locationUpdate || !location) return;
-    console.log()
-    handleSearch();
-    locationUpdate = false;
-  },[location]);
+    }
+  }, []);
+
 
   //to reset dataloaded to prepare for next sidebar update
   useEffect(() => {
@@ -389,21 +371,32 @@ function SearchLocation(){
       console.log('Data loaded!');
       setDataLoaded(false);
     }
+    console.log("curious george",location);
+    globalLocation = location;
   }, [dataLoaded]);
-
-
 
   //another handle search function using 'enter' and search button
   const handleSearch = async () => {
     console.log(location.trim());
     console.log(location);
-    if (location.trim() !== '') { //if location input isnt empty
+    if (location.trim() !== '' || globalLocation !== '') { //if location input isnt empty
       console.log('HEYOOOO TEST');
+
       //request geocode for location
       try {
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
-        );
+        let response;
+        if(globalLocation !== '')
+        {
+          response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(globalLocation)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+          );
+        }
+        else
+        {
+          response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+          );
+        }
         
         //if gets response, update user position with data recieved 
         if (response.ok) {
@@ -412,6 +405,7 @@ function SearchLocation(){
             const { lat, lng } = data.results[0].geometry.location;
             setOpen(true);
             setUserPosition({ lat, lng });
+            //globalLocation = location;
             console.log("User position updated successfully!");
           } else {
             console.log(data);
@@ -437,6 +431,7 @@ function SearchLocation(){
             };
             setOpen(true);
             setUserPosition(newPosition);
+            //globalLocation = location;
             console.log("User position updated successfully:", newPosition);
           },
           (error) => {
@@ -487,11 +482,16 @@ function SearchLocation(){
      }
    }, [initialAddressRef]);
 
-        const {t} = useTranslation();
-       function SavedSales({ update }) {
+   const handleSortByRatingsChange = async () =>{
+     setSortByRatings(!sortByRatings);
+     console.log("THE TRUUUTHHH",sortByRatings);
+   };
+      const {t} = useTranslation();
+      function SavedSales({ update }) {
           const [dropdownOpenB, setdropdownOpenB] = useState(false);
           const {t} = useTranslation();
           const [savedDistance, setSavedDistance] = useState(globalDistance);
+          console.log("DISTANCE.",globalDistance);
           console.log("radishes");
         
           //toggle radius distance dropdown
@@ -550,15 +550,7 @@ function SearchLocation(){
            // infoWindow.open(map, marker);
         };
 
-        const navigateToReviewPage = (index : number) =>{
-          routeIndex = index;
-          const positionString = `${userPosition.lat},${userPosition.lng}`;
-          console.log("HORSEEEEE", routeIndex);
-          if(routeIndex || routeIndex === 0)
-            navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${positionString}`);
-          else
-            console.log("PROBLEM", routeIndex);
-        }
+        
         
         const closeAllInfoWindows = () => {
             locationMarkers.forEach(marker => {
@@ -566,66 +558,130 @@ function SearchLocation(){
             });
         };
           return (
-            <div className="saved">
-            <div className="sidebar-container">
-            <div className="sidebar">
-                <div className="name">
-                {t("global.dashboard.title")}
-                  <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
-                </div>
-                <div className="locationSettings">
-                  <button className="setDistance"  onClick={handleDistanceDropdown}>
-                        <span>Within {distance} miles </span>
-                      <img
-                          src="https://static.thenounproject.com/png/551749-200.png"
-                          className="open-dropdown"
-                          alt=""
-                        />
-                  </button>
-                    <div className={`dropdown-contentB ${dropdownOpenB ? 'flex' : 'hidden'}`}>
-                      <span onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</span>
-                      <span onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</span>
-                      <span onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</span>
-                      <span onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</span>
-                      <span onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</span>
-                      <span onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</span>
-                    </div>
-
-                </div>
-                <div className="displayLocations">
-                <ul>
-                  {nearbyLocations.map((location, index) => (
-                    <li key={`${location.address}-${index}`}
-                    onMouseEnter={() => highlightMarker(index)} 
-                    onClick={()=>handleListItemClick(index)}>
-                      <div className="locationInfo">
-                        <span className="name-text">{location.name}</span>
-                        <span className="location-text">{location.address}</span>
-                        <span className="routeDistance">{location.distance} mi / {(location.distance *  1.60934).toFixed(3)} km</span>
+            <div >
+              <div className="saved">
+              <div className="sidebar-container">
+              <div className="sidebar">
+                  <div className="name">
+                  {t("global.dashboard.title")}
+                    <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
+                  </div>
+                  <div className="locationSettings">
+                  <div className="checkboxAndDistance">
+        <input type="checkbox" id="sort-by-ratings" checked={sortByRatings} onChange={handleSortByRatingsChange} />
+        <label htmlFor="sort-by-ratings">Sort by ratings</label>
+        
+        <button className="setDistance" onClick={handleDistanceDropdown}>
+            <span>Within {distance} miles </span>
+            <img src="https://static.thenounproject.com/png/551749-200.png" className="open-dropdown" alt="" />
+        </button>
+    </div>
+                      <div className={`dropdown-contentB ${dropdownOpenB ? 'flex' : 'hidden'}`}>
+                        <span onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</span>
+                        <span onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</span>
                       </div>
-                      <button className="result-sales-button"
-                        onClick={()=> navigateToReviewPage(index)}>
-                      
+
+                  </div>
+                  <div className="displayLocations">
+                  <ul>
+                    {nearbyLocations.map((location, index) => (
+                      <li key={`${location.address}-${index}`}
+                      onMouseEnter={() => highlightMarker(index)} 
+                      onClick={()=>handleListItemClick(index)}>
+                        <div className="locationInfo">
+                          <span className="name-text">{location.name}</span>
+                          <span className="location-text">{location.address}</span>
+                          <span> </span>
+                          <div style={{ display: 'flex', alignItems: 'center', paddingTop: '15px' }}>
+                            <span className="routeDistance">{location.distance} mi / {(location.distance * 1.60934).toFixed(3)} km</span>
+                            <span style={{ marginRight: '-40px', justifyContent: 'none', borderRadius: '3px', padding: '4px', color: 'white', background: `${location.color}`, fontSize: '15px' }}>
+                            
+                                {location.rating === 0 ? 
+                                    "N / A" :
+                                    `${(location.rating).toFixed(1)} / 5 ★`
+                                }
+                            </span>
+                        </div>
+                        </div>
+                        <button className="result-sales-button"
+                          onClick={()=> navigateToReviewPage(index)}>
+                        
+                          <img
+                            src="/assets/arrow.PNG"
+                            className="array-image"
+                            alt=""
+                          />
+                        
+                        </button>  
+                      </li>
+                    ))}
+                  </ul>
+                  </div>
+              </div>
+              </div>
+              </div>
+              {/* <div className="show-results">
+              <div className="sidebar-container">
+              <div className="sidebar">
+                  <div className="locationSettings">
+                    <button className="setDistance"  onClick={handleDistanceDropdown}>
+                          <span>Within {distance} miles </span>
                         <img
-                          src="/assets/arrow.PNG"
-                          className="array-image"
-                          alt=""
-                        />
+                            src="https://static.thenounproject.com/png/551749-200.png"
+                            className="open-dropdown"
+                            alt=""
+                          />
+                    </button>
+                      <div className={`dropdown-contentB ${dropdownOpenB ? 'flex' : 'hidden'}`}>
+                        <span onClick={()=>handleDistanceChange(0.5)}>Within 0.5 miles</span>
+                        <span onClick={()=>handleDistanceChange(1.0)}>Within 1.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(2.0)}>Within 2.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(5.0)}>Within 5.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(10.0)}>Within 10.0 miles</span>
+                        <span onClick={()=>handleDistanceChange(15.0)}>Within 15.0 miles</span>
+                      </div>
+                      <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
+                  </div>
+                  <div className="displayLocations">
+                  <ul>
+                    {nearbyLocations.map((location, index) => (
+                      <li key={`${location.address}-${index}`}
+                      onMouseEnter={() => highlightMarker(index)} 
+                      onClick={()=>handleListItemClick(index)}>
+                        <div className="locationInfo">
+                          <span className="name-text">{location.name}</span>
+                          <span className="location-text">{location.address}</span>
+                          <span className="routeDistance">{location.distance} mi / {(location.distance *  1.60934).toFixed(3)} km</span>
+                        </div>
+                        <button className="result-sales-button"
+                          onClick={()=> navigateToReviewPage(index)}>
+                        
+                          <img
+                            src="/assets/arrow.PNG"
+                            className="array-image"
+                            alt=""
+                          />
+                        
+                        </button>
                       
-                      </button>
-                    
-                    </li>
-                  ))}
-                </ul>
+                      </li>
+                    ))}
+                  </ul>
+                  </div>
                 </div>
-            </div>
-            </div>
-            </div>
+                </div>
+              </div> */}
+              </div>
           );
         }
 
   return (
-    <div className="lower-content">
+    <div>
+      <div className="lower-content">
         <SavedSales update={dataLoaded} />
           <div className="search-map">
             <div className="input-container">
@@ -643,14 +699,38 @@ function SearchLocation(){
               </button>
               <img className="currentLocationButton" 
                 onClick={handleCurrentLocation}
-                src="/assets/currentLocationButton.png"
+                src="/assets/currentLocation.png"
                 alt="current_location"
               />
             </div>
             <div className="map" id="map"></div>
           </div>
-          </div>
-      );
+      </div>
+      {/* <div className="mobile-version">
+        <div className="input-container">
+              <input
+                id="locationInput"
+                name="location"
+                type="text"
+                placeholder={t("global.dashboard.searchbar")}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                aria-label="Search Location"
+              />
+              <button id="searchButton" type="button" className="searchButton" onClick={handleSearch}>
+              {t("global.dashboard.search")}
+              </button>
+              <img className="currentLocationButton" 
+                onClick={handleCurrentLocation}
+                src="/assets/currentLocation.png"
+                alt="current_location"
+              />
+        </div>
+        <div className="map" id="map"></div>
+        <SavedSales update={dataLoaded} />
+      </div> */}
+    </div>
+  );
 }
 
 function UserProfile(){
@@ -728,7 +808,8 @@ function UserProfile(){
 function Dashboard(){
   
   useEffect(() => {
-    console.log("jorge");
+    nearbyLocations = [];
+    console.log("jorge", globalLocation);
     
   }, []);
    const {t} = useTranslation();

@@ -257,15 +257,90 @@
   border-radius: 10px; /* Adjust border-radius as needed */
 }
 
-.review-page .map{
-  height: 500px;
-  width: auto;
-  border-radius: 10px;
-}
 .route-steps-container {
   text-align: left; /* Center-align the steps to the right */
 }
 
 .route-step {
   margin-bottom: -20px; /* Adjust the margin to reduce line space between steps */
+  font-size: 25px;
+  color: #000;
+}
+
+.review-page .map-directions .map{
+  height: inherit;
+  width: auto;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.review-page .map-directions .directions{
+  width: 450px;
+  min-height: inherit;
+  background-color: #f8f7f7; 
+  display: block;
+  border-radius: 10px;
+  margin-left: 5px;
+  overflow-y: auto;
+  text-align: left;
+  padding: 0px 10px;
+}
+
+.review-page .map-directions{
+  gap: 5px;
+  display: flex;
+  height: 500px;
+  flex-direction: row;
+}
+
+/* Custom scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Custom scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #b5b5b5;
+  border-radius: 10px;
+}
+
+/* Custom scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: #f1f1f1;
+}
+
+/* Optional: Hide scrollbar when not hovering */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Show scrollbar on hover */
+::-webkit-scrollbar:hover {
+  display: block;
+}
+
+
+@media(max-width: 1000px)
+{
+  .review-page .map-directions {
+    flex-direction: column;
+    height: fit-content;
+  }
+  
+  .review-page .map-directions .map {
+    border-radius: 10px;
+    height: 500px;
+    flex: none;
+  }
+  
+  .review-page .map-directions .directions {
+    background-color: #f8f7f7;
+    border-radius: 10px;
+    overflow-y: auto;
+    width: auto;
+    text-align: left;
+    padding: 0px 10px;
+    height: 130px;
+  }
 }
