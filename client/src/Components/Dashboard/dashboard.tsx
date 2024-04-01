@@ -602,7 +602,7 @@ function SearchLocation(){
                             
                                 {location.rating === 0 ? 
                                     "N / A" :
-                                    `${(location.rating).toFixed(1)} / 5 ★`
+                                    `${(location.rating).toFixed(1)} / 5.0 ★`
                                 }
                             </span>
                         </div>

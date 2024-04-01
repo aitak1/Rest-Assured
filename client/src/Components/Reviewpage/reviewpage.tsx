@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
 import "./reviewpage.css";
 
 // Define a custom interface for restroom data
@@ -92,6 +92,23 @@ function ReviewPage() {
         date: newReview.date,
         restroomsID: `/restrooms/${id}` // Use the restroom ID from the URL
       });
+       // Calculate overall quality of the review
+    const overallQuality = calculateOverallQuality(newReview);
+    let thumbsType: string;
+    // Determine thumbs type based on overall quality
+    if (overallQuality <= 2.5) {
+      thumbsType = "thumbs_down";
+    } else {
+      thumbsType = "thumbs_up";
+    }
+
+    // Update thumbs count in Firestore
+    const restroomRef = doc(db, 'restrooms', id || '');
+    await updateDoc(restroomRef, {
+      [thumbsType]: increment(1) // Increment thumbs count by 1
+    });
+
+    console.log(`${thumbsType} updated successfully for restroom ${id}`);
       console.log("New review added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding review: ", error);
@@ -113,6 +130,7 @@ function ReviewPage() {
   const calculateOverallQuality = (review: Review): number => {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
+
 
   useEffect(() => {
     const fetchRestroomData = async () => {
@@ -326,12 +344,13 @@ function ReviewPage() {
 
   console.log("Reviews data:", );
   return (
+    <div className="page-wrapper">
     <div className="review-page">
-      <div className="header-container">
+    <div className="header-container">
+        <div className="review-header">Restroom's information</div>
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
           Add Review
         </button>
-        <div className="review-header">Restroom's information</div>
         <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
       </div>
       <div className="place-details">
@@ -435,6 +454,7 @@ function ReviewPage() {
         )}
       </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -1,6 +1,13 @@
 .review-page {
+  background: linear-gradient(to bottom, rgb(42, 42, 165), #ffffff);
   text-align: center;
   padding: 20px;
+}
+
+.page-wrapper {
+  /* Optionally, apply gradient background to a wrapper container */
+  background: linear-gradient(to bottom, rgb(42, 42, 165), #ffffff);
+  min-height: 100vh; /* Ensure the wrapper covers the entire viewport height */
 }
 
 .header-container {
@@ -54,7 +61,7 @@
 
 .add-review-dropdown {
   background-color: #f2f2f2;
-  padding: 10px;
+  padding: 5px;
   border: 2px solid #000;
   border-radius: 10px;
   margin-top: 10px;
@@ -63,21 +70,21 @@
 
 .add-review-dropdown label {
   display: block;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .add-review-dropdown input {
-  width: 100%;
-  padding: 8px;
+  width: calc(100% - 10px); /* Adjust width to accommodate reduced padding */
+  padding: 5px; /* Decrease padding */
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .add-review-dropdown button {
   background-color: #4caf50;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 3px 8px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -229,6 +236,9 @@
 }
 
 .review-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: rgb(42, 42, 165);
   color: white;
   font-size: 20px;
