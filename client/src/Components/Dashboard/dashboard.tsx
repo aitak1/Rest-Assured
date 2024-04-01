@@ -43,23 +43,37 @@ function SearchLocation(){
     } finally {
       // Finally block executes whether there's an error or not
       // You can perform cleanup or other actions here
-      console.log('Finally block executed');
+      //console.log('Finally block executed');
     }
   }, []);
 
   const [sortByRatings, setSortByRatings] = useState(false);
+  // const [showMap, setShowMap] = useState(false);
 
+  // const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    // useEffect(() => {
+    //     const handleResize = () => {
+    //         setWindowWidth(window.innerWidth);
+    //     };
+
+    //     window.addEventListener('resize', handleResize);
+
+    //     return () => {
+    //         window.removeEventListener('resize', handleResize);
+    //     };
+    // }, []);
 
   let routeIndex: number | null = null;
 
   const navigateToReviewPage = (index : number) =>{
     routeIndex = index;
     const positionString = `${userPosition.lat},${userPosition.lng}`;
-    console.log("HORSEEEEE", routeIndex);
+    //console.log("HORSEEEEE", routeIndex);
     if(routeIndex || routeIndex === 0)
       navigate(`/reviewpage/${nearbyLocations[routeIndex].id}/${positionString}`);
-    else
-      console.log("PROBLEM", routeIndex);
+    //else
+      //console.log("PROBLEM", routeIndex);
   }
 
   //find locations within certain radius and create markers, store data, signal for sidebar to rerender
@@ -70,7 +84,7 @@ function SearchLocation(){
     if(locationMarkers.length !=0)
     {
       locationMarkers.forEach(marker => {
-        console.log('delete');
+        //console.log('delete');
         marker.setMap(null);
     });
     //Empty the locationMarkers array
@@ -116,12 +130,12 @@ function SearchLocation(){
           }
           overallRating /= 20;
 
-          //console.log('MAMA MIA',typeof rating.positive);
+          ////console.log('MAMA MIA',typeof rating.positive);
     
           // Concatenate street, city, state, and country to form complete address
           const address = `${street}, ${city}, ${state}, ${country}`;
     
-          console.log("Attempting geocoding for address:", address);
+          //console.log("Attempting geocoding for address:", address);
     
           // Perform geocoding to convert address to coordinates
           const response = await fetch(
@@ -130,7 +144,7 @@ function SearchLocation(){
     
           if (response.ok) {
             const geoData = await response.json();
-            console.log("Geocoding response:", geoData); // Log the response from geocoding API
+            //console.log("Geocoding response:", geoData); // Log the response from geocoding API
             if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
               const { lat, lng } = geoData.results[0].geometry.location;
     
@@ -155,7 +169,7 @@ function SearchLocation(){
           }
         }));
     
-        console.log("SPEAK YOUR TRUTH ",sortByRatings);
+        //console.log("SPEAK YOUR TRUTH ",sortByRatings);
         // Sort nearby locations by distance or rating
         if(sortByRatings)
           nearbyLocations.sort((a, b) => b.rating - a.rating);
@@ -212,11 +226,11 @@ function SearchLocation(){
       });
         setDataLoaded(true);  //to initiate sidebar update
         if(dataLoaded){
-          console.log('yooo whats good');
+          //console.log('yooo whats good');
         }
         
         // Log the number of locations found
-        console.log("Number of nearby restroom locations:", nearbyLocations.length);
+        //console.log("Number of nearby restroom locations:", nearbyLocations.length);
     
       } catch (error) {
         console.error("Error fetching restroom data:", error);  //print error
@@ -226,6 +240,9 @@ function SearchLocation(){
 
   //load google map api and operate location search functions
   useEffect(() => {
+
+    // if(!showMap && windowWidth <=1100) return;
+    //console.log("WE MADE IT");
     //load map
         const loader = new Loader({
           apiKey: 'AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o',
@@ -286,14 +303,14 @@ function SearchLocation(){
               mapInstance.panTo(newPosition); //zoom in to users new position
               //globalLocation = location;
 
-              console.log("savior sir", globalLocation, location);
+              //console.log("savior sir", globalLocation, location);
             }
           }
         }).catch(error => { //if map failed to load
           console.error('Error loading Google Maps API:', error);
         });
 
-        console.log('AMMMEEERRRIIICAAAA');
+        //console.log('AMMMEEERRRIIICAAAA');
       }, [userPosition, distance]); //depends on if userPosition changes
 
       
@@ -348,7 +365,7 @@ function SearchLocation(){
       memoizedFindTheWay(newCircle, map, userPosition, sortByRatings);     
     }
 
-        console.log('horset p2',locationMarkers.length);
+        //console.log('horset p2',locationMarkers.length);
     }
   
   }, [map, sortByRatings]);  // map changes
@@ -357,9 +374,9 @@ function SearchLocation(){
     if(globalLocation && globalLocation.trim() !== '')
       {setLocation(globalLocation);
       handleSearch();
-    console.log(location, globalLocation );}
-    else{
-      console.log("oh woe is me", globalLocation);
+    //console.log(location, globalLocation );}
+
+      //console.log("oh woe is me", globalLocation);
 
     }
   }, []);
@@ -368,19 +385,19 @@ function SearchLocation(){
   //to reset dataloaded to prepare for next sidebar update
   useEffect(() => {
     if (dataLoaded) {
-      console.log('Data loaded!');
+      //console.log('Data loaded!');
       setDataLoaded(false);
     }
-    console.log("curious george",location);
+    //console.log("curious george",location);
     globalLocation = location;
   }, [dataLoaded]);
 
   //another handle search function using 'enter' and search button
   const handleSearch = async () => {
-    console.log(location.trim());
-    console.log(location);
+    //console.log(location.trim());
+    //console.log(location);
     if (location.trim() !== '' || globalLocation !== '') { //if location input isnt empty
-      console.log('HEYOOOO TEST');
+      //console.log('HEYOOOO TEST');
 
       //request geocode for location
       try {
@@ -406,9 +423,9 @@ function SearchLocation(){
             setOpen(true);
             setUserPosition({ lat, lng });
             //globalLocation = location;
-            console.log("User position updated successfully!");
+            //console.log("User position updated successfully!");
           } else {
-            console.log(data);
+            //console.log(data);
           }
         } else {  //if no response
           console.error("Geocoding request failed");
@@ -432,7 +449,7 @@ function SearchLocation(){
             setOpen(true);
             setUserPosition(newPosition);
             //globalLocation = location;
-            console.log("User position updated successfully:", newPosition);
+            //console.log("User position updated successfully:", newPosition);
           },
           (error) => {
             console.error('Error getting user location:', error);
@@ -475,29 +492,34 @@ function SearchLocation(){
      const initialAddress = initialAddressRef.current;
      if (initialAddress) {
        // This block of code will run after the initial address has been obtained
-       console.log(initialAddress);
+       //console.log(initialAddress);
        // You can call any function here that needs to be executed after obtaining the initial address
        handleSearch();
-       console.log("work?");
+       //console.log("work?");
      }
    }, [initialAddressRef]);
 
    const handleSortByRatingsChange = async () =>{
      setSortByRatings(!sortByRatings);
-     console.log("THE TRUUUTHHH",sortByRatings);
+     //console.log("THE TRUUUTHHH",sortByRatings);
    };
+
+  //  const toggleMap = () => {
+  //   setShowMap(!showMap);
+  //   //console.log(showMap);
+  //   };
       const {t} = useTranslation();
       function SavedSales({ update }) {
           const [dropdownOpenB, setdropdownOpenB] = useState(false);
           const {t} = useTranslation();
           const [savedDistance, setSavedDistance] = useState(globalDistance);
-          console.log("DISTANCE.",globalDistance);
-          console.log("radishes");
+          //console.log("DISTANCE.",globalDistance);
+          //console.log("radishes");
         
           //toggle radius distance dropdown
           const handleDistanceDropdown = () => {
             setdropdownOpenB(!dropdownOpenB); 
-            console.log('wassuuuppp guurll');
+            //console.log('wassuuuppp guurll');
           };
           //update radius distance
           const handleDistanceChange = (newDistance) =>{
@@ -515,10 +537,10 @@ function SearchLocation(){
                         scaledSize: new google.maps.Size(30, 45)
               };
               locationMarkers[index].setIcon(newIcon);
-              console.log("yooooooo", index);
+              //console.log("yooooooo", index);
               locationMarkers[index].setAnimation(google.maps.Animation.BOUNCE);
               locationMarkers[index].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
-              console.log("arr length", locationMarkers.length);
+              //console.log("arr length", locationMarkers.length);
             }
           };
           
@@ -530,9 +552,9 @@ function SearchLocation(){
                     scaledSize: new google.maps.Size(30, 45)
                 };
                 locationMarkers.forEach((marker, index) => {
-                  console.log(index);
+                  //console.log(index);
                     marker.setIcon(resetIcon);
-                    console.log('broooooo');
+                    //console.log('broooooo');
                     marker.setAnimation(null);
                     marker.setZIndex(index);
                 });
@@ -564,6 +586,7 @@ function SearchLocation(){
               <div className="sidebar">
                   <div className="name">
                   {t("global.dashboard.title")}
+                  {/* <button className="viewMapButton" style={{ marginRight: '-150px'}} onClick={toggleMap}>View map</button> */}
                     <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
                   </div>
                   <div className="locationSettings">
@@ -704,31 +727,14 @@ function SearchLocation(){
               />
             </div>
             <div className="map" id="map"></div>
+            
+            {/* {windowWidth > 1100 ? (
+                <div className="map" id="map"></div>
+            ) : (
+                showMap && <div className="map" id="map"></div>
+            )} */}
           </div>
       </div>
-      {/* <div className="mobile-version">
-        <div className="input-container">
-              <input
-                id="locationInput"
-                name="location"
-                type="text"
-                placeholder={t("global.dashboard.searchbar")}
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                aria-label="Search Location"
-              />
-              <button id="searchButton" type="button" className="searchButton" onClick={handleSearch}>
-              {t("global.dashboard.search")}
-              </button>
-              <img className="currentLocationButton" 
-                onClick={handleCurrentLocation}
-                src="/assets/currentLocation.png"
-                alt="current_location"
-              />
-        </div>
-        <div className="map" id="map"></div>
-        <SavedSales update={dataLoaded} />
-      </div> */}
     </div>
   );
 }
@@ -809,7 +815,7 @@ function Dashboard(){
   
   useEffect(() => {
     nearbyLocations = [];
-    console.log("jorge", globalLocation);
+    //console.log("jorge", globalLocation);
     
   }, []);
    const {t} = useTranslation();
