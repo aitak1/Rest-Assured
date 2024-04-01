@@ -34,6 +34,7 @@ function SearchLocation(){
   const [dataLoaded, setDataLoaded] = useState(false);
   const [location, setLocation] = useState(''); //location in search bar
   const currentLocation = useLocation();
+  const searchBar = useLocation();
   const [opened, setOpen] = useState(false);  //to activate circle radius on map
   const [userPosition, setUserPosition] = useState({ lat: 33.253946, lng: -97.152896 });  //auto set users position
   const [map, setMap] = useState<google.maps.Map | null>(null); //google map api
@@ -254,39 +255,6 @@ function SearchLocation(){
               const newPosition = { lat: lat(), lng: lng() };
               setUserPosition(newPosition);
               mapInstance.panTo(newPosition); //zoom in to users new position
-             
-            //   console.log(routeBool, routeIndex);
-            //   if(!routeBool || routeIndex===null) return;
-            //   console.log("WHORE");
-            //   const directionsService = new google.maps.DirectionsService();
-            //   const directionsRenderer = new google.maps.DirectionsRenderer();
-
-            //   directionsRenderer.setMap(map);
-            //   const position = locationMarkers[routeIndex].getPosition();
-            //   let request;
-
-            //   if(position){
-            //   request = {
-            //     origin: {
-            //       lat: userPosition.lat,
-            //       lng: userPosition.lng
-            //     }, // Use user's position as the origin
-            //     destination: {
-            //       lat: position.lat(),
-            //       lng: position.lng()
-            //     },
-            //     travelMode: google.maps.TravelMode.DRIVING,
-            //   };
-            // }
-
-            //   directionsService.route(request, (result, status) => {
-            //     if (status === "OK") {
-            //       directionsRenderer.setDirections(result);
-            //     } else {
-            //       console.error("Directions request failed due to " + status);
-            //     }
-            //   });
-            //   setRouteBool(false);
              }
           }
         }).catch(error => { //if map failed to load
@@ -402,7 +370,7 @@ function SearchLocation(){
   }, [dataLoaded]);
 
   //another handle search function using 'enter' and search button
-  const handleSearch = async () => {
+  /*const handleSearch = async () => {
     if (location.trim() !== '') { //if location input isnt empty
       console.log('HEYOOOO TEST');
       //request geocode for location
@@ -430,7 +398,38 @@ function SearchLocation(){
         console.error("Error during geocoding:", error);
       }
     }
+  }; */
+
+  const handleSearch = async (queryFromURL = '') => {
+    const query = queryFromURL || location.trim(); // Use URL query if available, otherwise use input from local state
+    if (query !== '') {
+      // Proceed with existing logic to perform search
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=AIzaSyDLRmzWGSVuOYRHHFJ0vrEApxLuSVVgf1o`
+        );
+        
+        //if gets response, update user position with data recieved 
+        if (response.ok) {
+          const data = await response.json();
+          if (data.results && data.results[0] && data.results[0].geometry) {
+            const { lat, lng } = data.results[0].geometry.location;
+            setOpen(true);
+            setUserPosition({ lat, lng });
+            setSearchUpdatedPosition(true);
+            console.log("User position updated successfully!");
+          } else {
+            console.log(data);
+          }
+        } else {  //if no response
+          console.error("Geocoding request failed");
+        }
+      } catch (error) { //if error in connecting to googleapis
+        console.error("Error during geocoding:", error);
+      } 
+    }
   };
+
 
   //handle current location 
   const handleCurrentLocation = async () => {
@@ -459,10 +458,16 @@ function SearchLocation(){
   };
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(currentLocation.search);
+    const searchParams = new URLSearchParams(currentLocation.search); 
     if (searchParams.get('useLocation') === 'true') {
       handleCurrentLocation();
     }
+
+    const address = searchParams.get('address');
+    if (address) {
+      handleSearch(address);
+    }
+
   // Removed extraneous closing brace and corrected dependency array
   }, [currentLocation.search]);
   
