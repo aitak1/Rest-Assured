@@ -491,197 +491,76 @@ ul {
   display: block;
 }
 
-
-/* change to mobile width */
-/* @media  (max-width: 1100px) {
+@media  (max-width: 1100px) {
   .viewMapButton{
     display: block;
   }
   .dashboard .lower-content {
-    flex-direction: column; 
+    min-width: 100%;
+    max-height: 50%;
+    min-height: none;
+    height: 100px;
   }
-  .lower-content .search-map {
+  .dashboard .lower-content .search-map {
+    order: 1; 
+}
+
+.dashboard .lower-content .saved {
     order: 2; 
 }
 
-.lower-content .saved {
-    order: 1; 
+.dashboard .lower-content .saved{
+  min-width: 100%;
+  min-height: none;
+  max-height: 50%;
+  height: 100px;
 }
-.dashboard .lower-content .saved .sidebar-container{
-  min-width: 450px;
-  height: 700px;
-  display: block;
-  border-radius: 0px;
-  flex: 1;
-  margin-right: 0px;
-  padding-right: 5px;
-  height: fit-content;
+
+.dashboard .lower-content .search-map .input-container{
+  position: fixed;
+  top: 80px;
+  left: 10px;
+  margin-bottom: 20px;
+  padding-top: 0px;
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  min-height: 10px;
+  margin-bottom: 10px;
   max-width: 100%;
-  
+}
+.dashboard .lower-content .search-map{
+  min-width: none;
+  min-height: 10px;
+  height: 10px;
+  max-height: 0px;
+}
+
+.dashboard{
+  min-height: 20%;
+  max-height: 20%;
+  height: 10px;
+}
+
+.dashboard .lower-content .saved .sidebar-container{
+  height: 20px;
+  min-height: none;
+  margin-left: -5px;
 }
 
 .dashboard .lower-content .saved .sidebar{
-  position: absolute;
-  top:60px;
-  min-width: 450px;
-  max-width: 1000px;
-  height: fit-content;
-  min-height: 645px;
-  background-color: #f2f2f2; 
-  display: block;
-  border-radius: 0px;
-  margin-right: 5px;
-  flex: 1;
-  width: 100%;
+  top:140px;
+  position: fixed;
+  width: 100vw;
+  max-width: none;
+  min-height: none;
+  height: 10px;
 }
 
-  
-} */
-/* .mobile-version {
-  display: none;
+.dashboard .lower-content .saved .sidebar .displayLocations{
+  height: 100px;
+  min-height: none;
+  overflow-y: auto;
 }
-.show-results{
-  display: none;
+
 }
-@media (max-width: 600px) {
-  .lower-content{
-    display: none;
-  }
-  .lower-content .search-map{
-    display: none;
-  }
-  .lower-content .saved{
-    display: none;
-  }
-
-  .mobile-version {
-    display: block;
-  }
-
-  .mobile-version .saved {
-    display: none;
-  }
-
-  .mobile-version .show-results{
-    display: block;
-  }
-
-  .dashboard .mobile-version .input-container{
-    position: fixed;
-    top: 80px;
-    margin-left: 5px;
-    margin-right: 0px;
-    margin-bottom: 20px;
-    padding-top: 0px;
-    display: flex;
-    flex-direction: row;
-    white-space: nowrap;
-    min-height: 10px;
-    margin-bottom: 10px;
-    max-width: 100%;
-  }
-
-
-  .mobile-version .show-results{
-    position: absolute;
-    top: 140px;
-    width: 100%;
-    height: calc(100% - 200px);
-  }
-
-  .dashboard .show-results .sidebar-container{
-    position: sticky;
-    min-width: 450px;
-    height: 700px;
-    display: block;
-    border-radius: 0px;
-    flex: 1;
-    margin-right: 0px;
-    padding-right: 5px;
-    height: fit-content;
-    
-  }
-  .dashboard .show-results .sidebar{
-    position: absolute;
-    min-width: 450px;
-    height: fit-content;
-    min-height: 645px;
-    background-color: #f2f2f2; 
-    display: block;
-    border-radius: 0px;
-    flex: 1;
-    width: 100%;
-  }
-
-  .dashboard .show-results .sidebar .name
-  {
-    border-radius: 0px;
-  }
-
-  .dashboard .show-results .displayLocations{
-    overflow-y: auto;
-  }
-
-  .dashboard .sidebar .locationSettings .setDistance {
-    margin-left: 60%;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-  .dashboard .sidebar .locationSettings{
-    padding-right: 5px;
-  }
-
-  .dashboard .mobile-version .search-map .map{
-    height: calc(100vh - 152px);
-    min-height: 585px;
-    position: relative;
-    width:100%;
-    flex-grow: 1;
-    flex-shrink: 1;
-    border-radius: 10px;
-  }
-} */
-  /* .mobile-version {
-    display: block;
-  }
-
-  .mobile-version .saved{
-    display: none;
-  }
-
-  .show-results{
-    display: block;
-  } 
-
-
-
-
-.dashboard .input-container .searchButton{
-  padding: 10px;
-  margin-top: 8px;
-  margin-bottom: -4px;
-  margin-left: -20px;
-  height: 42px;
-  background: rgb(72, 72, 185);
-  color: white;
-  font-size: 17px;
-  cursor: pointer;
-  border: none;
-  border-right: 2px solid white;
-  z-index: 1;
-}
-.dashboard .input-container .currentLocationButton{
-  margin-top: 8px;
-  margin-left: -24px;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding: 2px 10px 2px 15px;
-  width: auto; 
-  height: 38px; 
-  display: block; 
-  border-radius: 10px;
-  cursor: pointer;
-  background-color: rgb(72, 72, 185);
-  margin-right: -20px;
-}
-*/

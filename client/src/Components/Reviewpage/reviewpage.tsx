@@ -108,8 +108,8 @@ function ReviewPage() {
       [thumbsType]: increment(1) // Increment thumbs count by 1
     });
 
-    //console.log(`${thumbsType} updated successfully for restroom ${id}`);
-      //console.log("New review added with ID: ", docRef.id);
+    console.log(`${thumbsType} updated successfully for restroom ${id}`);
+      console.log("New review added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding review: ", error);
     }
@@ -157,7 +157,7 @@ function ReviewPage() {
             // Add more fields as needed
           });
         } else {
-          //console.log("No such document!");
+          console.log("No such document!");
         }
       } catch (error) {
         console.error("Error fetching restroom data:", error);
@@ -174,16 +174,16 @@ function ReviewPage() {
     const fetchReviews = async () => {
       try {
         const reviewRef = collection(db, 'reviews');
-        //console.log("Review collection reference:", reviewRef);
+        console.log("Review collection reference:", reviewRef);
     
         const querySnapshot = await getDocs(reviewRef);
-        //console.log("Query snapshot:", querySnapshot);
+        console.log("Query snapshot:", querySnapshot);
     
         //let updatedReviews: Review[] = []; // Create a new array to hold the updated reviews
         const updatedReviews: Review[] = []; 
         querySnapshot.forEach((doc) => {
           const reviewData = doc.data();
-          //console.log("Review data:", reviewData);
+          console.log("Review data:", reviewData);
           
           // Assuming restroomsID is stored as a complete URL, like `/restrooms/123`
           if (reviewData.restroomsID === `/restrooms/${id}`) {
@@ -200,11 +200,11 @@ function ReviewPage() {
             //reviewsData.push(review);
             updatedReviews.push(review);
             //setReviewsData(prevReviews => [...prevReviews, review]);
-            //console.log("Review data:", reviewData);
+            console.log("Review data:", reviewData);
           }
         });
     
-        ////console.log("Fetched reviews:", updatedReviews);
+        //console.log("Fetched reviews:", updatedReviews);
         //setReviewsData(updatedReviews);
         setReviewsData(updatedReviews);
       } catch (error) {
@@ -241,7 +241,7 @@ function ReviewPage() {
         styles: mapStyles
       });    
       
-      //console.log('part 1');
+      console.log('part 1');
         
       setMap(makeMap);  //set changes to map
     });
@@ -251,7 +251,7 @@ function ReviewPage() {
   useEffect(() => {
     
     const fetchData = async () => {
-      //console.log("POR QUE");
+      console.log("POR QUE");
   
       if (!map) return; //if map not loaded
       //display route
@@ -263,7 +263,7 @@ function ReviewPage() {
       if (!restroomData) return;
       const address = `${restroomData.street}, ${restroomData.city}, ${restroomData.state}, ${restroomData.country}`;
   
-      //console.log("Attempting geocoding for address:", address);
+      console.log("Attempting geocoding for address:", address);
   
       // Perform geocoding to convert address to coordinates
       const response = await fetch(
@@ -272,16 +272,16 @@ function ReviewPage() {
   
       if (response.ok) {
         const geoData = await response.json();
-        //console.log("Geocoding response:", geoData); // Log the response from geocoding API
+        console.log("Geocoding response:", geoData); // Log the response from geocoding API
         if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
           const { lat, lng } = geoData.results[0].geometry.location;
           destLat = lat;
           destLng = lng;
-          //console.log("ayo");
+          console.log("ayo");
         }
       }
   
-      //console.log('part 2');
+      console.log('part 2');
       directionsRenderer.setMap(map);
       let request;
   
@@ -310,7 +310,7 @@ function ReviewPage() {
               setTotalDistance(route.legs[0]?.distance?.text || "");
 
               // Log or use the total duration as needed
-              //console.log("Total Time:", totalDurationText);
+              console.log("Total Time:", totalDurationText);
               legs.forEach((leg, legIndex) => {
                 leg.steps.forEach((step, stepIndex) => {
                   steps.push({
@@ -328,7 +328,7 @@ function ReviewPage() {
           console.error("Directions request failed due to " + status);
         }
       });
-      //console.log('rerun');
+      console.log('rerun');
     };
   
     fetchData(); // Call the async function
@@ -342,7 +342,7 @@ function ReviewPage() {
     navigate(`/dashboard?latLng=${position}`);
   };
 
-  //console.log("Reviews data:", );
+  console.log("Reviews data:", );
   return (
     <div className="page-wrapper">
     <div className="review-page">
