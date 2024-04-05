@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
 import "./reviewpage.css";
 
 // Define a custom interface for restroom data
@@ -44,7 +44,7 @@ function ReviewPage() {
   const { id } = useParams();
   const { position } = useParams<{ position: string }>();
   const positionArray = (position ? position.split(',').map(Number) : []) || [];
-  const [getAddress, setAddress] = useState('');
+  //const [getAddress, setAddress] = useState('');
   const [map, setMap] = useState<google.maps.Map | null>(null);
   //const [restroomData, setRestroomData] = useState(null);
   const [restroomData, setRestroomData] = useState<RestroomData | null>(null);
@@ -143,8 +143,8 @@ function ReviewPage() {
         if (docSnap.exists()) {
           // If the document exists, set the restroom data state
           const data = docSnap.data();
-          const hold = `${data.street}, ${data.city}, ${data.state}, ${data.country}`;
-          setAddress(hold);
+          //const hold = `${data.street}, ${data.city}, ${data.state}, ${data.country}`;
+          //setAddress(hold);
           setRestroomData({
             name: data.name,
             street: data.street,
@@ -245,8 +245,10 @@ function ReviewPage() {
         
       setMap(makeMap);  //set changes to map
     });
-  }, []);
+  }, [position]);
   
+  const [destLat, setDestLat] = useState(null);
+  const [destLng, setDestLng] = useState(null);
   //whenever map changes
   useEffect(() => {
     
@@ -255,10 +257,8 @@ function ReviewPage() {
   
       if (!map) return; //if map not loaded
       //display route
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer();
-      let destLat: number = 33.253946;
-      let destLng: number = -97.136407;
+      //const directionsService = new google.maps.DirectionsService();
+      //const directionsRenderer = new google.maps.DirectionsRenderer();
   
       if (!restroomData) return;
       const address = `${restroomData.street}, ${restroomData.city}, ${restroomData.state}, ${restroomData.country}`;
@@ -275,14 +275,76 @@ function ReviewPage() {
         console.log("Geocoding response:", geoData); // Log the response from geocoding API
         if (geoData.results && geoData.results[0] && geoData.results[0].geometry) {
           const { lat, lng } = geoData.results[0].geometry.location;
-          destLat = lat;
-          destLng = lng;
+          setDestLat(lat);
+          setDestLng(lng);
           console.log("ayo");
         }
       }
   
       console.log('part 2');
-      directionsRenderer.setMap(map);
+      // directionsRenderer.setMap(map);
+      // let request;
+  
+      // request = {
+      //   origin: {
+      //     lat: positionArray[0], lng: positionArray[1]
+      //   }, // Use user's position as the origin
+      //   destination: {
+      //     lat: destLat, lng: destLng
+      //   },
+      //   travelMode: google.maps.TravelMode.DRIVING,
+      // };
+  
+      // directionsService.route(request, (result, status) => {
+      //   if (status === "OK") {
+      //     directionsRenderer.setDirections(result);
+          
+      //     if (result) {
+      //       const steps: RouteStep[] = [];
+      //       const route = result.routes[0];
+      //       if (route) {
+              
+      //         const legs = route.legs;
+      //         const totalDurationText = route.legs[0]?.duration?.text || "";
+      //         setTotalTime(totalDurationText);
+      //         setTotalDistance(route.legs[0]?.distance?.text || "");
+
+      //         // Log or use the total duration as needed
+      //         console.log("Total Time:", totalDurationText);
+      //         legs.forEach((leg, legIndex) => {
+      //           leg.steps.forEach((step, stepIndex) => {
+      //             steps.push({
+      //               instruction: step.instructions,
+      //               distance: step.distance ? step.distance.text : "Unknown",
+      //               duration: step.duration ? step.duration.text : "Unknown",
+      //               travelMode: step.travel_mode,
+      //             });
+      //           });
+      //         });
+      //       }
+      //       setRouteSteps(steps);
+      //     }
+      //   } else {
+      //     console.error("Directions request failed due to " + status);
+      //   }
+      // });
+      console.log('rerun');
+    };
+  
+    fetchData(); // Call the async function
+    // Return a cleanup function if needed
+    return () => {
+      // Cleanup code here
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restroomData]); // Dependency array
+
+  useEffect(() => {
+    if (!map || destLat === null || destLng === null) return;
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
       let request;
   
       request = {
@@ -328,15 +390,9 @@ function ReviewPage() {
           console.error("Directions request failed due to " + status);
         }
       });
-      console.log('rerun');
-    };
-  
-    fetchData(); // Call the async function
-    // Return a cleanup function if needed
-    return () => {
-      // Cleanup code here
-    };
-  }, [map, restroomData]); // Dependency array
+
+       // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [map, destLat, destLng]);
   
   const handleDashboardReturn = () => {
     navigate(`/dashboard?latLng=${position}`);
@@ -362,7 +418,8 @@ function ReviewPage() {
           <div className='map-directions'>
             <div className="directions">
               <div style={{fontSize: '30px', padding: '10px', marginBottom: '-20px', borderBottom: '2px solid lightgray'}}>{totalTime}, ({totalDistance})
-              <a href={`https://www.google.com/maps?q=${positionArray[0]},${positionArray[1]}`} target="_blank" style={{marginLeft:'20px', textDecoration: 'none', color: 'white', fontSize: '20px', padding: '10px', backgroundColor: 'purple', borderRadius: '20px'}}>Navigate</a></div>
+              <a href={`https://www.google.com/maps?q=${destLat},${destLng}`} target="_blank" rel="noreferrer" style={{ marginLeft: '20px', textDecoration: 'none', color: 'white', fontSize: '20px', padding: '10px', backgroundColor: 'purple', borderRadius: '20px' }}>Navigate</a>
+              </div>
             {routeSteps.map((step, index) => (
         <div key={index}>
           <p className="route-step"><span dangerouslySetInnerHTML={{ __html: step.instruction }}/></p>
@@ -377,7 +434,7 @@ function ReviewPage() {
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">
-      <img src="Comp/Reviewpage/Handicap_toliet_2.jpg" alt="Place Image" /> 
+      {/* <img src="Comp/Reviewpage/Handicap_toliet_2.jpg" alt="Place Image" />  */}
       </div>
       </div>
       </div>

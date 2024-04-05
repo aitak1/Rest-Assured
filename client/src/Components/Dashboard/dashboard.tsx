@@ -1,6 +1,7 @@
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
+//import { google } from '@google/maps';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import "./dashboard.css"; 
 import { useTranslation } from 'react-i18next';
@@ -69,7 +70,7 @@ function SearchLocation(){
     {
       locationMarkers.forEach(marker => {
         console.log('delete');
-        marker.setMap(null);
+        (marker as google.maps.Marker).setMap(null);
     });
     //Empty the locationMarkers array
       locationMarkers = [];
@@ -203,9 +204,9 @@ function SearchLocation(){
                   }
                 });
 
-                marker.addListener('click', () => {
-                      infoWindow.open(map, marker);
-                    });      
+                google.maps.event.addListener(marker, 'click', () => {
+                  infoWindow.open(map, marker);
+              });  
                 locationMarkers.push(marker);
       });
         setDataLoaded(true);  //to initiate sidebar update
@@ -221,22 +222,22 @@ function SearchLocation(){
       }
     };
 
-  const memoizedFindTheWay = useCallback(async (circle, map, userPosition, sortByRatings) => {
-    try {
-      // Your asynchronous logic goes here
-      // For example:
-      const result = await findTheWay(circle, map, userPosition, sortByRatings);
-      // Process the result if needed
-      return result;
-    } catch (error) {
-      // Handle errors
-      console.error('Error:', error);
-    } finally {
-      // Finally block executes whether there's an error or not
-      // You can perform cleanup or other actions here
-      console.log('Finally block executed');
-    }
-  }, [findTheWay]);
+  // const memoizedFindTheWay = useCallback(async (circle, map, userPosition, sortByRatings) => {
+  //   try {
+  //     // Your asynchronous logic goes here
+  //     // For example:
+  //     const result = await findTheWay(circle, map, userPosition, sortByRatings);
+  //     // Process the result if needed
+  //     return result;
+  //   } catch (error) {
+  //     // Handle errors
+  //     console.error('Error:', error);
+  //   } finally {
+  //     // Finally block executes whether there's an error or not
+  //     // You can perform cleanup or other actions here
+  //     console.log('Finally block executed');
+  //   }
+  // }, [findTheWay]);
 
   //load google map api and operate location search functions
   useEffect(() => {
@@ -315,6 +316,7 @@ function SearchLocation(){
         });
 
         console.log('AMMMEEERRRIIICAAAA');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [userPosition, distance, showMap, windowWidth]); //depends on if userPosition changes
 
       
@@ -366,7 +368,7 @@ function SearchLocation(){
 
     //add markers for locations within radius
     if(newCircle !== undefined){
-      memoizedFindTheWay(newCircle, map, userPosition, sortByRatings);     
+      findTheWay(newCircle, map, userPosition, sortByRatings);     
     }
 
         console.log('horset p2',locationMarkers.length);
@@ -376,6 +378,7 @@ function SearchLocation(){
   }, [map, sortByRatings]);  // map changes
   
   useEffect(() => {
+    
     if(globalLocation && globalLocation.trim() !== '')
       {setLocation(globalLocation);
       handleSearch();
@@ -384,6 +387,7 @@ function SearchLocation(){
       console.log("oh woe is me", globalLocation);
 
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -395,6 +399,7 @@ function SearchLocation(){
     }
     console.log("curious george",location);
     globalLocation = location;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataLoaded]);
 
   //another handle search function using 'enter' and search button
@@ -503,6 +508,7 @@ function SearchLocation(){
        handleSearch();
        console.log("work?");
      }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [initialAddressRef]);
 
    const handleSortByRatingsChange = async () =>{
@@ -518,7 +524,7 @@ function SearchLocation(){
       function SavedSales({ update }) {
           const [dropdownOpenB, setdropdownOpenB] = useState(false);
           const {t} = useTranslation();
-          const [savedDistance, setSavedDistance] = useState(globalDistance);
+         // const [savedDistance, setSavedDistance] = useState(globalDistance);
           console.log("DISTANCE.",globalDistance);
           console.log("radishes");
         
@@ -531,7 +537,7 @@ function SearchLocation(){
           const handleDistanceChange = (newDistance) =>{
             setDistance(newDistance);
             globalDistance = newDistance;
-            setSavedDistance(newDistance);
+           // setSavedDistance(newDistance);
           };
 
           //highlight marker thats relative to list item hovered on sidebar
@@ -542,10 +548,10 @@ function SearchLocation(){
                   url: "/assets/highlighted-marker.PNG",
                         scaledSize: new google.maps.Size(30, 45)
               };
-              locationMarkers[index].setIcon(newIcon);
+              (locationMarkers[index] as google.maps.Marker).setIcon(newIcon);
               console.log("yooooooo", index);
-              locationMarkers[index].setAnimation(google.maps.Animation.BOUNCE);
-              locationMarkers[index].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+              (locationMarkers[index] as google.maps.Marker).setAnimation(google.maps.Animation.BOUNCE);
+              (locationMarkers[index] as google.maps.Marker).setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
               console.log("arr length", locationMarkers.length);
             }
           };
@@ -559,10 +565,10 @@ function SearchLocation(){
                 };
                 locationMarkers.forEach((marker, index) => {
                   console.log(index);
-                    marker.setIcon(resetIcon);
+                  (marker as google.maps.Marker).setIcon(resetIcon);
                     console.log('broooooo');
-                    marker.setAnimation(null);
-                    marker.setZIndex(index);
+                    (marker as google.maps.Marker).setAnimation(null);
+                    (marker as google.maps.Marker).setZIndex(index);
                 });
                 resolve(); // Resolve the Promise after resetting all markers
             });
@@ -571,7 +577,7 @@ function SearchLocation(){
           const handleListItemClick = (index: number) => {
             // Close any previously opened InfoWindows
             //closeAllInfoWindows();
-            locationMarkers[index].setAnimation(null);
+            (locationMarkers[index] as google.maps.Marker).setAnimation(null);
             // Open InfoWindow for the clicked marker
            // const marker = locationMarkers[index];
            // const infoWindow = marker.infoWindow;
@@ -580,11 +586,11 @@ function SearchLocation(){
 
         
         
-        const closeAllInfoWindows = () => {
-            locationMarkers.forEach(marker => {
-                marker.infoWindow.close();
-            });
-        };
+        // const closeAllInfoWindows = () => {
+        //     locationMarkers.forEach(marker => {
+        //         marker.infoWindow.close();
+        //     });
+        // };
           return (
             <div >
               <div className="saved">
@@ -753,9 +759,9 @@ function UserProfile(){
   };
 
   const [languagesOpen, setlanguagesOpen] = useState(false);
-  const handleLanguagesDropdown = () => {
-    setlanguagesOpen(!languagesOpen); // Toggle the dropdown
-  };
+  // const handleLanguagesDropdown = () => {
+  //   setlanguagesOpen(!languagesOpen); // Toggle the dropdown
+  // };
 
   let settingsRef = useRef();
   let profileRef = useRef();
@@ -795,6 +801,7 @@ function UserProfile(){
               />
             
           </button>
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
             <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
             <a>{t("global.dropdown.settings")}</a>
@@ -803,6 +810,7 @@ function UserProfile(){
             </button >
             <Link to="/">{t("global.dropdown.signout")}</Link>
           </div>
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
             <LanguageSelector />
             <a ref={backRef}>{t("global.dropdown.return")}</a>

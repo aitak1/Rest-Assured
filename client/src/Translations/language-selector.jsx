@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useEffect } from "react";
+import React, { } from "react";
 
 const languages = [
     {code: "en", lang: "English"},
