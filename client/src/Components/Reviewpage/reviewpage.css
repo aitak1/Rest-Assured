@@ -1,6 +1,13 @@
 .review-page {
+  background: linear-gradient(to bottom, rgb(42, 42, 165), #ffffff);
   text-align: center;
   padding: 20px;
+}
+
+.page-wrapper {
+  /* Optionally, apply gradient background to a wrapper container */
+  background: linear-gradient(to bottom, rgb(42, 42, 165), #ffffff);
+  min-height: 100vh; /* Ensure the wrapper covers the entire viewport height */
 }
 
 .header-container {
@@ -54,7 +61,7 @@
 
 .add-review-dropdown {
   background-color: #f2f2f2;
-  padding: 10px;
+  padding: 5px;
   border: 2px solid #000;
   border-radius: 10px;
   margin-top: 10px;
@@ -63,21 +70,21 @@
 
 .add-review-dropdown label {
   display: block;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .add-review-dropdown input {
-  width: 100%;
-  padding: 8px;
+  width: calc(100% - 10px); /* Adjust width to accommodate reduced padding */
+  padding: 5px; /* Decrease padding */
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .add-review-dropdown button {
   background-color: #4caf50;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 3px 8px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -229,6 +236,9 @@
 }
 
 .review-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: rgb(42, 42, 165);
   color: white;
   font-size: 20px;
@@ -257,15 +267,90 @@
   border-radius: 10px; /* Adjust border-radius as needed */
 }
 
-.review-page .map{
-  height: 500px;
-  width: auto;
-  border-radius: 10px;
-}
 .route-steps-container {
   text-align: left; /* Center-align the steps to the right */
 }
 
 .route-step {
   margin-bottom: -20px; /* Adjust the margin to reduce line space between steps */
+  font-size: 25px;
+  color: #000;
+}
+
+.review-page .map-directions .map{
+  height: inherit;
+  width: auto;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.review-page .map-directions .directions{
+  width: 450px;
+  min-height: inherit;
+  background-color: #f8f7f7; 
+  display: block;
+  border-radius: 10px;
+  margin-left: 5px;
+  overflow-y: auto;
+  text-align: left;
+  padding: 0px 10px;
+}
+
+.review-page .map-directions{
+  gap: 5px;
+  display: flex;
+  height: 500px;
+  flex-direction: row;
+}
+
+/* Custom scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* Custom scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #b5b5b5;
+  border-radius: 10px;
+}
+
+/* Custom scrollbar corner */
+::-webkit-scrollbar-corner {
+  background-color: #f1f1f1;
+}
+
+/* Optional: Hide scrollbar when not hovering */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Show scrollbar on hover */
+::-webkit-scrollbar:hover {
+  display: block;
+}
+
+
+@media(max-width: 1000px)
+{
+  .review-page .map-directions {
+    flex-direction: column;
+    height: fit-content;
+  }
+  
+  .review-page .map-directions .map {
+    border-radius: 10px;
+    height: 500px;
+    flex: none;
+  }
+  
+  .review-page .map-directions .directions {
+    background-color: #f8f7f7;
+    border-radius: 10px;
+    overflow-y: auto;
+    width: auto;
+    text-align: left;
+    padding: 0px 10px;
+    height: 130px;
+  }
 }

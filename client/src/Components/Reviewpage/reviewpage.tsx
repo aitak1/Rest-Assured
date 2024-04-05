@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
 import "./reviewpage.css";
 
 // Define a custom interface for restroom data
@@ -39,6 +39,8 @@ interface RouteStep {
 function ReviewPage() {
   const navigate = useNavigate();
   const [routeSteps, setRouteSteps] = useState<RouteStep[]>([]);
+  const [totalTime, setTotalTime] = useState("");
+  const [totalDistance, setTotalDistance] = useState("");
   const { id } = useParams();
   const { position } = useParams<{ position: string }>();
   const positionArray = (position ? position.split(',').map(Number) : []) || [];
@@ -90,6 +92,23 @@ function ReviewPage() {
         date: newReview.date,
         restroomsID: `/restrooms/${id}` // Use the restroom ID from the URL
       });
+       // Calculate overall quality of the review
+    const overallQuality = calculateOverallQuality(newReview);
+    let thumbsType: string;
+    // Determine thumbs type based on overall quality
+    if (overallQuality <= 2.5) {
+      thumbsType = "thumbs_down";
+    } else {
+      thumbsType = "thumbs_up";
+    }
+
+    // Update thumbs count in Firestore
+    const restroomRef = doc(db, 'restrooms', id || '');
+    await updateDoc(restroomRef, {
+      [thumbsType]: increment(1) // Increment thumbs count by 1
+    });
+
+    console.log(`${thumbsType} updated successfully for restroom ${id}`);
       console.log("New review added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding review: ", error);
@@ -111,6 +130,7 @@ function ReviewPage() {
   const calculateOverallQuality = (review: Review): number => {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
+
 
   useEffect(() => {
     const fetchRestroomData = async () => {
@@ -227,9 +247,9 @@ function ReviewPage() {
     });
   }, []);
   
-
   //whenever map changes
   useEffect(() => {
+    
     const fetchData = async () => {
       console.log("POR QUE");
   
@@ -283,7 +303,14 @@ function ReviewPage() {
             const steps: RouteStep[] = [];
             const route = result.routes[0];
             if (route) {
+              
               const legs = route.legs;
+              const totalDurationText = route.legs[0]?.duration?.text || "";
+              setTotalTime(totalDurationText);
+              setTotalDistance(route.legs[0]?.distance?.text || "");
+
+              // Log or use the total duration as needed
+              console.log("Total Time:", totalDurationText);
               legs.forEach((leg, legIndex) => {
                 leg.steps.forEach((step, stepIndex) => {
                   steps.push({
@@ -305,7 +332,6 @@ function ReviewPage() {
     };
   
     fetchData(); // Call the async function
-  
     // Return a cleanup function if needed
     return () => {
       // Cleanup code here
@@ -318,12 +344,13 @@ function ReviewPage() {
 
   console.log("Reviews data:", );
   return (
+    <div className="page-wrapper">
     <div className="review-page">
-      <div className="header-container">
+    <div className="header-container">
+        <div className="review-header">Restroom's information</div>
         <button className="add-review-btn" onClick={() => setAddingReview(true)}>
           Add Review
         </button>
-        <div className="review-header">Restroom's information</div>
         <button onClick={handleDashboardReturn} className="go-back-btn">Dashboard</button>
       </div>
       <div className="place-details">
@@ -332,19 +359,21 @@ function ReviewPage() {
           <div className="place-name">{restroomData?.name}</div>
           <div className="place-address">Address: {restroomData?.address}</div>
           <div className="place-directions">Building Directions: {restroomData?.direction}</div>
-          <div className="map" id="map"></div>
-          <div className="route-steps-container">
-            {/* <p>Street Directions</p>
-      {routeSteps.map((step, index) => (
+          <div className='map-directions'>
+            <div className="directions">
+              <div style={{fontSize: '30px', padding: '10px', marginBottom: '-20px', borderBottom: '2px solid lightgray'}}>{totalTime}, ({totalDistance})
+              <a href={`https://www.google.com/maps?q=${positionArray[0]},${positionArray[1]}`} target="_blank" style={{marginLeft:'20px', textDecoration: 'none', color: 'white', fontSize: '20px', padding: '10px', backgroundColor: 'purple', borderRadius: '20px'}}>Navigate</a></div>
+            {routeSteps.map((step, index) => (
         <div key={index}>
-          <p className="route-step">Step {index + 1}</p>
-          <p className="route-step">Instructions: <span dangerouslySetInnerHTML={{ __html: step.instruction }} /></p>
-          <p className="route-step">Distance: <span dangerouslySetInnerHTML={{ __html: step.distance }} /></p>
-          <p className="route-step">Duration: <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p>
+          <p className="route-step"><span dangerouslySetInnerHTML={{ __html: step.instruction }}/></p>
+          <p className="route-step" style={{ fontSize: '20px', borderBottom: '2px solid lightgray'}}>&nbsp;&nbsp;&nbsp;<span dangerouslySetInnerHTML={{ __html: step.distance }} /></p>
+          {/* <p className="route-step">&nbsp;&nbsp;&nbsp;for a duration of <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p> */}
           <p></p>
         </div>
-      ))} */}
-    </div>
+      ))}
+            </div>
+            <div className="map" id="map"></div>
+          </div>
           </div>
       <div className="place-comments">Comments: {restroomData?.comments}</div>
       <div className="image-container">
@@ -425,6 +454,7 @@ function ReviewPage() {
         )}
       </div>
       </div>
+    </div>
     </div>
   );
 }
