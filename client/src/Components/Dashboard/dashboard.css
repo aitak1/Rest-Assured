@@ -79,6 +79,9 @@ html, body{
   border-radius: 50%;
   align-self: center;
 }
+.dashboard .profile img:hover {
+  cursor: pointer;
+}
 .dashboard .profile button {
   background-color: rgb(157, 222, 248);
   text-align: center;
@@ -138,7 +141,7 @@ html, body{
 .dashboard .lower-content .saved .sidebar-container{
   position: sticky;
   max-width: 30vw;
-  min-width: 450px;
+  min-width: 400px;
   height: inherit;
   display: block;
   border-radius: 10px;
@@ -148,7 +151,7 @@ html, body{
 .dashboard .lower-content .saved .sidebar{
   position: absolute;
   max-width: 30vw;
-  min-width: 450px;
+  min-width: 400px;
   height: calc(100vh - 100px);
   min-height: 645px;
   background-color: #f2f2f2; 
@@ -290,18 +293,18 @@ html, body{
   display: flex;
   flex-direction: row;
   white-space: nowrap;
-  min-width: 80%; /*when window maximized, take entire top bar*/
+  min-width: 40%; /*when window maximized, take entire top bar*/
   min-height: 10px;
   margin-bottom: 10px;
 }
 .dashboard .input-container input{
   font-size: 20px;
   padding-left: 10px;
-  min-width: 100px;
+  min-width: 50px;
   padding: 6px;
   margin-top: 8px;
   margin-right: 8px;
-  width: 500px;
+  max-width: 75%;
   border-radius: 10px;
   border: none;
   flex: 1;
@@ -348,12 +351,13 @@ html, body{
   min-height: 585px;
   position: relative;
   width:100%;
+  min-width: 60%;
   flex-grow: 1;
   flex-shrink: 1;
   border-radius: 10px;
 }
 
-@media(max-width: 1220px)
+@media(max-width: 900px)
 {
   .dashboard .lower-content .search-map .map{
     height: calc(100vh - 166px);
@@ -393,22 +397,27 @@ ul {
   width: auto;
   border-radius: 50%;
 }
-.add-button {
+.buttons{
+  display: flex;
+  flex-direction: row;
+  
+}
+.buttons .add-button {
   color: white;
   border: none;
   padding: 10px;
+  padding-left: 10px;
   border-radius: 5px;
-  margin-left: 10px;
   margin-bottom: -2px;
+  margin-left: 3px;
   cursor: pointer;
   background-color: rgb(72, 72, 185);
 }
-.viewMapButton {
+.buttons .viewMapButton {
   color: white;
   border: none;
   padding: 10px;
   border-radius: 5px;
-  margin-left: 10px;
   margin-bottom: -2px;
   cursor: pointer;
   background-color: rgb(72, 72, 185);
@@ -491,8 +500,8 @@ ul {
   display: block;
 }
 
-@media  (max-width: 1100px) {
-  .viewMapButton{
+@media  (max-width: 900px) {
+  .buttons .viewMapButton{
     display: block;
   }
   .dashboard .lower-content {

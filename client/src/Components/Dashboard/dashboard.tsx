@@ -598,8 +598,10 @@ function SearchLocation(){
               <div className="sidebar">
                   <div className="name">
                   {t("global.dashboard.title")}
-                  <button className="viewMapButton" style={{ marginRight: '-150px'}} onClick={toggleMap}>View map</button>
+                  <div className="buttons">
+                  <button className="viewMapButton" style={{ marginRight: '0px'}} onClick={toggleMap}>View map</button>
                     <button className="add-button"><Link to="/add-restroom" style={{ textDecoration: 'none', color: 'inherit'}}>{t("global.dashboard.addPost")}</Link></button>
+                    </div>
                   </div>
                   <div className="locationSettings">
                   <div className="checkboxAndDistance">
@@ -740,7 +742,7 @@ function SearchLocation(){
             </div>
             {/* <div className="map" id="map"></div> */}
             
-            {windowWidth > 1100 ? (
+            {windowWidth > 900 ? (
                 <div className="map" id="map"></div>
             ) : (
                 showMap && <div className="map" id="map"></div>
@@ -793,22 +795,19 @@ function UserProfile(){
 
   return (
     <div className="profile" ref={profileRef}>
-            <button type="button"  onClick={handleProfileDropdown}>
+
             <img
-                src="https://i.pinimg.com/736x/b9/49/0a/b9490abd30c15850908b8ee0570f8b19.jpg"
+                src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3JtNTMzLWljb24tMjA5LXguanBn.jpg"
                 className="pfp"
                 alt="profile_picture"
+                onClick={handleProfileDropdown}
               />
-            
-          </button>
+ 
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-            <a href="https://www.google.com/">{t("global.dropdown.profile")}</a>
-            <a>{t("global.dropdown.settings")}</a>
             <button ref={settingsRef} type="button">
             {t("global.dropdown.language")}       
             </button >
-            <Link to="/">{t("global.dropdown.signout")}</Link>
           </div>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <div className={`dropdown-content ${languagesOpen ? 'show' : ''}`}>
