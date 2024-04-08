@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase.ts";
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, addDoc } from 'firebase/firestore';
 import "./reviewpage.css";
 
 // Define a custom interface for restroom data
@@ -77,6 +77,18 @@ function ReviewPage() {
     }
   }, [id]);*/
 
+  const calculateStarColor = (starCount: number): string => {
+    if (starCount === 1 || starCount === 2) {
+      return 'one-star';
+    } else if (starCount === 3) {
+      return 'three-star';
+    } else if (starCount === 4 || starCount === 5) {
+      return 'four-star';
+    } else {
+      return ''; // Default color if count is invalid
+    }
+  };
+
   const handleAddReview = async () => {
     const updatedReviews = [...reviewsData, { ...newReview }];
     setReviewsData(updatedReviews);
@@ -92,23 +104,6 @@ function ReviewPage() {
         date: newReview.date,
         restroomsID: `/restrooms/${id}` // Use the restroom ID from the URL
       });
-       // Calculate overall quality of the review
-    const overallQuality = calculateOverallQuality(newReview);
-    let thumbsType: string;
-    // Determine thumbs type based on overall quality
-    if (overallQuality <= 2.5) {
-      thumbsType = "thumbs_down";
-    } else {
-      thumbsType = "thumbs_up";
-    }
-
-    // Update thumbs count in Firestore
-    const restroomRef = doc(db, 'restrooms', id || '');
-    await updateDoc(restroomRef, {
-      [thumbsType]: increment(1) // Increment thumbs count by 1
-    });
-
-    console.log(`${thumbsType} updated successfully for restroom ${id}`);
       console.log("New review added with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding review: ", error);
@@ -130,7 +125,6 @@ function ReviewPage() {
   const calculateOverallQuality = (review: Review): number => {
     return (review.cleanliness + review.amenities + review.accessibility) / 3;
   };
-
 
   useEffect(() => {
     const fetchRestroomData = async () => {
@@ -489,23 +483,25 @@ function ReviewPage() {
       
       <div className = "reviews-box">
       <div className="reviews-container">
-        {reviewsData.length > 0 ? (
+      {reviewsData.length > 0 ? (
           reviewsData.map((review, index) => (
-            <div key={index} className={`review-rectangle ${calculateOverallQuality(review) <= 2.5 ? 'light-red' : 'light-green'}`}>
-              <div className="reviewer-name">{review.reviewerName}</div>
-              <div className="cleanliness star-rating">{`Cleanliness: ${'★'.repeat(review.cleanliness)}`}</div>
-              <div className="amenities star-rating">{`Amenities: ${'★'.repeat(review.amenities)}`}</div>
-              <div className="accessibility star-rating">{`Accessibility: ${'★'.repeat(review.accessibility)}`}</div>
-              <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/5`}</div>
-              <div className="description">{review.description}</div>
-              <div className="date">Date: {review.date.toLocaleDateString()}</div>
-              {review.image && (
-                <div className="photo">
-                  <img src={URL.createObjectURL(review.image)} alt="Review" />
-                </div>
-              )}
+            <div key={index} className="review">
+            <div className="reviewer-name">Name: {review.reviewerName}</div>
+            <div className="star-ratings">
+            <div>Cleanliness: {[...Array(review.cleanliness)].map((_, i) => <span key={i} className={`star ${calculateStarColor(review.cleanliness)}`}>&#9733;</span>)}</div>
+            <div>Amenities: {[...Array(review.amenities)].map((_, i) => <span key={i} className={`star ${calculateStarColor(review.amenities)}`}>&#9733;</span>)}</div>
+            <div>Accessibility: {[...Array(review.accessibility)].map((_, i) => <span key={i} className={`star ${calculateStarColor(review.accessibility)}`}>&#9733;</span>)}</div>
             </div>
-          ))
+            <div className="overall-quality">{`Overall Quality: ${calculateOverallQuality(review).toFixed(2)}/5`}</div>
+            <div className="description">Reason: {review.description}</div>
+            <div className="date">Date: {review.date.toLocaleDateString()}</div>
+            {review.image && (
+              <div className="photo">
+                <img src={URL.createObjectURL(review.image)} alt="Review" />
+              </div>
+            )}
+          </div>
+        ))
         ) : (
           <div>No reviews available</div>
         )}

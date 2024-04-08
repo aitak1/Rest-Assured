@@ -1,5 +1,4 @@
 .review-page {
-  background: linear-gradient(to bottom, rgb(42, 42, 165), #ffffff);
   text-align: center;
   padding: 20px;
 }
@@ -61,7 +60,7 @@
 
 .add-review-dropdown {
   background-color: #f2f2f2;
-  padding: 5px;
+  padding: 10px;
   border: 2px solid #000;
   border-radius: 10px;
   margin-top: 10px;
@@ -70,21 +69,21 @@
 
 .add-review-dropdown label {
   display: block;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .add-review-dropdown input {
-  width: calc(100% - 10px); /* Adjust width to accommodate reduced padding */
-  padding: 5px; /* Decrease padding */
+  width: 100%;
+  padding: 8px;
   margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .add-review-dropdown button {
   background-color: #4caf50;
   color: white;
   border: none;
-  padding: 3px 8px;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -99,24 +98,18 @@
   justify-content: space-evenly;
 }
 
-.review-box {
-  display : block;
-  width: 60%; /* Same width as the header */
-  margin: 0 auto; /* Center the container */
+.review {
+  border: 1px solid #ccc; /* Add border around each review */
+  border-radius: 10px; /* Optional: Add border radius for rounded corners */
+  padding: 20px; /* Add padding inside each review */
+  margin-bottom: 20px; /* Add margin between reviews */
   background-color: white;
-  border-radius: 20px; /* Adjust border radius for the circular effect */
-  padding: 20px; /* Add padding for content */
-  margin-top: 20px; /* Add space below the header */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+
 }
 
-.review-rectangle {
-  width: 30%;
-  margin: 10px;
-  padding: 15px;
-  border-radius: 10px;
-  background-color: #f2f2f2;
-  margin-bottom: 20px;
+.overall-quality {
+  font-size: 18px; /* Adjust font size */
+  color: #333; /* Adjust font color */
 }
 
 .customer-name {
@@ -128,7 +121,7 @@
 .cleanliness,
 .amenities,
 .accessibility,
-.overall-quality,
+/*.overall-quality,*/
 .description,
 .date {
   font-size: 16px;
@@ -159,42 +152,6 @@
   background-color: #e6ffe6; /* Light green */
 }
 
-/* New styles for stars */
-.star-rating {
-  display: inline-block;
-  unicode-bidi: bidi-override;
-  color: #f0c040;
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.star-rating span {
-  display: inline-block;
-  position: relative;
-  width: 1.1em;
-}
-
-.star-rating span:before {
-  content: "\2605";
-  position: absolute;
-  opacity: 0;
-}
-
-/* Adjusting star colors */
-.cleanliness .star-rating span:before,
-.amenities .star-rating span:before,
-.accessibility .star-rating span:before {
-  color: #f0c040; /* Yellow */
-}
-
-.light-red .star-rating span:before {
-  color: #ff6347; /* Light red */
-}
-
-.light-green .star-rating span:before {
-  color: #32cd32; /* Light green */
-}
-
 .star-rating {
   font-size: 20px;
   margin-bottom: 10px;
@@ -202,6 +159,20 @@
 
 .star-rating span::before {
   content: "\2605"; /* Unicode character for star */
+}
+
+/* New star color classes */
+.one-star {
+  color: red; /* Red for 1 or 2 stars */
+}
+
+.three-star {
+  color: orange; /* Orange for 3 stars */
+}
+
+.four-star,
+.five-star {
+  color: green; /* Green for 4 or 5 stars */
 }
 
 .place-name-container {
@@ -236,9 +207,6 @@
 }
 
 .review-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   background-color: rgb(42, 42, 165);
   color: white;
   font-size: 20px;

@@ -101,7 +101,7 @@ function SearchLocation(){
           }
           else if(overallRating  < 70 && overallRating >= 40)
           {
-            color = "orange";
+            color = "rgb(249, 127, 14)";
           }
 
           else if(overallRating < 40)
@@ -380,9 +380,18 @@ function SearchLocation(){
   useEffect(() => {
     
     if(globalLocation && globalLocation.trim() !== '')
-      {setLocation(globalLocation);
-      handleSearch();
-    console.log(location, globalLocation );}
+    {
+      if(globalLocation === 'Current Location')
+      {
+        handleCurrentLocation();
+      }
+      else
+      {
+        setLocation(globalLocation);
+        handleSearch();
+      }
+        console.log(location, globalLocation );
+    }
     else{
       console.log("oh woe is me", globalLocation);
 
