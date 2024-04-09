@@ -407,7 +407,8 @@ function SearchLocation(){
       setDataLoaded(false);
     }
     console.log("curious george",location);
-    globalLocation = location;
+    if(location.trim() !== '')
+      globalLocation = location;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataLoaded]);
 
