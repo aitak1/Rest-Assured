@@ -744,7 +744,7 @@ function SearchLocation(){
               {t("global.dashboard.search")}
               </button>
               <img className="currentLocationButton" 
-                onClick={handleCurrentLocation}
+                onClick={()=>{setLocation('Current Location'); handleCurrentLocation();}}
                 src="/assets/currentLocation.png"
                 alt="current_location"
               />
