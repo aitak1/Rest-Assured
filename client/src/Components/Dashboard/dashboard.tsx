@@ -190,9 +190,10 @@ function SearchLocation(){
                 map,
                 title: location.name,
                 icon: {
-                  url: "/assets/marker.PNG",
-                  scaledSize: new google.maps.Size(30, 45)
-                }
+                  url: "/assets/blueMarker.PNG",
+                  scaledSize: new google.maps.Size(40, 50)
+                },
+                animation: google.maps.Animation.DROP
               })as MarkerWithInfoWindow;
               //info to display when marker selected
 
@@ -312,7 +313,11 @@ function SearchLocation(){
 
       if(wideDisplay)
       {
-        setShowMap(false);
+        if(showMap)
+        {
+          setShowMap(false);
+          return;
+        }
       }
       //console.log("LETS GET ITTTTTTT");
 
@@ -386,9 +391,10 @@ function SearchLocation(){
       map: map,
       title: 'Your Location',
       icon: {
-        url: "/assets/userMarker.PNG",
-        scaledSize: new google.maps.Size(29, 52)
+        url: "/assets/shipMarker.PNG",
+        scaledSize: new google.maps.Size(50, 70)
       },
+      animation: google.maps.Animation.DROP
     });
     
     //remove any existing circles off map
@@ -402,10 +408,10 @@ function SearchLocation(){
       center: userPosition,
       radius: distance * 1609.34, // Convert miles to meters
       fillColor: '#4285F4',
-      fillOpacity: 0.2,
-      strokeColor: '#4285F4',
-      strokeOpacity: 0.8,
-      strokeWeight: 2
+      fillOpacity: 0.15,
+      strokeColor: '#1f61cf',
+      strokeOpacity: 0.5,
+      strokeWeight: 4
     });
 
     // Set the new circle instance
@@ -554,9 +560,20 @@ function SearchLocation(){
   
     //toggle radius distance dropdown
     const handleDistanceDropdown = () => {
-      setdropdownOpenB(!dropdownOpenB); 
+      const img = document.querySelector('.open-dropdown') as HTMLImageElement;
+      setdropdownOpenB(!dropdownOpenB);    
+      if (img) {
+        // Toggle the rotation by checking if the current rotation is 0 degrees
+        if (img.style.transform === '' || img.style.transform === 'none') {
+          img.style.transform = 'rotate(180deg)';
+        } else {
+          img.style.transform = 'none'; // Reset rotation to its original position
+        }
+      }     
       //console.log('wassuuuppp guurll');
     };
+
+    
     //update radius distance
     const handleDistanceChange = (newDistance) =>{
       setDistance(newDistance);
@@ -568,8 +585,8 @@ function SearchLocation(){
       if (locationMarkers[index]) {
         await resetMarker();  //reset marker image and zindex
         const newIcon = {
-          url: "/assets/highlighted-marker.PNG",
-                scaledSize: new google.maps.Size(30, 45)
+          url: "/assets/purpleMarker.PNG",
+                scaledSize: new google.maps.Size(40, 50)
         };
 
         (locationMarkers[index] as google.maps.Marker).setIcon(newIcon);
@@ -584,8 +601,8 @@ function SearchLocation(){
     const resetMarker = () => {
       return new Promise<void>((resolve) => {
         const resetIcon = {
-            url: "/assets/marker.PNG",
-            scaledSize: new google.maps.Size(30, 45)
+            url: "/assets/blueMarker.PNG",
+            scaledSize: new google.maps.Size(40, 50)
         };
 
         locationMarkers.forEach((marker, index) => {

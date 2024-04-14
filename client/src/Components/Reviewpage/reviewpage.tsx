@@ -44,9 +44,7 @@ function ReviewPage() {
   const { id } = useParams();
   const { position } = useParams<{ position: string }>();
   const positionArray = (position ? position.split(',').map(Number) : []) || [];
-  //const [getAddress, setAddress] = useState('');
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  //const [restroomData, setRestroomData] = useState(null);
   const [restroomData, setRestroomData] = useState<RestroomData | null>(null);
   const [addingReview, setAddingReview] = useState(false);
   const [newReview, setNewReview] = useState<Review>({
@@ -60,22 +58,6 @@ function ReviewPage() {
   });
   const [reviewsData, setReviewsData] = useState<Review[]>([
   ]);
-  /*useEffect(() => {
-    if (id === "CaCKeanWrTIkBrlBLeuT") {
-      // If the ID matches, add a default review to reviewsData
-      setReviewsData([
-        {
-          reviewerName: "John Doe",
-          cleanliness: 4,
-          amenities: 3,
-          accessibility: 5,
-          description: "Very Clean bathroom!",
-          image: null,
-          date: new Date()
-        }
-      ]);
-    }
-  }, [id]);*/
 
   const calculateStarColor = (starCount: number): string => {
     if (starCount === 1 || starCount === 2) {
@@ -219,6 +201,7 @@ function ReviewPage() {
     loader.load().then(() => {
       const mapElement = document.getElementById('map');
       if(!mapElement || !position) return;
+
       const mapStyles = [
         {
           featureType: 'poi',
@@ -335,54 +318,55 @@ function ReviewPage() {
 
   useEffect(() => {
     if (!map || destLat === null || destLng === null) return;
+
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
 
-      let request;
-  
-      request = {
-        origin: {
-          lat: positionArray[0], lng: positionArray[1]
-        }, // Use user's position as the origin
-        destination: {
-          lat: destLat, lng: destLng
-        },
-        travelMode: google.maps.TravelMode.DRIVING,
-      };
-  
-      directionsService.route(request, (result, status) => {
-        if (status === "OK") {
-          directionsRenderer.setDirections(result);
-          
-          if (result) {
-            const steps: RouteStep[] = [];
-            const route = result.routes[0];
-            if (route) {
-              
-              const legs = route.legs;
-              const totalDurationText = route.legs[0]?.duration?.text || "";
-              setTotalTime(totalDurationText);
-              setTotalDistance(route.legs[0]?.distance?.text || "");
+    let request;
 
-              // Log or use the total duration as needed
-              console.log("Total Time:", totalDurationText);
-              legs.forEach((leg, legIndex) => {
-                leg.steps.forEach((step, stepIndex) => {
-                  steps.push({
-                    instruction: step.instructions,
-                    distance: step.distance ? step.distance.text : "Unknown",
-                    duration: step.duration ? step.duration.text : "Unknown",
-                    travelMode: step.travel_mode,
-                  });
+    request = {
+      origin: {
+        lat: positionArray[0], lng: positionArray[1]
+      }, // Use user's position as the origin
+      destination: {
+        lat: destLat, lng: destLng
+      },
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+
+    directionsService.route(request, (result, status) => {
+      if (status === "OK") {
+        directionsRenderer.setDirections(result);
+        
+        if (result) {
+          const steps: RouteStep[] = [];
+          const route = result.routes[0];
+
+          if (route) {
+            const legs = route.legs;
+            const totalDurationText = route.legs[0]?.duration?.text || "";
+            setTotalTime(totalDurationText);
+            setTotalDistance(route.legs[0]?.distance?.text || "");
+
+            // Log or use the total duration as needed
+            console.log("Total Time:", totalDurationText);
+            legs.forEach((leg, legIndex) => {
+              leg.steps.forEach((step, stepIndex) => {
+                steps.push({
+                  instruction: step.instructions,
+                  distance: step.distance ? step.distance.text : "Unknown",
+                  duration: step.duration ? step.duration.text : "Unknown",
+                  travelMode: step.travel_mode,
                 });
               });
-            }
-            setRouteSteps(steps);
+            });
           }
-        } else {
-          console.error("Directions request failed due to " + status);
+          setRouteSteps(steps);
         }
+      } else {
+        console.error("Directions request failed due to " + status);
+      }
       });
 
        // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -418,7 +402,6 @@ function ReviewPage() {
         <div key={index}>
           <p className="route-step"><span dangerouslySetInnerHTML={{ __html: step.instruction }}/></p>
           <p className="route-step" style={{ fontSize: '20px', borderBottom: '2px solid lightgray'}}>&nbsp;&nbsp;&nbsp;<span dangerouslySetInnerHTML={{ __html: step.distance }} /></p>
-          {/* <p className="route-step">&nbsp;&nbsp;&nbsp;for a duration of <span dangerouslySetInnerHTML={{ __html: step.duration }} /></p> */}
           <p></p>
         </div>
       ))}

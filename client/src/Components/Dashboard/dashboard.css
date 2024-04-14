@@ -66,7 +66,7 @@ html, body{
 }
 .dashboard .topbar .profile{
   position: fixed;
-  top:23px;
+  top:15px;
   right:0px;
   margin-right: 1%;
   display: inline-block;
@@ -84,7 +84,7 @@ html, body{
 .dashboard .profile img:hover {
   cursor: pointer;
   filter: invert(100%);
-  background-color:  rgb(141, 115, 12);
+  background-color:  rgb(89, 47, 6);
 }
 .dashboard .profile button {
   background-color: rgb(58, 185, 235);
@@ -195,15 +195,16 @@ html, body{
   padding: 10px;
 }
 .dashboard .sidebar .name button:hover{
-  background-color:  rgb(71, 190, 246);
-  color: black;
+  filter: invert(100%);
+  background-color:  rgb(89, 47, 6);
 }
 .add-button:hover{
-  background-color:  rgb(143, 219, 255);
-  color: black;
+  filter: invert(100%);
+  background-color:  rgb(89, 47, 6);
 }
 .viewMapButton:hover{
-  background-color:  rgb(143, 219, 255);
+  filter: invert(100%);
+  background-color:  rgb(89, 47, 6);
 }
 .dashboard .sidebar .sidebar-top .locationSettings{
   padding: 10px;
@@ -244,6 +245,7 @@ html, body{
   flex-direction: column;
   right: 2%;
   top: 90%;
+  z-index: 0;
 } 
 .dashboard .sidebar .sidebar-top .locationSettings .dropdown-contentB span{
   padding: 10px;
@@ -346,11 +348,11 @@ html, body{
 }
 .dashboard .lower-content .currentLocationButton:hover{
   filter: invert(100%);
-  background-color:  rgb(141, 115, 12);
+  background-color:  rgb(89, 47, 6);
 }
 .dashboard .lower-content .searchButton:hover{
   filter: invert(100%);
-  background-color:  rgb(141, 115, 12);
+  background-color:  rgb(89, 47, 6);
 }
 .dashboard .lower-content .search-map .map{
   min-height: 575px;
@@ -429,11 +431,11 @@ ul {
 }
 .result-sales-button:hover {
   filter: invert(100%);
-  background-color:  rgb(156, 211, 17);
+  background-color:  rgb(21, 239, 28);
 }
 .navigate-button:hover {
   filter: invert(100%);
-  background-color:  rgb(156, 211, 17);
+  background-color:  rgb(21, 239, 28);
 }
 .dashboard .sidebar-container .sidebar .sidebar-top{
   position: sticky;
@@ -447,7 +449,7 @@ ul {
 }
 .dashboard .sidebar .sidebar-top .name button:hover {
   filter: invert(100%);
-  background-color:  rgb(141, 115, 12);
+  background-color:  rgb(89, 47, 6);
 }
 /* Custom scrollbar track */
 ::-webkit-scrollbar-track {
