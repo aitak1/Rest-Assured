@@ -107,13 +107,14 @@ html, body{
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  z-index: 2;
+  z-index: 50;
 }
 .dashboard .dropdown-content a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  z-index: 50;
 }
 .dashboard .dropdown-content a:hover {
   background-color: #ddd;
@@ -123,6 +124,7 @@ html, body{
 }
 .dashboard .lower-content .saved .sidebar-container .sidebar .locationSettings .dropdown-contentB.flex {
   display: flex;
+  z-index: 50;
 }
 .dashboard .lower-content .saved .sidebar-container .sidebar .locationSettings .dropdown-contentB.hidden {
   display: none; /* Display the dropdown content when the "show" class is added */
@@ -245,10 +247,11 @@ html, body{
   flex-direction: column;
   right: 2%;
   top: 90%;
-  z-index: 0;
+  z-index: 50;
 } 
 .dashboard .sidebar .sidebar-top .locationSettings .dropdown-contentB span{
   padding: 10px;
+  z-index: 50;
 }
 .dashboard .sidebar .sidebar-top .locationSettings .dropdown-contentB span:hover{
   cursor: pointer;
@@ -440,7 +443,7 @@ ul {
 .dashboard .sidebar-container .sidebar .sidebar-top{
   position: sticky;
   top: 77px;
-  z-index: 1;
+  z-index: 49;
 }
 .dashboard .sidebar .sidebar-top .name button {
   background-color: rgb(72, 72, 185);
@@ -492,7 +495,7 @@ ul {
     min-width: none;
     height: 400px;
     width: 99%;
-    z-index: 5;
+    z-index: 4;
   }
   .dashboard .lower-content{
     min-width: 100px;
@@ -574,6 +577,7 @@ ul {
   .dashboard .sidebar .sidebar-top .locationSettings .dropdown-contentB{
     right: 1.4%;
     top: 90%;
+    z-index: 1;
   } 
   .dashboard{
     min-width: 100px;
