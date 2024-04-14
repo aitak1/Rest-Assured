@@ -391,8 +391,8 @@ function SearchLocation(){
       map: map,
       title: 'Your Location',
       icon: {
-        url: "/assets/shipMarker.PNG",
-        scaledSize: new google.maps.Size(50, 70)
+        url: "/assets/userMarker.PNG",
+        scaledSize: new google.maps.Size(30, 50)
       },
       animation: google.maps.Animation.DROP
     });
